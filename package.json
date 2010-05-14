@@ -1,0 +1,21 @@
+{
+    "name" : "irc",
+    "description" : "An IRC client library for node",
+    "version" : "0.1.0",
+    "author" : "Martyn Smith <martyn@dollyfish.net.nz>",
+    "contributors" : [],
+    "repository" : {
+        "type" : "git",
+        "url" : "http://github.com/martynsmith/nodejs-irc"
+    },
+    "bugs" : {
+        "mail" : "martyn@dollyfish.net.nz",
+        "web" : "http://github.com/martynsmith/nodejs-irc/issues"
+    },
+    "main" : "lib/irc",
+    "engines" : { "node" : ">=0.1.91" },
+    "licenses" : [ {
+        "type" : "GPL",
+        "url" : "http://github.com/martynsmith/nodejs-irc/raw/master/COPYING"
+    } ]
+}
