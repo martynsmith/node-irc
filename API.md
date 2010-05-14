@@ -14,8 +14,6 @@ attempt to use. The third optional argument is an options object with default
 values:
 
     {
-        server: server,
-        nick: nick,
         userName: 'nodebot',
         realName: 'nodeJS IRC client',
         port: 6667,
