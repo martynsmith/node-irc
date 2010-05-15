@@ -133,3 +133,23 @@ parameter is exactly as in the 'raw' event.
 
 Sends a raw message to the server, generally speaking it's best not to use this
 method unless you know what you're doing, instead use one of the methods below.
+
+### Client.join(channel, callback)
+
+Joins the specified channel.
+
+`callback` is automatically subscribed to the `join#channel` event, but removed
+after the first invocation.
+
+### Client.part(channel, callback)
+
+Parts the specified channel.
+
+callback is automatically subscribed to the `part#channel` event, but removed
+after the first invocation.
+
+### Client.say(target, message)
+
+Sends a message to the specified target.
+
+`target` is either a nickname, or a channel.
