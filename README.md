@@ -18,12 +18,34 @@ want to use is:
         sys.puts(from + ' => ' + to + ': ' + message);
     });
 
-At the moment there are no helper methods for sending commands back to the
-server, so you need to use raw commands (via the send() function). To send a
-message for example:
+or if you're only interested in messages to the bot itself:
 
-    client.send('PRIVMSG', '#blah', 'I am a nodebot!');
+    client.addListener('pm', function (from, message) {
+        sys.puts(from + ' => ME: ' + message);
+    });
+
+or to a particular channel:
+
+    client.addListener('message#yourchannel', function (from, message) {
+        sys.puts(from + ' => #yourchannel: ' + message);
+    });
+
+At the moment there are functions for joining:
+
+    client.join('#yourchannel');
+
+parting:
+
+    client.part('#yourchannel');
+
+and talking:
+
+    client.say('#yourchannel', 'I'm a bot!');
+
+For any other commands you might want to send to the server you can use the
+send() message which sends raw messages to the server:
+
+    client.send('MODE', '#yourchannel', '+o', 'yournick');
 
 All commands and events are documented in `API.md` (hopefully). I hope to make
-a more complete set of events and implement helped commands for sending
-messages etc in the next few weeks.
+a more complete set of events/commands over the next few weeks.
