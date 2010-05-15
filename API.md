@@ -18,6 +18,7 @@ values:
         realName: 'nodeJS IRC client',
         port: 6667,
         debug: false,
+        showErrors: false,
         autoRejoin: true,
         channels: [],
     }
@@ -120,6 +121,13 @@ Emitted when ever the client receives a "message" from the server. A message is 
     }
 
 You can read more about the IRC protocol by reading [RFC 1459](http://www.ietf.org/rfc/rfc1459.txt).
+
+### Event: 'error'
+
+`function (message) { }`
+
+Emitted when ever the server responds with an error-type message. The message
+parameter is exactly as in the 'raw' event.
 
 ### Client.send(command, arg1, arg2, ...)
 

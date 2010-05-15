@@ -11,6 +11,10 @@ var bot = new irc.Client('irc.dollyfish.net.nz', 'nodebot', {
     channels: ['#blah', '#test'],
 });
 
+bot.addListener('error', function(message) {
+    sys.puts('ERROR: ' + message.command + ': ' + message.args.join(' '));
+});
+
 bot.addListener('message#blah', function (from, message) {
     sys.puts('<' + from + '> ' + message);
 });
