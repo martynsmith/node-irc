@@ -5,7 +5,6 @@ require.paths.unshift(__dirname + '/../lib');
 
 var sys = require('sys');
 var irc = require('irc');
-var http = require('http');
 
 var bot = new irc.Client('irc.dollyfish.net.nz', 'nodebot', {
     debug: true,
