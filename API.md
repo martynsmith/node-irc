@@ -90,3 +90,8 @@ Emitted when ever the client receives a "message" from the server. A message is 
     }
 
 You can read more about the IRC protocol by reading [RFC 1459](http://www.ietf.org/rfc/rfc1459.txt).
+
+### Client.send(command, arg1, arg2, ...)
+
+Sends a raw message to the server, generally speaking it's best not to use this
+method unless you know what you're doing, instead use one of the methods below.
