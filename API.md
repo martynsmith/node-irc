@@ -53,11 +53,23 @@ Emitted when the server sends the channel topic on joining a channel, or when a 
 
 Emitted when a user joins a channel (including when the client itself joins a channel).
 
+### Event: 'join#channel'
+
+`function (nick) { }`
+
+As per 'join' event but only emits for the subscribed channel
+
 ### Event: 'part'
 
 `function (channel, nick, reason) { }`
 
 Emitted when a user parts a channel (including when the client itself parts a channel).
+
+### Event: 'part#channel'
+
+`function (nick, reason) { }`
+
+As per 'part' event but only emits for the subscribed channel
 
 ### Event: 'kick'
 
@@ -65,11 +77,29 @@ Emitted when a user parts a channel (including when the client itself parts a ch
 
 Emitted when a user is kicked from a channel.
 
+### Event: 'kick#channel'
+
+`function (nick, by, reason) { }`
+
+As per 'kick' event but only emits for the subscribed channel
+
 ### Event: 'message'
 
 `function (nick, to, text) { }`
 
 Emitted when a message is sent. `to` can be either a nick (which is most likely this clients nick and means a private message), or a channel (which means a message to that channel).
+
+### Event: 'message#channel'
+
+`function (nick, text) { }`
+
+As per 'message' event but only emits for the subscribed channel
+
+### Event: 'pm'
+
+`function (text) { }`
+
+As per 'message' event but only emits when the message is direct to the client
 
 ### Event: 'raw'
 
