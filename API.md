@@ -97,7 +97,7 @@ As per 'message' event but only emits for the subscribed channel
 
 ### Event: 'pm'
 
-`function (text) { }`
+`function (nick, text) { }`
 
 As per 'message' event but only emits when the message is direct to the client
 

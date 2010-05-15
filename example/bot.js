@@ -9,7 +9,11 @@ var http = require('http');
 
 var bot = new irc.Client('irc.dollyfish.net.nz', 'nodebot', {
     debug: true,
-    channels: ['#blah'],
+    channels: ['#blah', '#test'],
+});
+
+bot.addListener('message#blah', function (from, message) {
+    sys.puts('<' + from + '> ' + message);
 });
 
 bot.addListener('message', function (from, to, message) {
@@ -30,6 +34,9 @@ bot.addListener('message', function (from, to, message) {
     else {
         // private message
     }
+});
+bot.addListener('pm', function(nick, message) {
+    sys.puts('Got private message from ' + nick + ': ' + message);
 });
 bot.addListener('join', function(channel, who) {
     sys.puts(who + ' has joined ' + channel);
