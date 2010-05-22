@@ -1,6 +1,24 @@
 NodeJS IRC client library
 =========================
 
+How to get it
+-------------
+
+The easiest way to get it is via [npm][]
+
+    npm install irc
+
+If you want to run the latest version (i.e. later than the version available
+via [npm][]) you can clone this repo, then use [npm][] to link-install it:
+
+    npm link /path/to/your/clone
+
+Of course, you can just clone this, and manually point at the library itself,
+but I really recommend using [npm][]!
+
+How to use it
+-------------
+
 This library provides basic IRC client functionality. In the simplest case you
 can connect to an IRC server like so:
 
@@ -49,3 +67,5 @@ send() message which sends raw messages to the server:
 
 All commands and events are documented in `API.md` (hopefully). I hope to make
 a more complete set of events/commands over the next few weeks.
+
+[npm]: http://github.com/isaacs/npm
