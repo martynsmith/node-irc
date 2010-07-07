@@ -21,7 +21,10 @@ values:
         showErrors: false,
         autoRejoin: true,
         channels: [],
+        secure: false
     }
+
+`secure` (SSL connection) can be a true value or an object (the kind of object returned from `crypto.createCredentials()`) specifying cert etc for validation.
 
 `irc.Client` instances are an EventEmitters with the following events:
 
