@@ -99,6 +99,12 @@ Emitted when a message is sent. `to` can be either a nick (which is most likely 
 
 As per 'message' event but only emits for the subscribed channel
 
+### Event: 'notice'
+
+`function (nick, to, text) { }`
+
+Emitted when a notice is sent. `to` can be either a nick (which is most likely this clients nick and means a private message), or a channel (which means a message to that channel). `nick` is either the senders nick or `null` which means that the notice comes from the server.
+
 ### Event: 'pm'
 
 `function (nick, text) { }`
