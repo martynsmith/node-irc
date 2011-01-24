@@ -20,11 +20,18 @@ values:
         debug: false,
         showErrors: false,
         autoRejoin: true,
+        autoConnect: true,
         channels: [],
         secure: false
     }
 
 `secure` (SSL connection) can be a true value or an object (the kind of object returned from `crypto.createCredentials()`) specifying cert etc for validation.
+
+Setting `autoConnect` to false prevents the Client from connecting on instantiation.  You will need to call `connect()` on the client instance:
+
+    var client = new irc.Client({ autoConnect: false, ... });
+    client.connect();
+
 
 `irc.Client` instances are an EventEmitters with the following events:
 
