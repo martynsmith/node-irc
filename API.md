@@ -78,6 +78,13 @@ Emitted when a user parts a channel (including when the client itself parts a ch
 
 As per 'part' event but only emits for the subscribed channel
 
+### Event: 'quit'
+
+`function (nick, reason, channels) { }`
+
+Emitted when a user disconnects from the IRC, leaving the specified array of
+channels.
+
 ### Event: 'kick'
 
 `function (channel, nick, by, reason) { }`
