@@ -28,13 +28,16 @@ values:
 
 `irc.Client` instances are an EventEmitters with the following events:
 
+### Event: 'registered'
+
+Emitted when the server sends the initial 001 line, indicating
+you've connected to the server.
+
 ### Event: 'motd'
 
 `function (motd) { }`
 
 Emitted when the server sends the message of the day to clients.
-This (at least as far as I know) is the most reliable way to know
-when you've connected to the server.
 
 ### Event: 'names'
 
