@@ -115,6 +115,12 @@ As per 'message' event but only emits for the subscribed channel
 
 As per 'message' event but only emits when the message is direct to the client
 
+### Event: 'nick'
+
+`function (oldnick, newnick, channels) { }`
+
+Emitted when a user changes nick along with the channels the user is in.
+
 ### Event: 'raw'
 
 `function (message) { }`
