@@ -35,13 +35,16 @@ Setting `autoConnect` to false prevents the Client from connecting on instantiat
 
 `irc.Client` instances are an EventEmitters with the following events:
 
+### Event: 'registered'
+
+Emitted when the server sends the initial 001 line, indicating
+you've connected to the server.
+
 ### Event: 'motd'
 
 `function (motd) { }`
 
 Emitted when the server sends the message of the day to clients.
-This (at least as far as I know) is the most reliable way to know
-when you've connected to the server.
 
 ### Event: 'names'
 
@@ -82,6 +85,13 @@ Emitted when a user parts a channel (including when the client itself parts a ch
 
 As per 'part' event but only emits for the subscribed channel
 
+### Event: 'quit'
+
+`function (nick, reason, channels) { }`
+
+Emitted when a user disconnects from the IRC, leaving the specified array of
+channels.
+
 ### Event: 'kick'
 
 `function (channel, nick, by, reason) { }`
@@ -106,11 +116,23 @@ Emitted when a message is sent. `to` can be either a nick (which is most likely 
 
 As per 'message' event but only emits for the subscribed channel
 
+### Event: 'notice'
+
+`function (nick, to, text) { }`
+
+Emitted when a notice is sent. `to` can be either a nick (which is most likely this clients nick and means a private message), or a channel (which means a message to that channel). `nick` is either the senders nick or `null` which means that the notice comes from the server.
+
 ### Event: 'pm'
 
 `function (nick, text) { }`
 
 As per 'message' event but only emits when the message is direct to the client
+
+### Event: 'nick'
+
+`function (oldnick, newnick, channels) { }`
+
+Emitted when a user changes nick along with the channels the user is in.
 
 ### Event: 'raw'
 
