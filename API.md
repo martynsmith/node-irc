@@ -185,3 +185,7 @@ after the first invocation.
 Sends a message to the specified target.
 
 `target` is either a nickname, or a channel.
+
+### Client.disconnect(message)
+
+Disconnects from the IRC server sending the specified parting message.
