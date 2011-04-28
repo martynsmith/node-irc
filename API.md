@@ -134,6 +134,12 @@ As per 'message' event but only emits when the message is direct to the client
 
 Emitted when a user changes nick along with the channels the user is in.
 
+### Event: 'invite'
+
+`function (channel, from) { }`
+
+Emitted when the client recieves an `/invite`.
+
 ### Event: 'raw'
 
 `function (message) { }`
