@@ -34,19 +34,19 @@ normally see in your favourite IRC client. Most likely the first one you'll
 want to use is:
 
     client.addListener('message', function (from, to, message) {
-        sys.puts(from + ' => ' + to + ': ' + message);
+        console.log(from + ' => ' + to + ': ' + message);
     });
 
 or if you're only interested in messages to the bot itself:
 
     client.addListener('pm', function (from, message) {
-        sys.puts(from + ' => ME: ' + message);
+        console.log(from + ' => ME: ' + message);
     });
 
 or to a particular channel:
 
     client.addListener('message#yourchannel', function (from, message) {
-        sys.puts(from + ' => #yourchannel: ' + message);
+        console.log(from + ' => #yourchannel: ' + message);
     });
 
 At the moment there are functions for joining:

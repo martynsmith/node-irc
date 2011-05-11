@@ -13,7 +13,7 @@
         "web" : "http://github.com/martynsmith/node-irc/issues"
     },
     "main" : "lib/irc",
-    "engines" : { "node" : ">=0.1.91" },
+    "engines" : { "node" : ">=0.4.0" },
     "licenses" : [ {
         "type" : "GPL",
         "url" : "http://github.com/martynsmith/node-irc/raw/master/COPYING"
