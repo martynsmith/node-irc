@@ -22,10 +22,13 @@ values:
         autoRejoin: true,
         autoConnect: true,
         channels: [],
-        secure: false
+        secure: false,
+        floodProtection: false
     }
 
 `secure` (SSL connection) can be a true value or an object (the kind of object returned from `crypto.createCredentials()`) specifying cert etc for validation.
+
+`floodProtection` queues all your messages and slowly unpacks it to make sure that we won't get kicked out because for Excess Flood.
 
 Setting `autoConnect` to false prevents the Client from connecting on instantiation.  You will need to call `connect()` on the client instance:
 
