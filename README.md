@@ -65,6 +65,15 @@ You can also whois people:
 
     client.whois('Human');
 
+It returns something like this:
+
+    { nickname: 'John',
+      username: 'jdoe',
+      host: 'host.net',
+      realname: 'John Doe',
+      channels: [ '#hatcollectors' ],
+      auth: null }
+
 For any other commands you might want to send to the server you can use the
 send() message which sends raw messages to the server:
 
