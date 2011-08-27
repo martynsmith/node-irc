@@ -61,6 +61,10 @@ and talking:
 
     client.say('#yourchannel', 'I'm a bot!');
 
+You can also whois people:
+
+    client.whois('Human');
+
 For any other commands you might want to send to the server you can use the
 send() message which sends raw messages to the server:
 
