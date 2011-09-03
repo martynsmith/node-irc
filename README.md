@@ -57,9 +57,15 @@ parting:
 
     client.part('#yourchannel');
 
-and talking:
+talking:
 
-    client.say('#yourchannel', 'I'm a bot!');
+    client.say('#yourchannel', "I'm a bot!");
+    client.say('nonbeliever', "SRSLY, I AM!");
+
+and sending notices:
+
+    client.notice('#yourchannel', "I'm a bot!");
+    client.notice('nonbeliever', "SRSLY, I AM!");
 
 For any other commands you might want to send to the server you can use the
 send() message which sends raw messages to the server:
