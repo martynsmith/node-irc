@@ -154,6 +154,25 @@ Emitted when a user changes nick along with the channels the user is in.
 
 Emitted when the client recieves an `/invite`.
 
+### Event: 'whois'
+
+`function (info) { }`
+
+Emitted whenever the server finishes outputting a WHOIS response. The
+information should look something like:
+
+    {
+        nick: "Ned",
+        user: "martyn",
+        host: "10.0.0.18",
+        realname: "Unknown",
+        channels: ["@#purpledishwashers", "#blah", "#mmmmbacon"],
+        server: "*.dollyfish.net.nz",
+        serverinfo: "The Dollyfish Underworld",
+        operator: "is an IRC Operator"
+    }
+
+
 ### Event: 'raw'
 
 `function (message) { }`
@@ -212,6 +231,14 @@ Sends a message to the specified target.
 ### Client.notice(target, message)
 
 Sends a notice to the specified target.
+
+### Client.whois(nick, callback)
+
+Request a whois for the specified `nick`.
+
+`callback` is fired when the server has finished generating the whois
+information and is passed exactly the same information as a `whois` event
+described above.
 
 `target` is either a nickname, or a channel.
 

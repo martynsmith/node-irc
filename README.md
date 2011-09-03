@@ -62,17 +62,16 @@ talking:
     client.say('#yourchannel', "I'm a bot!");
     client.say('nonbeliever', "SRSLY, I AM!");
 
-and sending notices:
+and many others. Check out the API documentation for a complete reference.
 
-    client.notice('#yourchannel', "I'm a bot!");
-    client.notice('nonbeliever', "SRSLY, I AM!");
-
-For any other commands you might want to send to the server you can use the
-send() message which sends raw messages to the server:
+For any commands that there aren't methods for you can use the send() method
+which sends raw messages to the server:
 
     client.send('MODE', '#yourchannel', '+o', 'yournick');
 
-All commands and events are documented in `API.md` (hopefully). I hope to make
-a more complete set of events/commands over the next few weeks.
+All commands and events are documented in `API.md` (hopefully). If you find any
+methods/events missing that you'd really like to have included feel free to
+send me a pull request (preferred) or file an issue and I'll try get around to
+writing it.
 
 [npm]: http://github.com/isaacs/npm
