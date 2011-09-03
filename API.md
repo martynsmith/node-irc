@@ -218,3 +218,14 @@ Sends a notice to the specified target.
 ### Client.disconnect(message)
 
 Disconnects from the IRC server sending the specified parting message.
+
+### Client.whois(nickname)
+
+Sends whois command to server and returns a object that includes user's nickname, username, host, realname, channels and auth if user is identified.
+
+    { nickname: 'John',
+      username: 'jdoe',
+      host: 'host.net',
+      realname: 'John Doe',
+      channels: [ '#hatcollectors' ],
+      auth: null }
