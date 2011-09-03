@@ -22,12 +22,18 @@ values:
         autoRejoin: true,
         autoConnect: true,
         channels: [],
-        secure: false
+        secure: false,
+        floodProtection: false
     }
 
-`secure` (SSL connection) can be a true value or an object (the kind of object returned from `crypto.createCredentials()`) specifying cert etc for validation.
+`secure` (SSL connection) can be a true value or an object (the kind of object
+returned from `crypto.createCredentials()`) specifying cert etc for validation.
 
-Setting `autoConnect` to false prevents the Client from connecting on instantiation.  You will need to call `connect()` on the client instance:
+`floodProtection` queues all your messages and slowly unpacks it to make sure
+that we won't get kicked out because for Excess Flood.
+
+Setting `autoConnect` to false prevents the Client from connecting on
+instantiation.  You will need to call `connect()` on the client instance:
 
     var client = new irc.Client({ autoConnect: false, ... });
     client.connect();
@@ -59,13 +65,15 @@ passed to the callback is keyed by nick names, and has values '',
 
 `function (channel, topic, nick) { }`
 
-Emitted when the server sends the channel topic on joining a channel, or when a user changes the topic on a channel.
+Emitted when the server sends the channel topic on joining a channel, or when a
+user changes the topic on a channel.
 
 ### Event: 'join'
 
 `function (channel, nick) { }`
 
-Emitted when a user joins a channel (including when the client itself joins a channel).
+Emitted when a user joins a channel (including when the client itself joins a
+channel).
 
 ### Event: 'join#channel'
 
@@ -77,7 +85,8 @@ As per 'join' event but only emits for the subscribed channel
 
 `function (channel, nick, reason) { }`
 
-Emitted when a user parts a channel (including when the client itself parts a channel).
+Emitted when a user parts a channel (including when the client itself parts a
+channel).
 
 ### Event: 'part#channel'
 
@@ -108,7 +117,9 @@ As per 'kick' event but only emits for the subscribed channel
 
 `function (nick, to, text) { }`
 
-Emitted when a message is sent. `to` can be either a nick (which is most likely this clients nick and means a private message), or a channel (which means a message to that channel).
+Emitted when a message is sent. `to` can be either a nick (which is most likely
+this clients nick and means a private message), or a channel (which means a
+message to that channel).
 
 ### Event: 'message#channel'
 
@@ -120,7 +131,10 @@ As per 'message' event but only emits for the subscribed channel
 
 `function (nick, to, text) { }`
 
-Emitted when a notice is sent. `to` can be either a nick (which is most likely this clients nick and means a private message), or a channel (which means a message to that channel). `nick` is either the senders nick or `null` which means that the notice comes from the server.
+Emitted when a notice is sent. `to` can be either a nick (which is most likely
+this clients nick and means a private message), or a channel (which means a
+message to that channel). `nick` is either the senders nick or `null` which
+means that the notice comes from the server.
 
 ### Event: 'pm'
 
@@ -144,7 +158,9 @@ Emitted when the client recieves an `/invite`.
 
 `function (message) { }`
 
-Emitted when ever the client receives a "message" from the server. A message is basically a single line of data from the server, but the parameter to the callback has already been parsed and contains:
+Emitted when ever the client receives a "message" from the server. A message is
+basically a single line of data from the server, but the parameter to the
+callback has already been parsed and contains:
 
     message = {
         prefix: "The prefix for the message (optional)",
@@ -158,7 +174,8 @@ Emitted when ever the client receives a "message" from the server. A message is 
         args: ['arguments', 'to', 'the', 'command'],
     }
 
-You can read more about the IRC protocol by reading [RFC 1459](http://www.ietf.org/rfc/rfc1459.txt).
+You can read more about the IRC protocol by reading [RFC
+1459](http://www.ietf.org/rfc/rfc1459.txt).
 
 ### Event: 'error'
 
