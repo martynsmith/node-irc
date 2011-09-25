@@ -203,6 +203,10 @@ You can read more about the IRC protocol by reading [RFC
 Emitted when ever the server responds with an error-type message. The message
 parameter is exactly as in the 'raw' event.
 
+### Client.connect(retryCount, callback)
+
+Connects to the server. Used when `autoConnect` in the options is set to false. If `retryCount` is a function it will be treated as the `callback`.
+
 ### Client.send(command, arg1, arg2, ...)
 
 Sends a raw message to the server, generally speaking it's best not to use this
@@ -242,6 +246,6 @@ described above.
 
 `target` is either a nickname, or a channel.
 
-### Client.disconnect(message)
+### Client.disconnect(message, callback)
 
-Disconnects from the IRC server sending the specified parting message.
+Disconnects from the IRC server sending the specified parting message. If `message` is a function it will be treated as the `callback`.
