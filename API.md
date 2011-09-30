@@ -23,11 +23,13 @@ values:
         autoConnect: true,
         channels: [],
         secure: false,
+        selfSigned: false,
         floodProtection: false
     }
 
 `secure` (SSL connection) can be a true value or an object (the kind of object
 returned from `crypto.createCredentials()`) specifying cert etc for validation.
+If you set `selfSigned` to true SSL accepts certificates from a non trusted CA.
 
 `floodProtection` queues all your messages and slowly unpacks it to make sure
 that we won't get kicked out because for Excess Flood.
