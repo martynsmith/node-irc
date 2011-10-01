@@ -3,7 +3,7 @@ API
 
 This library provides IRC client functionality
 
-irc.Client
+Client
 ----------
 
 .. js:class:: irc.Client(server, nick [, options])
@@ -254,8 +254,8 @@ Events
             args: ['arguments', 'to', 'the', 'command'],
         }
 
-    You can read more about the IRC protocol by reading [RFC
-    1459](http://www.ietf.org/rfc/rfc1459.txt).
+    You can read more about the IRC protocol by reading `RFC 1459
+    <http://www.ietf.org/rfc/rfc1459.txt>`_
 
 .. js:data:: 'error'
 
