@@ -230,6 +230,10 @@ Sends a message to the specified target.
 
 `target` is either a nickname, or a channel.
 
+### Client.action(channel, message)
+
+Sends an action to the specified target.
+
 ### Client.notice(target, message)
 
 Sends a notice to the specified target.
