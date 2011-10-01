@@ -4,6 +4,7 @@
 require.paths.unshift(__dirname + '/../lib');
 
 var irc = require('irc');
+var colors = irc.colors;
 
 var bot = new irc.Client('irc.dollyfish.net.nz', 'nodebot', {
     debug: true,
@@ -27,10 +28,11 @@ bot.addListener('message', function (from, to, message) {
             bot.say(to, 'Hello there ' + from);
         }
         if ( message.match(/dance/) ) {
-            setTimeout(function () { bot.say(to, "\u0001ACTION dances: :D\\-<\u0001") }, 1000);
-            setTimeout(function () { bot.say(to, "\u0001ACTION dances: :D|-<\u0001")  }, 2000);
-            setTimeout(function () { bot.say(to, "\u0001ACTION dances: :D/-<\u0001")  }, 3000);
-            setTimeout(function () { bot.say(to, "\u0001ACTION dances: :D|-<\u0001")  }, 4000);
+            setTimeout(function () { bot.say(to, "dances") }, 0);
+            setTimeout(function () { bot.action(to, colors.wrap('white', ":D\\-<")) }, 1000);
+            setTimeout(function () { bot.action(to, colors.wrap('dark_green', ":D|-<"))  }, 2000);
+            setTimeout(function () { bot.action(to, colors.wrap('cyan', ":D/-<"))  }, 3000);
+            setTimeout(function () { bot.action(to, colors.wrap('light_red', ":D|-<"))  }, 4000);
         }
     }
     else {
