@@ -3,104 +3,104 @@ API
 
 This library provides IRC client functionality
 
-irc.Client(server, nick [, options])
-------------------------------------
+irc.Client
+----------
 
-This object is the base of everything, it represents a single nick connected to
-a single IRC server.
+.. js:class:: irc.Client(server, nick [, options])
 
-The first two arguments are the server to connect to, and the nickname to
-attempt to use. The third optional argument is an options object with default
-values::
+    This object is the base of everything, it represents a single nick connected to
+    a single IRC server.
 
-    {
-	userName: 'nodebot',
-	realName: 'nodeJS IRC client',
-	port: 6667,
-	debug: false,
-	showErrors: false,
-	autoRejoin: true,
-	autoConnect: true,
-	channels: [],
-	secure: false,
-	selfSigned: false,
-	floodProtection: false
-    }
+    The first two arguments are the server to connect to, and the nickname to
+    attempt to use. The third optional argument is an options object with default
+    values::
 
-`secure` (SSL connection) can be a true value or an object (the kind of object
-returned from `crypto.createCredentials()`) specifying cert etc for validation.
-If you set `selfSigned` to true SSL accepts certificates from a non trusted CA.
+        {
+            userName: 'nodebot',
+            realName: 'nodeJS IRC client',
+            port: 6667,
+            debug: false,
+            showErrors: false,
+            autoRejoin: true,
+            autoConnect: true,
+            channels: [],
+            secure: false,
+            selfSigned: false,
+            floodProtection: false
+        }
 
-`floodProtection` queues all your messages and slowly unpacks it to make sure
-that we won't get kicked out because for Excess Flood.
+    `secure` (SSL connection) can be a true value or an object (the kind of object
+    returned from `crypto.createCredentials()`) specifying cert etc for validation.
+    If you set `selfSigned` to true SSL accepts certificates from a non trusted CA.
 
-Setting `autoConnect` to false prevents the Client from connecting on
-instantiation.  You will need to call `connect()` on the client instance::
+    `floodProtection` queues all your messages and slowly unpacks it to make sure
+    that we won't get kicked out because for Excess Flood.
 
-    var client = new irc.Client({ autoConnect: false, ... });
-    client.connect();
+    Setting `autoConnect` to false prevents the Client from connecting on
+    instantiation.  You will need to call `connect()` on the client instance::
+
+        var client = new irc.Client({ autoConnect: false, ... });
+        client.connect();
 
 
-`irc.Client` instances are an EventEmitters with the following events:
+.. js:function:: Client.send(command, arg1, arg2, ...)
 
-Client.send(command, arg1, arg2, ...)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Sends a raw message to the server, generally speaking it's best not to use
+    this method unless you know what you're doing, instead use one of the
+    methods below.
 
-Sends a raw message to the server, generally speaking it's best not to use this
-method unless you know what you're doing, instead use one of the methods below.
+.. js:function:: Client.join(channel, callback)
 
-Client.join(channel, callback)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Joins the specified channel.
 
-Joins the specified channel.
+    :param string channel: Channel to join
+    :param function callback: Callback to automatically subscribed to the
+        `join#channel` event, but removed after the first invocation.
 
-`callback` is automatically subscribed to the `join#channel` event, but removed
-after the first invocation.
+.. js:function:: Client.part(channel, callback)
 
-Client.part(channel, callback)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Parts the specified channel.
 
-Parts the specified channel.
+    :param string channel: Channel to part
+    :param function callback: Callback to automatically subscribed to the
+        `part#channel` event, but removed after the first invocation.
 
-callback is automatically subscribed to the `part#channel` event, but removed
-after the first invocation.
+.. js:function:: Client.say(target, message)
 
-Client.say(target, message)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Sends a message to the specified target.
 
-Sends a message to the specified target.
+    :param string target: is either a nickname, or a channel.
+    :param string message: the message to send to the target.
 
-`target` is either a nickname, or a channel.
+.. js:function:: Client.notice(target, message)
 
-Client.notice(target, message)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Sends a notice to the specified target.
 
-Sends a notice to the specified target.
+    :param string target: is either a nickname, or a channel.
+    :param string message: the message to send as a notice to the target.
 
-Client.whois(nick, callback)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. js:function:: Client.whois(nick, callback)
 
-Request a whois for the specified `nick`.
+    Request a whois for the specified `nick`.
 
-`callback` is fired when the server has finished generating the whois
-information and is passed exactly the same information as a `whois` event
-described above.
+    :param string nick: is a nickname
+    :param function callback: Callback to fire when the server has finished
+        generating the whois information and is passed exactly the same
+        information as a `whois` event described above.
 
-`target` is either a nickname, or a channel.
 
-Client.disconnect(message)
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. js:function:: Client.disconnect(message)
 
-Disconnects from the IRC server sending the specified parting message.
+    Disconnects from the IRC server.
 
-Client.addListener(event [, callback])
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+    :param string message: Message to send when disconnecting.
 
-Listen for any of the following events. If there is a function listed under the
-event's name, that is the expected signature for the `callback`.
 
 Events
 ------
+
+`irc.Client` instances are an EventEmitters with the following events:
+
 
 'registered'
 ~~~~~~~~~~~~
@@ -241,14 +241,14 @@ Emitted whenever the server finishes outputting a WHOIS response. The
 information should look something like::
 
     {
-	nick: "Ned",
-	user: "martyn",
-	host: "10.0.0.18",
-	realname: "Unknown",
-	channels: ["@#purpledishwashers", "#blah", "#mmmmbacon"],
-	server: "*.dollyfish.net.nz",
-	serverinfo: "The Dollyfish Underworld",
-	operator: "is an IRC Operator"
+        nick: "Ned",
+        user: "martyn",
+        host: "10.0.0.18",
+        realname: "Unknown",
+        channels: ["@#purpledishwashers", "#blah", "#mmmmbacon"],
+        server: "*.dollyfish.net.nz",
+        serverinfo: "The Dollyfish Underworld",
+        operator: "is an IRC Operator"
     }
 
 
@@ -262,15 +262,15 @@ basically a single line of data from the server, but the parameter to the
 callback has already been parsed and contains::
 
     message = {
-	prefix: "The prefix for the message (optional)",
-	nick: "The nickname portion of the prefix (optional)",
-	user: "The username portion of the prefix (optional)",
-	host: "The hostname portion of the prefix (optional)",
-	server: "The servername (if the prefix was a servername)",
-	rawCommand: "The command exactly as sent from the server",
-	command: "Human readable version of the command",
-	commandType: "normal, error, or reply",
-	args: ['arguments', 'to', 'the', 'command'],
+        prefix: "The prefix for the message (optional)",
+        nick: "The nickname portion of the prefix (optional)",
+        user: "The username portion of the prefix (optional)",
+        host: "The hostname portion of the prefix (optional)",
+        server: "The servername (if the prefix was a servername)",
+        rawCommand: "The command exactly as sent from the server",
+        command: "Human readable version of the command",
+        commandType: "normal, error, or reply",
+        args: ['arguments', 'to', 'the', 'command'],
     }
 
 You can read more about the IRC protocol by reading [RFC
