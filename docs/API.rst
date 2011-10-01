@@ -6,7 +6,7 @@ This library provides IRC client functionality
 Client
 ----------
 
-.. js:class:: irc.Client(server, nick [, options])
+.. js:function:: irc.Client(server, nick [, options])
 
     This object is the base of everything, it represents a single nick connected to
     a single IRC server.
