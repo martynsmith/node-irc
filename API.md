@@ -251,3 +251,42 @@ described above.
 ### Client.disconnect(message)
 
 Disconnects from the IRC server sending the specified parting message.
+
+irc.colors
+------------------------------------
+
+This contains the set of colors available and a function to wrap text in a color.
+
+The following color choices are available:
+
+    {
+        white: '\u000300',
+        black: '\u000301',
+        dark_blue: '\u000302',
+        dark_green: '\u000303',
+        light_red: '\u000304',
+        dark_red: '\u000305',
+        magenta: '\u000306',
+        orange: '\u000307',
+        yellow: '\u000308',
+        light_green: '\u000309',
+        cyan: '\u000310',
+        light_cyan: '\u000311',
+        light_blue: '\u000312',
+        light_magenta: '\u000313',
+        gray: '\u000314',
+        light_gray: '\u000315',
+        reset: '\u000f',
+    }
+
+### irc.colors.codes
+
+An object containing the above colors.
+
+### irc.colors.wrap(color, text [, reset_color])
+
+Takes a color by name, text, and optionally what color to return.
+
+`color` is the name of the color as a string
+`text` is the text you want wrapped
+`reset_color` is the color you want set in the end, defaults to `reset`
