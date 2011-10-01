@@ -102,184 +102,164 @@ Events
 `irc.Client` instances are an EventEmitters with the following events:
 
 
-'registered'
-~~~~~~~~~~~~
+.. js:data:: 'registered'
 
-Emitted when the server sends the initial 001 line, indicating you've connected
-to the server.
+    Emitted when the server sends the initial 001 line, indicating you've connected
+    to the server.
 
-'motd'
-~~~~~~
+.. js:data:: 'motd'
 
-`function (motd) { }`
+    `function (motd) { }`
 
-Emitted when the server sends the message of the day to clients.
+    Emitted when the server sends the message of the day to clients.
 
-'names'
-~~~~~~~
+.. js:data:: 'names'
 
-`function (channel, nicks) { }`
+    `function (channel, nicks) { }`
 
-Emitted when the server sends a list of nicks for a channel (which happens
-immediately after joining and on request. The nicks object passed to the
-callback is keyed by nick names, and has values '', '+', or '@' depending on the
-level of that nick in the channel.
+    Emitted when the server sends a list of nicks for a channel (which happens
+    immediately after joining and on request. The nicks object passed to the
+    callback is keyed by nick names, and has values '', '+', or '@' depending on the
+    level of that nick in the channel.
 
-'topic'
-~~~~~~~
+.. js:data:: 'topic'
 
-`function (channel, topic, nick) { }`
+    `function (channel, topic, nick) { }`
 
-Emitted when the server sends the channel topic on joining a channel, or when a
-user changes the topic on a channel.
+    Emitted when the server sends the channel topic on joining a channel, or when a
+    user changes the topic on a channel.
 
-'join'
-~~~~~~
+.. js:data:: 'join'
 
-`function (channel, nick) { }`
+    `function (channel, nick) { }`
 
-Emitted when a user joins a channel (including when the client itself joins a
-channel).
+    Emitted when a user joins a channel (including when the client itself joins a
+    channel).
 
-'join#channel'
-~~~~~~~~~~~~~~
+.. js:data:: 'join#channel'
 
-`function (nick) { }`
+    `function (nick) { }`
 
-As per 'join' event but only emits for the subscribed channel
+    As per 'join' event but only emits for the subscribed channel
 
-'part'
-~~~~~~
+.. js:data:: 'part'
 
-`function (channel, nick, reason) { }`
+    `function (channel, nick, reason) { }`
 
-Emitted when a user parts a channel (including when the client itself parts a
-channel).
+    Emitted when a user parts a channel (including when the client itself parts a
+    channel).
 
-'part#channel'
-~~~~~~~~~~~~~~
+.. js:data:: 'part#channel'
 
-`function (nick, reason) { }`
+    `function (nick, reason) { }`
 
-As per 'part' event but only emits for the subscribed channel
+    As per 'part' event but only emits for the subscribed channel
 
-'quit'
-~~~~~~
+.. js:data:: 'quit'
 
-`function (nick, reason, channels) { }`
+    `function (nick, reason, channels) { }`
 
-Emitted when a user disconnects from the IRC, leaving the specified array of
-channels.
+    Emitted when a user disconnects from the IRC, leaving the specified array of
+    channels.
 
-'kick'
-~~~~~~
+.. js:data:: 'kick'
 
-`function (channel, nick, by, reason) { }`
+    `function (channel, nick, by, reason) { }`
 
-Emitted when a user is kicked from a channel.
+    Emitted when a user is kicked from a channel.
 
-'kick#channel'
-~~~~~~~~~~~~~~
+.. js:data:: 'kick#channel'
 
-`function (nick, by, reason) { }`
+    `function (nick, by, reason) { }`
 
-As per 'kick' event but only emits for the subscribed channel
+    As per 'kick' event but only emits for the subscribed channel
 
-'message'
-~~~~~~~~~
+.. js:data:: 'message'
 
-`function (nick, to, text) { }`
+    `function (nick, to, text) { }`
 
-Emitted when a message is sent. `to` can be either a nick (which is most likely
-this clients nick and means a private message), or a channel (which means a
-message to that channel).
+    Emitted when a message is sent. `to` can be either a nick (which is most likely
+    this clients nick and means a private message), or a channel (which means a
+    message to that channel).
 
-'message#channel'
-~~~~~~~~~~~~~~~~~
+.. js:data:: 'message#channel'
 
-`function (nick, text) { }`
+    `function (nick, text) { }`
 
-As per 'message' event but only emits for the subscribed channel
+    As per 'message' event but only emits for the subscribed channel
 
-'notice'
-~~~~~~~~
+.. js:data:: 'notice'
 
-`function (nick, to, text) { }`
+    `function (nick, to, text) { }`
 
-Emitted when a notice is sent. `to` can be either a nick (which is most likely
-this clients nick and means a private message), or a channel (which means a
-message to that channel). `nick` is either the senders nick or `null` which
-means that the notice comes from the server.
+    Emitted when a notice is sent. `to` can be either a nick (which is most likely
+    this clients nick and means a private message), or a channel (which means a
+    message to that channel). `nick` is either the senders nick or `null` which
+    means that the notice comes from the server.
 
-'pm'
-~~~~
+.. js:data:: 'pm'
 
-`function (nick, text) { }`
+    `function (nick, text) { }`
 
-As per 'message' event but only emits when the message is direct to the client
+    As per 'message' event but only emits when the message is direct to the client
 
-'nick'
-~~~~~~
+.. js:data:: 'nick'
 
-`function (oldnick, newnick, channels) { }`
+    `function (oldnick, newnick, channels) { }`
 
-Emitted when a user changes nick along with the channels the user is in.
+    Emitted when a user changes nick along with the channels the user is in.
 
-'invite'
-~~~~~~~~
+.. js:data:: 'invite'
 
-`function (channel, from) { }`
+    `function (channel, from) { }`
 
-Emitted when the client recieves an `/invite`.
+    Emitted when the client recieves an `/invite`.
 
-'whois'
-~~~~~~~
+.. js:data:: 'whois'
 
-`function (info) { }`
+    `function (info) { }`
 
-Emitted whenever the server finishes outputting a WHOIS response. The
-information should look something like::
+    Emitted whenever the server finishes outputting a WHOIS response. The
+    information should look something like::
 
-    {
-        nick: "Ned",
-        user: "martyn",
-        host: "10.0.0.18",
-        realname: "Unknown",
-        channels: ["@#purpledishwashers", "#blah", "#mmmmbacon"],
-        server: "*.dollyfish.net.nz",
-        serverinfo: "The Dollyfish Underworld",
-        operator: "is an IRC Operator"
-    }
+        {
+            nick: "Ned",
+            user: "martyn",
+            host: "10.0.0.18",
+            realname: "Unknown",
+            channels: ["@#purpledishwashers", "#blah", "#mmmmbacon"],
+            server: "*.dollyfish.net.nz",
+            serverinfo: "The Dollyfish Underworld",
+            operator: "is an IRC Operator"
+        }
 
 
-'raw'
-~~~~~
+.. js:data:: 'raw'
 
-`function (message) { }`
+    `function (message) { }`
 
-Emitted when ever the client receives a "message" from the server. A message is
-basically a single line of data from the server, but the parameter to the
-callback has already been parsed and contains::
+    Emitted when ever the client receives a "message" from the server. A message is
+    basically a single line of data from the server, but the parameter to the
+    callback has already been parsed and contains::
 
-    message = {
-        prefix: "The prefix for the message (optional)",
-        nick: "The nickname portion of the prefix (optional)",
-        user: "The username portion of the prefix (optional)",
-        host: "The hostname portion of the prefix (optional)",
-        server: "The servername (if the prefix was a servername)",
-        rawCommand: "The command exactly as sent from the server",
-        command: "Human readable version of the command",
-        commandType: "normal, error, or reply",
-        args: ['arguments', 'to', 'the', 'command'],
-    }
+        message = {
+            prefix: "The prefix for the message (optional)",
+            nick: "The nickname portion of the prefix (optional)",
+            user: "The username portion of the prefix (optional)",
+            host: "The hostname portion of the prefix (optional)",
+            server: "The servername (if the prefix was a servername)",
+            rawCommand: "The command exactly as sent from the server",
+            command: "Human readable version of the command",
+            commandType: "normal, error, or reply",
+            args: ['arguments', 'to', 'the', 'command'],
+        }
 
-You can read more about the IRC protocol by reading [RFC
-1459](http://www.ietf.org/rfc/rfc1459.txt).
+    You can read more about the IRC protocol by reading [RFC
+    1459](http://www.ietf.org/rfc/rfc1459.txt).
 
-'error'
-~~~~~~~
+.. js:data:: 'error'
 
-`function (message) { }`
+    `function (message) { }`
 
-Emitted when ever the server responds with an error-type message. The message
-parameter is exactly as in the 'raw' event.
+    Emitted when ever the server responds with an error-type message. The message
+    parameter is exactly as in the 'raw' event.
