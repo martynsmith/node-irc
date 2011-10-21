@@ -6,7 +6,6 @@
 
 You can access more detailed documentation for this module at `Read the Docs`_
 
-.. _`Read the Docs`: http://readthedocs.org/docs/node-irc/en/latest/
 
 Installation
 -------------
@@ -76,10 +75,12 @@ which sends raw messages to the server::
 
     client.send('MODE', '#yourchannel', '+o', 'yournick');
 
-All commands and events are documented here_ (hopefully). If you find any
-methods/events missing that you'd really like to have included feel free to send
-me a pull request (preferred) or file an issue and I'll try get around to
-writing it.
+Further documentation (including a complete API reference) are available in
+reStructuredText format in the docs/ folder of this project, or online at `Read the Docs`_.
+
+If you find any issues with the documentation (or the module) please send a pull
+request or file an issue and I'll do my best to accommodate.
 
 .. _npm: http://github.com/isaacs/npm
 .. _here: http://node-irc.readthedocs.org/en/latest/API.html
+.. _`Read the Docs`: http://readthedocs.org/docs/node-irc/en/latest/
