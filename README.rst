@@ -4,6 +4,10 @@
 .. _JavaScript: http://en.wikipedia.org/wiki/JavaScript
 .. _Node: http://nodejs.org/
 
+You can access more detailed documentation for this module at `Read the Docs`_
+
+.. _`Read the Docs`: http://readthedocs.org/docs/node-irc/en/latest/
+
 Installation
 -------------
 
