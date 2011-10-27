@@ -92,6 +92,14 @@ Client
         generating the whois information and is passed exactly the same
         information as a `whois` event described above.
 
+.. js:function:: Client.list([arg1, arg2, ...])
+
+   Request a channel listing from the server. The arguments for this method are
+   fairly server specific, this method just passes them through exactly as
+   specified.
+
+   Responses from the server are available via the `channellist_start`,
+   `channellist_item`, and `channellist` events.
 
 .. js:function:: Client.disconnect(message)
 
@@ -274,6 +282,29 @@ Events
             operator: "is an IRC Operator"
         }
 
+.. js:data:: 'channellist_start'
+
+    `function () {}`
+
+    Emitted whenever the server starts a new channel listing
+
+.. js:data:: 'channellist_item'
+
+   `function (channel_info) {}`
+
+   Emitted for each channel the server returns. The channel_info object
+   contains keys 'name', 'users' (number of users on the channel), and 'topic'.
+
+.. js:data:: 'channellist'
+
+   `function (channel_list) {}`
+
+   Emitted when the server has finished returning a channel list. The
+   channel_list array is simply a list of the objects that were returned in the
+   intervening `channellist_item` events.
+
+   This data is also available via the Client.channellist property after this
+   event has fired.
 
 .. js:data:: 'raw'
 
