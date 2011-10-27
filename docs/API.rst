@@ -35,7 +35,9 @@ Client
     If you set `selfSigned` to true SSL accepts certificates from a non trusted CA.
 
     `floodProtection` queues all your messages and slowly unpacks it to make sure
-    that we won't get kicked out because for Excess Flood.
+    that we won't get kicked out because for Excess Flood. You can also use
+    `Client.activateFloodProtection()` to activate flood protection after
+    instantiating the client.
 
     `stripColors` removes mirc colors (0x03 followed by one or two ascii
     numbers for foreground,background) and ircII "effect" codes (0x02
@@ -51,8 +53,8 @@ Client
 
 .. js:function:: Client.send(command, arg1, arg2, ...)
 
-    Sends a raw message to the server, generally speaking it's best not to use
-    this method unless you know what you're doing, instead use one of the
+    Sends a raw message to the server; generally speaking, it's best not to use
+    this method unless you know what you're doing. Instead, use one of the
     methods below.
 
 .. js:function:: Client.join(channel, callback)
@@ -125,48 +127,16 @@ Client
     :param string message: Optional message to send when disconnecting.
     :param function callback: Optional callback
 
-Colors
-------
+.. js:function:: Client.activateFloodProtection()
 
-.. js:function:: irc.colors.wrap(color, text [, reset_color])
-
-    Takes a color by name, text, and optionally what color to return.
-
-    :param string color: the name of the color as a string
-    :param string text: the text you want colorized
-    :param string reset_color: the nam of the color you want set after the text (defaults to 'reset')
-
-.. js:data:: irc.colors.codes
-
-    This contains the set of colors available and a function to wrap text in a
-    color.
-
-    The following color choices are available:
-
-    {
-        white: '\u000300',
-        black: '\u000301',
-        dark_blue: '\u000302',
-        dark_green: '\u000303',
-        light_red: '\u000304',
-        dark_red: '\u000305',
-        magenta: '\u000306',
-        orange: '\u000307',
-        yellow: '\u000308',
-        light_green: '\u000309',
-        cyan: '\u000310',
-        light_cyan: '\u000311',
-        light_blue: '\u000312',
-        light_magenta: '\u000313',
-        gray: '\u000314',
-        light_gray: '\u000315',
-        reset: '\u000f',
-    }
+    Activates flood protection "after the fact". You can also use
+    `floodProtection` while instantiating the Client to enable flood
+    protection.
 
 Events
 ------
 
-`irc.Client` instances are an EventEmitters with the following events:
+`irc.Client` instances are EventEmitters with the following events:
 
 
 .. js:data:: 'registered'
@@ -353,3 +323,64 @@ Events
 
     Emitted when ever the server responds with an error-type message. The message
     parameter is exactly as in the 'raw' event.
+
+Colors
+------
+
+.. js:function:: irc.colors.wrap(color, text [, reset_color])
+
+    Takes a color by name, text, and optionally what color to return.
+
+    :param string color: the name of the color as a string
+    :param string text: the text you want colorized
+    :param string reset_color: the nam of the color you want set after the text (defaults to 'reset')
+
+.. js:data:: irc.colors.codes
+
+    This contains the set of colors available and a function to wrap text in a
+    color.
+
+    The following color choices are available:
+
+    {
+        white: '\u000300',
+        black: '\u000301',
+        dark_blue: '\u000302',
+        dark_green: '\u000303',
+        light_red: '\u000304',
+        dark_red: '\u000305',
+        magenta: '\u000306',
+        orange: '\u000307',
+        yellow: '\u000308',
+        light_green: '\u000309',
+        cyan: '\u000310',
+        light_cyan: '\u000311',
+        light_blue: '\u000312',
+        light_magenta: '\u000313',
+        gray: '\u000314',
+        light_gray: '\u000315',
+        reset: '\u000f',
+    }
+
+Internal
+------
+
+.. js:data:: Client.conn
+
+    Socket to the server. Rarely, if ever needed. Use `Client.send` instead.
+
+.. js:data:: Client.chans
+
+    Channels joined. Updated *after* the server recognizes the join.
+
+.. js:function:: client._whoisData
+
+    Buffer of whois data as whois is sent over multiple lines.
+
+.. js:function:: client._addWhoisData
+
+    Self-explanatory.
+
+.. js:function:: client._clearWhoisData
+
+    Self-explanatory.
