@@ -101,11 +101,23 @@ Client
    Responses from the server are available via the `channellist_start`,
    `channellist_item`, and `channellist` events.
 
-.. js:function:: Client.disconnect(message)
+.. js:function:: Client.connect(retryCount, callback)
 
-    Disconnects from the IRC server.
+   Connects to the server. Used when `autoConnect` in the options is set to
+   false. If `retryCount` is a function it will be treated as the `callback`
+   (i.e. both arguments to this function are optional).
 
-    :param string message: Message to send when disconnecting.
+    :param integer retryCount: Optional number of times to attempt reconnection
+    :param function callback: Optional callback
+
+.. js:function:: Client.disconnect(message, callback)
+
+    Disconnects from the IRC server. If `message` if a function it will be
+    treated as the `callback` (i.e. both arguments to this function are
+    optional).
+
+    :param string message: Optional message to send when disconnecting.
+    :param function callback: Optional callback
 
 Colors
 ------
