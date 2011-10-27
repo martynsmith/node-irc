@@ -10,7 +10,7 @@
     },
     "bugs" : {
         "mail" : "martyn@dollyfish.net.nz",
-        "web" : "http://github.com/martynsmith/node-irc/issues"
+        "url" : "http://github.com/martynsmith/node-irc/issues"
     },
     "main" : "lib/irc",
     "engines" : { "node" : ">=0.4.0" },
