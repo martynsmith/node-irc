@@ -26,7 +26,8 @@ Client
             channels: [],
             secure: false,
             selfSigned: false,
-            floodProtection: false
+            floodProtection: false,
+            stripColors: false
         }
 
     `secure` (SSL connection) can be a true value or an object (the kind of object
@@ -35,6 +36,11 @@ Client
 
     `floodProtection` queues all your messages and slowly unpacks it to make sure
     that we won't get kicked out because for Excess Flood.
+
+    `stripColors` removes mirc colors (0x03 followed by one or two ascii
+    numbers for foreground,background) and ircII "effect" codes (0x02
+    bold, 0x1f underline, 0x16 reverse, 0x0f reset) from the entire
+    message before parsing it and passing it along.
 
     Setting `autoConnect` to false prevents the Client from connecting on
     instantiation.  You will need to call `connect()` on the client instance::
