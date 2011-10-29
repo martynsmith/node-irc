@@ -1,7 +1,7 @@
 {
     "name" : "irc",
     "description" : "An IRC client library for node",
-    "version" : "0.3.0",
+    "version" : "0.3.1",
     "author" : "Martyn Smith <martyn@dollyfish.net.nz>",
     "contributors" : [],
     "repository" : {
