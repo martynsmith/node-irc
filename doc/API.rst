@@ -384,3 +384,8 @@ Internal
 .. js:function:: client._clearWhoisData
 
     Self-explanatory.
+
+.. js:function:: irc.parseMessage
+
+    Sort-of internal function to parse a message. Might be useful if you're
+    capturing on raw.
