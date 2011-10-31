@@ -63,7 +63,9 @@ Client
 
     :param string channel: Channel to join
     :param function callback: Callback to automatically subscribed to the
-        `join#channel` event, but removed after the first invocation.
+        `join#channel` event, but removed after the first invocation.  `channel`
+        supports multiple JOIN arguments as a space separated string (similar to
+        the IRC protocol).
 
 .. js:function:: Client.part(channel, callback)
 
