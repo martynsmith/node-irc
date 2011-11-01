@@ -26,6 +26,7 @@ Client
             channels: [],
             secure: false,
             selfSigned: false,
+            certExpired: false,
             floodProtection: false,
             stripColors: false
         }
@@ -33,6 +34,7 @@ Client
     `secure` (SSL connection) can be a true value or an object (the kind of object
     returned from `crypto.createCredentials()`) specifying cert etc for validation.
     If you set `selfSigned` to true SSL accepts certificates from a non trusted CA.
+    If you set `certExpired` to true, the bot connects even if the ssl cert has expired.
 
     `floodProtection` queues all your messages and slowly unpacks it to make sure
     that we won't get kicked out because for Excess Flood. You can also use
