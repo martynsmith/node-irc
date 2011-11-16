@@ -82,6 +82,15 @@ Client
     :param string target: is either a nickname, or a channel.
     :param string message: the message to send to the target.
 
+.. js:function:: Client.ctcp(target, type, text)
+
+    Sends a CTCP message to the specified target.
+    
+    :param string target: is either a nickname, or a channel.
+    :param string type: the type of the CTCP message, either "privmsg" for
+        a PRIVMSG or something else for a NOTICE.
+    :param string text: the CTCP message to send.
+
 .. js:function:: Client.action(target, message)
 
     Sends an action to the specified target.
@@ -247,6 +256,31 @@ Events
     `function (nick, text) { }`
 
     As per 'message' event but only emits when the message is direct to the client
+
+.. js:data:: 'ctcp'
+
+   `function (from, to, text, type) { }`
+   
+   Emitted when a CTCP notice or privmsg was received (`type` is either `'notice'`
+   or `'privmsg'`).
+
+.. js:data:: 'ctcp-notice'
+
+   `function (from, to, text) { }`
+   
+   Emitted when a CTCP notice was received.
+
+.. js:data:: 'ctcp-privmsg'
+
+   `function (from, to, text) { }`
+   
+   Emitted when a CTCP privmsg was received.
+
+.. js:data:: 'ctcp-version'
+
+   `function (from, to) { }`
+   
+   Emitted when a CTCP VERSION request was received.
 
 .. js:data:: 'nick'
 
