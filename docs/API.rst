@@ -213,6 +213,12 @@ Events
 
     As per 'kick' event but only emits for the subscribed channel
 
+.. js:data:: 'kill'
+
+    `function (nick, reason) { }`
+
+    Emitted when a user is killed from the IRC server
+
 .. js:data:: 'message'
 
     `function (nick, to, text) { }`
