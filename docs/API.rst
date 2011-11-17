@@ -239,7 +239,8 @@ Events
 
     `function (nick, to, text, message) { }`
 
-    Emitted when a message is sent to a channel.
+    Emitted when a message is sent to any channel (i.e. exactly the same as the
+    `message` event but excluding private messages.
     See the `raw` event for details on the `message` object.
 
 .. js:data:: 'message#channel'
