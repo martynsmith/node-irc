@@ -235,6 +235,13 @@ Events
     this clients nick and means a private message), or a channel (which means a
     message to that channel). See the `raw` event for details on the `message` object.
 
+.. js:data:: 'message#'
+
+    `function (nick, to, text, message) { }`
+
+    Emitted when a message is sent to a channel.
+    See the `raw` event for details on the `message` object.
+
 .. js:data:: 'message#channel'
 
     `function (nick, text, message) { }`
