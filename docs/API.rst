@@ -281,6 +281,30 @@ Events
     Emitted when the client recieves an `/invite`. See the `raw` event for details
     on the `message` object.
 
+.. js:data:: '+mode'
+
+	`function (channel, by, mode, argument, message) { }`
+
+    Emitted when a mode is added to a user or channel. `channel` is the channel
+    which the mode is being set on/in. `by` is the user setting the mode. `mode`
+    is the single character mode indentifier. If the mode is being set on a user,
+    `argument` is the nick of the user.  If the mode is being set on a channel,
+    `argument` is the argument to the mode. If a channel mode doesn't have any
+    arguments, `argument` will be 'undefined'. See the `raw` event for details
+    on the `message` object.
+
+.. js:data:: '-mode'
+
+	`function (channel, by, mode, argument, message) { }`
+
+    Emitted when a mode is removed from a user or channel. `channel` is the channel
+    which the mode is being set on/in. `by` is the user setting the mode. `mode`
+    is the single character mode indentifier. If the mode is being set on a user,
+    `argument` is the nick of the user.  If the mode is being set on a channel,
+    `argument` is the argument to the mode. If a channel mode doesn't have any
+    arguments, `argument` will be 'undefined'. See the `raw` event for details
+    on the `message` object.
+
 .. js:data:: 'whois'
 
     `function (info) { }`
