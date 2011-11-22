@@ -222,9 +222,11 @@ Events
 
 .. js:data:: 'kill'
 
-    `function (nick, reason, message) { }`
+    `function (nick, reason, channels, message) { }`
 
     Emitted when a user is killed from the IRC server.
+    `channels` is an array of channels the killed user was in which
+    are known to the client.
     See the `raw` event for details on the `message` object.
 
 .. js:data:: 'message'
