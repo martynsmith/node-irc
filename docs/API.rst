@@ -28,6 +28,7 @@ Client
             selfSigned: false,
             certExpired: false,
             floodProtection: false,
+            floodProtectionDelay: 1000,
             stripColors: false
         }
 
@@ -40,6 +41,9 @@ Client
     that we won't get kicked out because for Excess Flood. You can also use
     `Client.activateFloodProtection()` to activate flood protection after
     instantiating the client.
+
+    `floodProtectionDelay` sets the amount of time that the client will wait
+    between sending subsequent messages when `floodProtection` is enabled.
 
     `stripColors` removes mirc colors (0x03 followed by one or two ascii
     numbers for foreground,background) and ircII "effect" codes (0x02
@@ -131,11 +135,16 @@ Client
     :param string message: Optional message to send when disconnecting.
     :param function callback: Optional callback
 
-.. js:function:: Client.activateFloodProtection()
+.. js:function:: Client.activateFloodProtection(interval)
 
     Activates flood protection "after the fact". You can also use
     `floodProtection` while instantiating the Client to enable flood
-    protection.
+    protection, and `floodProtectionDelay` to set the default message
+    interval.
+
+    :param integer interval: Optional configuration for amount of time
+        to wait between messages. Takes value from client configuration
+        if unspecified.
 
 Events
 ------
