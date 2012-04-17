@@ -31,7 +31,8 @@ Client
             floodProtectionDelay: 1000,
             stripColors: false,
             channelPrefixes: "&#",
-            messageSplit: 512
+            messageSplit: 512,
+            encoding: false
         }
 
     `secure` (SSL connection) can be a true value or an object (the kind of object
@@ -54,6 +55,14 @@ Client
     numbers for foreground,background) and ircII "effect" codes (0x02
     bold, 0x1f underline, 0x16 reverse, 0x0f reset) from the entire
     message before parsing it and passing it along.
+
+    `encoding` can be any encoding acceptable to iconv, for example,
+    'ASCII', 'CP1251//IGNORE', 'CP949', etc. You can also check acceptable
+    encodings with a console command, 'iconv -l'. Setting `encoding` to
+    false(default) means that you use default encoding, UTF-8. If you don't
+    use default encoding, you need to install node-iconv module::
+
+        npm install iconv
 
     Setting `autoConnect` to false prevents the Client from connecting on
     instantiation.  You will need to call `connect()` on the client instance::
