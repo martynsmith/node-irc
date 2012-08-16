@@ -26,18 +26,24 @@ Client
             channels: [],
             secure: false,
             selfSigned: false,
+            certExpired: false,
             floodProtection: false,
+            floodProtectionDelay: 1000,
             stripColors: false
         }
 
     `secure` (SSL connection) can be a true value or an object (the kind of object
     returned from `crypto.createCredentials()`) specifying cert etc for validation.
     If you set `selfSigned` to true SSL accepts certificates from a non trusted CA.
+    If you set `certExpired` to true, the bot connects even if the ssl cert has expired.
 
     `floodProtection` queues all your messages and slowly unpacks it to make sure
     that we won't get kicked out because for Excess Flood. You can also use
     `Client.activateFloodProtection()` to activate flood protection after
     instantiating the client.
+
+    `floodProtectionDelay` sets the amount of time that the client will wait
+    between sending subsequent messages when `floodProtection` is enabled.
 
     `stripColors` removes mirc colors (0x03 followed by one or two ascii
     numbers for foreground,background) and ircII "effect" codes (0x02
@@ -81,6 +87,15 @@ Client
 
     :param string target: is either a nickname, or a channel.
     :param string message: the message to send to the target.
+
+.. js:function:: Client.ctcp(target, type, text)
+
+    Sends a CTCP message to the specified target.
+    
+    :param string target: is either a nickname, or a channel.
+    :param string type: the type of the CTCP message, either "privmsg" for
+        a PRIVMSG or something else for a NOTICE.
+    :param string text: the CTCP message to send.
 
 .. js:function:: Client.action(target, message)
 
@@ -129,11 +144,16 @@ Client
     :param string message: Optional message to send when disconnecting.
     :param function callback: Optional callback
 
-.. js:function:: Client.activateFloodProtection()
+.. js:function:: Client.activateFloodProtection(interval)
 
     Activates flood protection "after the fact". You can also use
     `floodProtection` while instantiating the Client to enable flood
-    protection.
+    protection, and `floodProtectionDelay` to set the default message
+    interval.
+
+    :param integer interval: Optional configuration for amount of time
+        to wait between messages. Takes value from client configuration
+        if unspecified.
 
 Events
 ------
@@ -268,6 +288,31 @@ Events
 
     As per 'message' event but only emits when the message is direct to the client.
     See the `raw` event for details on the `message` object.
+
+.. js:data:: 'ctcp'
+
+   `function (from, to, text, type) { }`
+   
+   Emitted when a CTCP notice or privmsg was received (`type` is either `'notice'`
+   or `'privmsg'`).
+
+.. js:data:: 'ctcp-notice'
+
+   `function (from, to, text) { }`
+   
+   Emitted when a CTCP notice was received.
+
+.. js:data:: 'ctcp-privmsg'
+
+   `function (from, to, text) { }`
+   
+   Emitted when a CTCP privmsg was received.
+
+.. js:data:: 'ctcp-version'
+
+   `function (from, to) { }`
+   
+   Emitted when a CTCP VERSION request was received.
 
 .. js:data:: 'nick'
 
