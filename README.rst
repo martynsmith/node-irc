@@ -83,7 +83,7 @@ event. As stated in the `Node JS EventEmitter documentation`_ if you don't bind
 something to this error, it will cause a fatal stack trace.
 
 The upshot of this is basically that if you bind an error handler to your
-client, errors will be sent there instead of crashing your program.
+client, errors will be sent there instead of crashing your program.::
 
     client.addListener('error', function(message) {
         console.log('error: ', message);
