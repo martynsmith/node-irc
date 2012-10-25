@@ -283,6 +283,13 @@ Events
     means that the notice comes from the server. See the `raw` event for details
     on the `message` object.
 
+.. js:data:: 'ping'
+
+   `function (server) { }`
+
+   Emitted when a server PINGs the client. The client will automatically send a
+   PONG request just before this is emitted.
+
 .. js:data:: 'pm'
 
     `function (nick, text, message) { }`
