@@ -40,6 +40,16 @@ bot.addListener('message', function (from, to, message) {
         if ( message.match(/hello/i) ) {
             bot.say(to, 'Hello there ' + from);
         }
+        // set away on request
+        if (message.match(/away/i)) {
+          bot.away('I am not here, leave a msg!', function(serverResponse) {
+            console.log(serverResponse);
+          });
+        }
+        // back
+        if (message.match(/back/i)) {
+          bot.away();
+        }
         if ( message.match(/dance/) ) {
             setTimeout(function () { bot.say(to, "\u0001ACTION dances: :D\\-<\u0001") }, 1000);
             setTimeout(function () { bot.say(to, "\u0001ACTION dances: :D|-<\u0001")  }, 2000);

@@ -122,6 +122,15 @@ Client
         generating the whois information and is passed exactly the same
         information as a `whois` event described above.
 
+.. js:function:: Client.away(awayMessage, callback)
+
+    Set away status to `awayMessage` or reset it.
+
+    :param string awayMessage: message to be set
+    :param function callback: Optional callback to fire when the server responds
+        to the away call with a message such as 'You have been marked as beeing
+        away.' or 'You are no longer marked as beeing away'.
+
 .. js:function:: Client.list([arg1, arg2, ...])
 
    Request a channel listing from the server. The arguments for this method are
