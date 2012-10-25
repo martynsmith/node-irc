@@ -29,7 +29,8 @@ Client
             certExpired: false,
             floodProtection: false,
             floodProtectionDelay: 1000,
-            stripColors: false
+            stripColors: false,
+            channelPrefixes: "&#"
         }
 
     `secure` (SSL connection) can be a true value or an object (the kind of object
