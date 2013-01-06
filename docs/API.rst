@@ -188,6 +188,12 @@ Events
     callback is keyed by nick names, and has values '', '+', or '@' depending on the
     level of that nick in the channel.
 
+.. js:data:: 'names#channel'
+
+    `function (nicks) { }`
+
+    As per 'names' event but only emits for the subscribed channel.
+
 .. js:data:: 'topic'
 
     `function (channel, topic, nick, message) { }`
