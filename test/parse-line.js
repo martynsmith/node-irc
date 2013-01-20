@@ -51,6 +51,34 @@ describe("irc.parseMessage", function() {
             rawCommand: "PRIVMSG",
             commandType: "normal",
             args: [ "#test", ":^:^:" ]
+        },
+        ":some.irc.net 324 webuser #channel +Cnj 5:10": {
+            prefix: "some.irc.net",
+            server: "some.irc.net",
+            command: "rpl_channelmodeis",
+            rawCommand: "324",
+            commandType: "reply",
+            args: [ "webuser", "#channel", "+Cnj", "5:10" ]
+        },
+        ":nick!user@host QUIT :Ping timeout: 252 seconds": {
+            prefix: "nick!user@host",
+            nick: "nick",
+            user: "user",
+            host: "host",
+            command: "QUIT",
+            rawCommand: "QUIT",
+            commandType: "normal",
+            args: [ "Ping timeout: 252 seconds" ]
+        },
+        ":nick!user@host PRIVMSG #channel :so : colons: :are :: not a problem ::::": {
+            prefix: "nick!user@host",
+            nick: "nick",
+            user: "user",
+            host: "host",
+            command: "PRIVMSG",
+            rawCommand: "PRIVMSG",
+            commandType: "normal",
+            args: [ "#channel", "so : colons: :are :: not a problem ::::" ]
         }
     };
 
