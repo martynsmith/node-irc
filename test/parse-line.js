@@ -79,6 +79,14 @@ describe("irc.parseMessage", function() {
             rawCommand: "PRIVMSG",
             commandType: "normal",
             args: [ "#channel", "so : colons: :are :: not a problem ::::" ]
+        },
+        ":pratchett.freenode.net 324 nodebot #ubuntu +CLcntjf 5:10 #ubuntu-unregged": {
+            prefix: 'pratchett.freenode.net',
+            server: 'pratchett.freenode.net',
+            command: 'rpl_channelmodeis',
+            rawCommand: '324',
+            commandType: 'reply',
+            args: [ 'nodebot', '#ubuntu', '+CLcntjf', '5:10', '#ubuntu-unregged' ]
         }
     };
 
