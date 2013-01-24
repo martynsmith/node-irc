@@ -31,7 +31,7 @@ Client
             floodProtectionDelay: 1000,
             stripColors: false,
             channelPrefixes: "&#",
-            messageSplit: 512
+            messageLength: 512
         }
 
     `secure` (SSL connection) can be a true value or an object (the kind of object
@@ -47,8 +47,9 @@ Client
     `floodProtectionDelay` sets the amount of time that the client will wait
     between sending subsequent messages when `floodProtection` is enabled.
 
-    `messageSplit` will split up large messages sent with the `say` method
-    into multiple messages of length fewer than `messageSplit` characters.
+    `messageLength` sets the character length at which messages sent with `msg` will
+    be split into multiple messages. This value should not be changed unless the
+    server explicitly indicates another value.
 
     `stripColors` removes mirc colors (0x03 followed by one or two ascii
     numbers for foreground,background) and ircII "effect" codes (0x02
@@ -348,7 +349,7 @@ Events
 
 .. js:data:: '+mode'
 
-	`function (channel, by, mode, argument, message) { }`
+    `function (channel, by, mode, argument, message) { }`
 
     Emitted when a mode is added to a user or channel. `channel` is the channel
     which the mode is being set on/in. `by` is the user setting the mode. `mode`
@@ -360,7 +361,7 @@ Events
 
 .. js:data:: '-mode'
 
-	`function (channel, by, mode, argument, message) { }`
+    `function (channel, by, mode, argument, message) { }`
 
     Emitted when a mode is removed from a user or channel. `channel` is the channel
     which the mode is being set on/in. `by` is the user setting the mode. `mode`
