@@ -19,6 +19,7 @@ Client
             userName: 'nodebot',
             realName: 'nodeJS IRC client',
             port: 6667,
+            localAddress: null,
             debug: false,
             showErrors: false,
             autoRejoin: true,
@@ -39,6 +40,9 @@ Client
     returned from `crypto.createCredentials()`) specifying cert etc for validation.
     If you set `selfSigned` to true SSL accepts certificates from a non trusted CA.
     If you set `certExpired` to true, the bot connects even if the ssl cert has expired.
+
+    `localAddress` is the address to bind to when connecting. Not
+    supported with `secure` option.
 
     `floodProtection` queues all your messages and slowly unpacks it to make sure
     that we won't get kicked out because for Excess Flood. You can also use
