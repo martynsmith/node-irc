@@ -109,6 +109,17 @@
 			"args": ["#channel", "neither are colors or styles"],
 			"stripColors": true
 		},
+		":동우!~Arkind.DK@host PRIVMSG #channel :test message": {
+			"prefix": "동우!~Arkind.DK@host",
+			"nick": "동우",
+			"user": "~Arkind.DK",
+			"host": "host",
+			"command": "PRIVMSG",
+			"rawCommand": "PRIVMSG",
+			"commandType": "normal",
+			"args": ["#channel", "test message"],
+			"stripColors": true
+		},
 		":nick!user@host PRIVMSG #channel :\u000314,01\u001fwe can leave styles and colors alone if desired\u001f\u0003": {
 			"prefix": "nick!user@host",
 			"nick": "nick",
