@@ -29,8 +29,8 @@ This library provides basic IRC client functionality. In the simplest case you
 can connect to an IRC server like so::
 
     var irc = require('irc');
-    var client = new irc.Client('irc.dollyfish.net.nz', 'myNick', {
-	channels: ['#blah'],
+    var client = new irc.Client('irc.yourserver.com', 'myNick', {
+	channels: ['#channel'],
     });
 
 Of course it's not much use once it's connected if that's all you have!
