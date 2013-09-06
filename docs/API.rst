@@ -82,11 +82,12 @@ Client
         supports multiple JOIN arguments as a space separated string (similar to
         the IRC protocol).
 
-.. js:function:: Client.part(channel, callback)
+.. js:function:: Client.part(channel, message, callback)
 
     Parts the specified channel.
 
     :param string channel: Channel to part
+    :param string message: Optional message to send upon leaving the channel
     :param function callback: Callback to automatically subscribed to the
         `part#channel` event, but removed after the first invocation.
 
