@@ -23,5 +23,8 @@
     } ],
     "dependencies": {
         "ansi-color" : "0.2.1"
+    },
+    "devDependencies": {
+        "should": "1.2.2"
     }
 }
