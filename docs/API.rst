@@ -29,6 +29,7 @@ Client
             certExpired: false,
             floodProtection: false,
             floodProtectionDelay: 1000,
+            sasl: false,
             stripColors: false,
             channelPrefixes: "&#",
             messageSplit: 512
@@ -47,13 +48,16 @@ Client
     `floodProtectionDelay` sets the amount of time that the client will wait
     between sending subsequent messages when `floodProtection` is enabled.
 
-    `messageSplit` will split up large messages sent with the `say` method
-    into multiple messages of length fewer than `messageSplit` characters.
+    Set `sasl` to true to enable SASL support. You'll also want to set `nick`, 
+    `userName`, and `password` for authentication.
 
     `stripColors` removes mirc colors (0x03 followed by one or two ascii
     numbers for foreground,background) and ircII "effect" codes (0x02
     bold, 0x1f underline, 0x16 reverse, 0x0f reset) from the entire
     message before parsing it and passing it along.
+
+    `messageSplit` will split up large messages sent with the `say` method
+    into multiple messages of length fewer than `messageSplit` characters.
 
     Setting `autoConnect` to false prevents the Client from connecting on
     instantiation.  You will need to call `connect()` on the client instance::
