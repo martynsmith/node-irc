@@ -18,6 +18,7 @@ Client
         {
             userName: 'nodebot',
             realName: 'nodeJS IRC client',
+            userInfo: 'node user',
             port: 6667,
             debug: false,
             showErrors: false,
@@ -311,26 +312,19 @@ Events
 
    `function (from, to, text, type) { }`
    
-   Emitted when a CTCP notice or privmsg was received (`type` is either `'notice'`
-   or `'privmsg'`).
+   Emitted when a CTCP request/reply is received (`type` is either 'request' or 'reply').
 
-.. js:data:: 'ctcp-notice'
-
-   `function (from, to, text) { }`
-   
-   Emitted when a CTCP notice was received.
-
-.. js:data:: 'ctcp-privmsg'
+.. js:data:: 'ctcp-request'
 
    `function (from, to, text) { }`
    
-   Emitted when a CTCP privmsg was received.
+   Emitted when a CTCP request is received.
 
-.. js:data:: 'ctcp-version'
+.. js:data:: 'ctcp-reply'
 
-   `function (from, to) { }`
+   `function (from, to, text) { }`
    
-   Emitted when a CTCP VERSION request was received.
+   Emitted when a CTCP reply is received.
 
 .. js:data:: 'nick'
 
