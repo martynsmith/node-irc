@@ -313,28 +313,31 @@ Events
 
 .. js:data:: 'ctcp'
 
-   `function (from, to, text, type) { }`
+   `function (from, to, text, type, message) { }`
    
    Emitted when a CTCP notice or privmsg was received (`type` is either `'notice'`
-   or `'privmsg'`).
+   or `'privmsg'`).  See the `raw` event for details on the `message` object.
 
 .. js:data:: 'ctcp-notice'
 
-   `function (from, to, text) { }`
+   `function (from, to, text, message) { }`
    
    Emitted when a CTCP notice was received.
+   See the `raw` event for details on the `message` object.
 
 .. js:data:: 'ctcp-privmsg'
 
-   `function (from, to, text) { }`
+   `function (from, to, text, message) { }`
    
    Emitted when a CTCP privmsg was received.
+   See the `raw` event for details on the `message` object.
 
 .. js:data:: 'ctcp-version'
 
-   `function (from, to) { }`
+   `function (from, to, message) { }`
    
    Emitted when a CTCP VERSION request was received.
+   See the `raw` event for details on the `message` object.
 
 .. js:data:: 'nick'
 
