@@ -29,6 +29,7 @@ Client
             certExpired: false,
             floodProtection: false,
             floodProtectionDelay: 1000,
+            sasl: false,
             stripColors: false,
             channelPrefixes: "&#",
             messageLength: 512
@@ -47,6 +48,8 @@ Client
     `floodProtectionDelay` sets the amount of time that the client will wait
     between sending subsequent messages when `floodProtection` is enabled.
 
+    Set `sasl` to true to enable SASL support. You'll also want to set `nick`, 
+    `userName`, and `password` for authentication.
     `messageLength` sets the character length at which messages sent with `msg` will
     be split into multiple messages. This value should not be changed unless the
     server explicitly indicates another value.
@@ -79,11 +82,12 @@ Client
         supports multiple JOIN arguments as a space separated string (similar to
         the IRC protocol).
 
-.. js:function:: Client.part(channel, callback)
+.. js:function:: Client.part(channel, message, callback)
 
     Parts the specified channel.
 
     :param string channel: Channel to part
+    :param string message: Optional message to send upon leaving the channel
     :param function callback: Callback to automatically subscribed to the
         `part#channel` event, but removed after the first invocation.
 
@@ -310,28 +314,31 @@ Events
 
 .. js:data:: 'ctcp'
 
-   `function (from, to, text, type) { }`
+   `function (from, to, text, type, message) { }`
    
    Emitted when a CTCP notice or privmsg was received (`type` is either `'notice'`
-   or `'privmsg'`).
+   or `'privmsg'`).  See the `raw` event for details on the `message` object.
 
 .. js:data:: 'ctcp-notice'
 
-   `function (from, to, text) { }`
+   `function (from, to, text, message) { }`
    
    Emitted when a CTCP notice was received.
+   See the `raw` event for details on the `message` object.
 
 .. js:data:: 'ctcp-privmsg'
 
-   `function (from, to, text) { }`
+   `function (from, to, text, message) { }`
    
    Emitted when a CTCP privmsg was received.
+   See the `raw` event for details on the `message` object.
 
 .. js:data:: 'ctcp-version'
 
-   `function (from, to) { }`
+   `function (from, to, message) { }`
    
    Emitted when a CTCP VERSION request was received.
+   See the `raw` event for details on the `message` object.
 
 .. js:data:: 'nick'
 
