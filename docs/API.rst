@@ -50,6 +50,7 @@ Client
 
     Set `sasl` to true to enable SASL support. You'll also want to set `nick`, 
     `userName`, and `password` for authentication.
+
     `messageLength` sets the character length at which messages sent with `msg` will
     be split into multiple messages. This value should not be changed unless the
     server explicitly indicates another value.
