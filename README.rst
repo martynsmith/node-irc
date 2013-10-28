@@ -77,11 +77,10 @@ which sends raw messages to the server::
     
 Advance usage
 ---------------
-WEBIRC::
 
-webirc = {"pass":"WebIrcPassWord","host":"my.host.com", "ip":"123.123.123.123"};
-
-"WebIrcPassWord" is case sensetive. It connects to the CGI irc block in your irc server.
+Webirc is used for multiple users to connect from your node server to irc.
+Get the users ip and hostname and send it like this:
+``webirc = {"pass":"WebIrcPassWord","host":"my.host.com", "ip":"123.123.123.123"};``
 How to configure your server for Webirc can be found in your irc server dokumentation.
 
 
