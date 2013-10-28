@@ -74,6 +74,16 @@ For any commands that there aren't methods for you can use the send() method
 which sends raw messages to the server::
 
     client.send('MODE', '#yourchannel', '+o', 'yournick');
+    
+Advance usage
+---------------
+WEBIRC::
+
+webirc = {"pass":"WebIrcPassWord","host":"my.host.com", "ip":"123.123.123.123"};
+
+"WebIrcPassWord" is case sensetive. It connects to the CGI irc block in your irc server.
+How to configure your server for Webirc can be found in your irc server dokumentation.
+
 
 Help! - it keeps crashing!
 ---------------------------
