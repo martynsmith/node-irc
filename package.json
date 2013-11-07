@@ -1,5 +1,5 @@
 {
-    "name" : "irc",
+    "name" : "node-irc",
     "description" : "An IRC client library for node",
     "version" : "0.3.6",
     "author" : "Martyn Smith <martyn@dollyfish.net.nz>",
