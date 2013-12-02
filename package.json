@@ -22,6 +22,7 @@
         "url" : "http://github.com/martynsmith/node-irc/raw/master/COPYING"
     } ],
     "dependencies": {
+        "irc-message": "0.1.x",
         "ansi-color" : "0.2.1"
     },
     "devDependencies": {
