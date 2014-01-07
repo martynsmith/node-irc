@@ -22,7 +22,9 @@
         "url" : "http://github.com/martynsmith/node-irc/raw/master/COPYING"
     } ],
     "dependencies": {
-        "ansi-color" : "0.2.1"
+        "ansi-color" : "0.2.1",
+        "iconv": "2.0.7",
+        "node-icu-charset-detector": "0.0.7"
     },
     "devDependencies": {
         "should": "1.2.2"
