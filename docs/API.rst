@@ -32,7 +32,7 @@ Client
             sasl: false,
             stripColors: false,
             channelPrefixes: "&#",
-            messageSplit: 512
+            messageLength: 512
         }
 
     `secure` (SSL connection) can be a true value or an object (the kind of object
@@ -51,13 +51,14 @@ Client
     Set `sasl` to true to enable SASL support. You'll also want to set `nick`, 
     `userName`, and `password` for authentication.
 
+    `messageLength` sets the character length at which messages sent with `msg` will
+    be split into multiple messages. This value should not be changed unless the
+    server explicitly indicates another value.
+
     `stripColors` removes mirc colors (0x03 followed by one or two ascii
     numbers for foreground,background) and ircII "effect" codes (0x02
     bold, 0x1f underline, 0x16 reverse, 0x0f reset) from the entire
     message before parsing it and passing it along.
-
-    `messageSplit` will split up large messages sent with the `say` method
-    into multiple messages of length fewer than `messageSplit` characters.
 
     Setting `autoConnect` to false prevents the Client from connecting on
     instantiation.  You will need to call `connect()` on the client instance::
@@ -356,7 +357,7 @@ Events
 
 .. js:data:: '+mode'
 
-	`function (channel, by, mode, argument, message) { }`
+    `function (channel, by, mode, argument, message) { }`
 
     Emitted when a mode is added to a user or channel. `channel` is the channel
     which the mode is being set on/in. `by` is the user setting the mode. `mode`
@@ -368,7 +369,7 @@ Events
 
 .. js:data:: '-mode'
 
-	`function (channel, by, mode, argument, message) { }`
+    `function (channel, by, mode, argument, message) { }`
 
     Emitted when a mode is removed from a user or channel. `channel` is the channel
     which the mode is being set on/in. `by` is the user setting the mode. `mode`
