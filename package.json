@@ -1,39 +1,32 @@
 {
   "name": "irc",
-  "description": "An IRC client library for node",
-  "version": "0.3.7",
-  "author": "Martyn Smith <martyn@dollyfish.net.nz>",
-  "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --reporter list"
+  "version": "0.4.0-alpha",
+  "description": "Modern IRC client library",
+  "main": "index.js",
+  "dependencies": {
+    "readable-stream": "^1.0.27-1",
+    "irc-message-stream": "^1.1.0"
   },
-  "contributors": [
-      "Fionn Kelleher <me@fionn.co>",
-      "xAndy <xandy@hackerspace-bamberg.de>"
-  ],
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "repository": {
     "type": "git",
-    "url": "http://github.com/martynsmith/node-irc"
+    "url": "https://github.com/martynsmith/node-irc.git"
   },
-  "bugs": {
-    "mail": "martyn@dollyfish.net.nz",
-    "url": "http://github.com/martynsmith/node-irc/issues"
-  },
-  "main": "lib/irc",
-  "engines": {
-    "node": ">=0.4.0"
-  },
-  "licenses": [
-    {
-      "type": "GPL",
-      "url": "http://github.com/martynsmith/node-irc/raw/master/COPYING"
-    }
+  "keywords": [
+    "irc",
+    "client",
+    "socket",
+    "chat",
+    "realtime",
+    "tcp"
   ],
-  "dependencies": {
-    "ansi-color": "0.2.1"
+  "author": "Fionn Kelleher <me@fionn.co>",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/martynsmith/node-irc/issues"
   },
-  "devDependencies": {
-    "mocha": "^1.20.0",
-    "should": "1.2.2",
-    "underscore": "^1.6.0"
-  }
+  "homepage": "https://github.com/martynsmith/node-irc"
 }
