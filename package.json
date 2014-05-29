@@ -1,7 +1,7 @@
 {
   "name": "irc",
   "description": "An IRC client library for node",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "author": "Martyn Smith <martyn@dollyfish.net.nz>",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --reporter list"
