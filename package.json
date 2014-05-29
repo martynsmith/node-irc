@@ -1,30 +1,41 @@
 {
-    "name" : "irc",
-    "description" : "An IRC client library for node",
-    "version" : "0.3.6",
-    "author" : "Martyn Smith <martyn@dollyfish.net.nz>",
-    "contributors" : [ {
-        "name": "xAndy",
-        "email": "xandy@hackerspace-bamberg.de"
-    } ],
-    "repository" : {
-        "type" : "git",
-        "url" : "http://github.com/martynsmith/node-irc"
-    },
-    "bugs" : {
-        "mail" : "martyn@dollyfish.net.nz",
-        "url" : "http://github.com/martynsmith/node-irc/issues"
-    },
-    "main" : "lib/irc",
-    "engines" : { "node" : ">=0.4.0" },
-    "licenses" : [ {
-        "type" : "GPL",
-        "url" : "http://github.com/martynsmith/node-irc/raw/master/COPYING"
-    } ],
-    "dependencies": {
-        "ansi-color" : "0.2.1"
-    },
-    "devDependencies": {
-        "should": "1.2.2"
+  "name": "irc",
+  "description": "An IRC client library for node",
+  "version": "0.3.6",
+  "author": "Martyn Smith <martyn@dollyfish.net.nz>",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha --reporter list"
+  },
+  "contributors": [
+    {
+      "name": "xAndy",
+      "email": "xandy@hackerspace-bamberg.de"
     }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/martynsmith/node-irc"
+  },
+  "bugs": {
+    "mail": "martyn@dollyfish.net.nz",
+    "url": "http://github.com/martynsmith/node-irc/issues"
+  },
+  "main": "lib/irc",
+  "engines": {
+    "node": ">=0.4.0"
+  },
+  "licenses": [
+    {
+      "type": "GPL",
+      "url": "http://github.com/martynsmith/node-irc/raw/master/COPYING"
+    }
+  ],
+  "dependencies": {
+    "ansi-color": "0.2.1"
+  },
+  "devDependencies": {
+    "mocha": "^1.20.0",
+    "should": "1.2.2",
+    "underscore": "^1.6.0"
+  }
 }
