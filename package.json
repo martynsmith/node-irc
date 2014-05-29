@@ -7,10 +7,8 @@
     "test": "./node_modules/mocha/bin/mocha --reporter list"
   },
   "contributors": [
-    {
-      "name": "xAndy",
-      "email": "xandy@hackerspace-bamberg.de"
-    }
+      "Fionn Kelleher <me@fionn.co>",
+      "xAndy <xandy@hackerspace-bamberg.de>"
   ],
   "repository": {
     "type": "git",
