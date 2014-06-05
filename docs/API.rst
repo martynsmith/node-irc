@@ -59,6 +59,11 @@ Client
     `messageSplit` will split up large messages sent with the `say` method
     into multiple messages of length fewer than `messageSplit` characters.
 
+    Setting `debug` to true will emit timestamped messages to the console
+    using `util.log` when certain events are fired.
+
+    `autoRejoin` has the client rejoin channels after being kicked.
+
     Setting `autoConnect` to false prevents the Client from connecting on
     instantiation.  You will need to call `connect()` on the client instance::
 
