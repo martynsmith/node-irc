@@ -96,6 +96,11 @@ Client
     :param function callback: Callback to automatically subscribed to the
         `part#channel` event, but removed after the first invocation.
 
+.. js:function:: Client.changenick(new_nickname)
+
+    Changes your nickname into the specified one.
+
+    :param string new_nickname: is a nickname.
 .. js:function:: Client.say(target, message)
 
     Sends a message to the specified target.
