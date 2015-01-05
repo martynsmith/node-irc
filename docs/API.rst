@@ -32,7 +32,8 @@ Client
             sasl: false,
             stripColors: false,
             channelPrefixes: "&#",
-            messageSplit: 512
+            messageSplit: 512,
+            autoEncoding: false
         }
 
     `secure` (SSL connection) can be a true value or an object (the kind of object
@@ -58,6 +59,8 @@ Client
 
     `messageSplit` will split up large messages sent with the `say` method
     into multiple messages of length fewer than `messageSplit` characters.
+
+    Setting `autoEncoding` to true will convert all messages to UTF-8 encoding.
 
     Setting `debug` to true will emit timestamped messages to the console
     using `util.log` when certain events are fired.
