@@ -46,6 +46,7 @@ bot.addListener('message', function(from, to, message) {
     }
     else {
         // private message
+        console.log('private message');
     }
 });
 bot.addListener('pm', function(nick, message) {
