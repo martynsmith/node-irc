@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 
-// Make sure the irc lib is available
-require.paths.unshift(__dirname + '/../lib');
-
-var irc = require('irc');
+var irc = require('../');
 
 var bot = new irc.Client('irc.dollyfish.net.nz', 'nodebot', {
     debug: true,

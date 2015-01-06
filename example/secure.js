@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 
-// Make sure the irc lib is available
-require.paths.unshift(__dirname + '/../lib');
-
-var irc = require('irc');
+var irc = require('../');
 /*
 * To set the key/cert explicitly, you could do the following
 var fs = require('fs');
