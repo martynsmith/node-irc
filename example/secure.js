@@ -18,7 +18,7 @@ var bot = new irc.Client('chat.us.freenode.net', 'nodebot', {
 	port: 6697,
     debug: true,
 	secure: options,
-    channels: ['#botwar'],
+    channels: ['#botwar']
 });
 
 bot.addListener('error', function(message) {

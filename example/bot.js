@@ -4,7 +4,7 @@ var irc = require('../');
 
 var bot = new irc.Client('irc.dollyfish.net.nz', 'nodebot', {
     debug: true,
-    channels: ['#blah', '#test'],
+    channels: ['#blah', '#test']
 });
 
 bot.addListener('error', function(message) {
