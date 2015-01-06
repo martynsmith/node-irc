@@ -1,4 +1,5 @@
 {
   "validateIndentation": 4,
-  "requireMultipleVarDecl": null
+  "requireMultipleVarDecl": null,
+  "requireCamelCaseOrUpperCaseIdentifiers": "ignoreProperties"
 }
