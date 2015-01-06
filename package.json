@@ -4,11 +4,12 @@
   "version": "0.3.7",
   "author": "Martyn Smith <martyn@dollyfish.net.nz>",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --reporter list"
+    "test": "./node_modules/mocha/bin/mocha --reporter list",
+    "lint": "./node_modules/jshint/bin/jshint */*.js"
   },
   "contributors": [
-      "Fionn Kelleher <me@fionn.co>",
-      "xAndy <xandy@hackerspace-bamberg.de>"
+    "Fionn Kelleher <me@fionn.co>",
+    "xAndy <xandy@hackerspace-bamberg.de>"
   ],
   "repository": {
     "type": "git",
@@ -32,8 +33,19 @@
     "ansi-color": "0.2.1"
   },
   "devDependencies": {
+    "jshint": "^2.5.11",
     "mocha": "^1.20.0",
     "should": "1.2.2",
     "underscore": "^1.6.0"
+  },
+  "jshintConfig": {
+    "node": true,
+    "smarttabs": true,
+    "undef": true,
+    "unused": "vars",
+    "newcap": true,
+    "maxlen": 120,
+    "indent": 2,
+    "mocha": true
   }
 }

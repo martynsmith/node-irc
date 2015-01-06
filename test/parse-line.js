@@ -1,3 +1,5 @@
+// jshint unused:false
+
 var irc  = require('../lib/irc.js');
 var should = require('should');
 var _ = require('underscore');
