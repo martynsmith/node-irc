@@ -19,7 +19,7 @@ If you want to run the latest version (i.e. later than the version available via
 ```
 
 Of course, you can just clone this, and manually point at the library itself,
-but I really recommend using [npm](http://github.com/isaacs/npm)!
+but we really recommend using [npm](http://github.com/isaacs/npm)!
 
 ## Basic Usage
 
@@ -105,10 +105,13 @@ client.addListener('error', function(message) {
 ```
 
 
-## Further Documentation
+## Further Support
 
-Further documentation (including a complete API reference) are available in
+Further documentation (including a complete API reference) is available in
 reStructuredText format in the docs/ folder of this project, or online at [Read the Docs](http://readthedocs.org/docs/node-irc/en/latest/).
 
 If you find any issues with the documentation (or the module) please send a pull
-request or file an issue and I'll do my best to accommodate.
+request or file an issue and we'll do our best to accommodate.
+
+You can also visit us on ##node-irc on freenode to discuss issues you're having
+with the library, pull requests, or anything else related to node-irc.
