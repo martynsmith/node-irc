@@ -9,7 +9,8 @@
   },
   "contributors": [
     "Fionn Kelleher <me@fionn.co>",
-    "xAndy <xandy@hackerspace-bamberg.de>"
+    "xAndy <xandy@hackerspace-bamberg.de>",
+    "Mischa Spiegelmock <revmischa@cpan.org>"
   ],
   "repository": {
     "type": "git",
