@@ -1,10 +1,9 @@
 // jshint unused:false
 
 var irc  = require('../lib/irc.js');
-var should = require('should');
-var _ = require('underscore');
+var test = require('tape');
 
-describe('irc.parseMessage', function() {
+test('irc.parseMessage', function(t) {
     var checks = {
         ':irc.dollyfish.net.nz 372 nodebot :The message of the day was last changed: 2012-6-16 23:57': {
             prefix: 'irc.dollyfish.net.nz',
@@ -92,9 +91,12 @@ describe('irc.parseMessage', function() {
         }
     };
 
-    _.each(checks, function(result, line) {
-        it('parse ' + line, function() {
-            JSON.stringify(result).should.equal(JSON.stringify(irc.parseMessage(line)));
-        });
+    Object.keys(checks).forEach(function(line) {
+        t.equal(
+            JSON.stringify(checks[line]),
+            JSON.stringify(irc.parseMessage(line)),
+            line + ' parses correctly'
+        );
     });
+    t.end();
 });
