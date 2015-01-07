@@ -30,7 +30,9 @@
     }
   ],
   "dependencies": {
-    "ansi-color": "0.2.1"
+    "ansi-color": "0.2.1",
+    "iconv": "~2.1.4",
+    "node-icu-charset-detector": "0.0.7"
   },
   "devDependencies": {
     "jscs": "^1.9.0",
