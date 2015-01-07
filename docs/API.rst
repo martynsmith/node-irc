@@ -32,7 +32,8 @@ Client
             sasl: false,
             stripColors: false,
             channelPrefixes: "&#",
-            messageSplit: 512
+            messageSplit: 512,
+            encoding: ''
         }
 
     `secure` (SSL connection) can be a true value or an object (the kind of object
@@ -58,6 +59,9 @@ Client
 
     `messageSplit` will split up large messages sent with the `say` method
     into multiple messages of length fewer than `messageSplit` characters.
+
+    With `encoding` you can set IRC bot to convert all messages to specified character set. If you don't want to use
+    this just leave value blank or false. Example values are UTF-8, ISO-8859-15, etc.
 
     Setting `debug` to true will emit timestamped messages to the console
     using `util.log` when certain events are fired.
