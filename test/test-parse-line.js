@@ -1,5 +1,3 @@
-// jshint unused:false
-
 var irc  = require('../lib/irc.js');
 var test = require('tape');
 
