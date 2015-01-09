@@ -23,6 +23,11 @@ If you want to run the latest version (i.e. later than the version available via
 Of course, you can just clone this, and manually point at the library itself,
 but we really recommend using [npm](http://github.com/isaacs/npm)!
 
+Note that as of version 0.3.8, node-irc supports character set detection using
+[icu](http://site.icu-project.org/). You'll need to install libiconv (if
+necessary; Linux systems tend to ship this in their glibc) and libicu (and its
+headers, if necessary) in order to use this feature.
+
 ## Basic Usage
 
 This library provides basic IRC client functionality. In the simplest case you
