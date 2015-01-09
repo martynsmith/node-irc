@@ -4,7 +4,7 @@
   "version": "0.3.7",
   "author": "Martyn Smith <martyn@dollyfish.net.nz>",
   "scripts": {
-    "test": "./node_modules/faucet/bin/cmd.js test/*.js",
+    "test": "./node_modules/faucet/bin/cmd.js test/test-*.js",
     "lint": "./node_modules/jscs/bin/jscs --preset=airbnb */*.js"
   },
   "contributors": [
