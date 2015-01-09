@@ -3,6 +3,7 @@ node_js:
   - "0.10"
   - "0.8"
 before_install:
+  - sudo apt-get -y install libicu-dev
   - npm install -g npm
 script:
   - "npm run-script lint"
