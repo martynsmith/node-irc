@@ -1,4 +1,4 @@
-var irc  = require('../lib/irc.js');
+var parseMessage  = require('../lib/parse_message');
 var test = require('tape');
 
 test('irc.parseMessage', function(t) {
@@ -92,7 +92,7 @@ test('irc.parseMessage', function(t) {
     Object.keys(checks).forEach(function(line) {
         t.equal(
             JSON.stringify(checks[line]),
-            JSON.stringify(irc.parseMessage(line)),
+            JSON.stringify(parseMessage(line)),
             line + ' parses correctly'
         );
     });
