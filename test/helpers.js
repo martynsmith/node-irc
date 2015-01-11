@@ -28,8 +28,9 @@ var MockIrcd = function(port, encoding) {
             self.emit('end')
         });
     });
-
     this.server.listen(this.port);
+
+    EventEmitter.call(this);
 };
 util.inherits(MockIrcd, EventEmitter);
 

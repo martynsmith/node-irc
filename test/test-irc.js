@@ -1,5 +1,3 @@
-var net = require('net');
-
 var irc = require('../lib/irc');
 var test = require('tape');
 
@@ -7,8 +5,6 @@ var testHelpers = require('./helpers');
 
 test('connect, register and quit', function(t) {
     var client, mock, expected;
-
-    t.plan(3);
 
     mock = testHelpers.MockIrcd();
     expected = testHelpers.getFixtures('basic');

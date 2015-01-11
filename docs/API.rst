@@ -177,6 +177,24 @@ Client
         to wait between messages. Takes value from client configuration
         if unspecified.
 
+.. js:function:: Client.enableParseMiddleware(middleware)
+
+    Adds the provided `middleware` to the end of the parser middleware chain.
+    Parser middlewares are processed syncronously in the order they are
+    enabled, and are expected to return a `String` that is the transformed
+    by the middleware.
+
+    :param function middleware: A function that takes a single `String` argument
+      that is the resulting `String` returned from the previous middleware.
+      Middleware functions are called within the context of `Client`.
+
+.. js:function:: Client.disableParseMiddleware(middleware)
+
+    Disables the provided `middleware` and removes it from the middleware chain.
+
+    :param function middleware: The function to be removed from the middleware
+      chain.
+
 Events
 ------
 
@@ -522,3 +540,8 @@ Internal
 .. js:function:: client._clearWhoisData
 
     Self-explanatory.
+
+.. js:function:: Client._parseMiddlewares
+
+    An `Array` of middleware functions to be called in order for each incoming
+    IRC message.
