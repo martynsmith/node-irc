@@ -1,5 +1,6 @@
 /* Mock irc server */
 
+var fs = require('fs');
 var net = require('net');
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
@@ -45,6 +46,12 @@ MockIrcd.prototype.getIncomingMsgs = function() {
     return this.incoming.filter(function(msg) { return msg; });
 };
 
-module.exports = function(port, encoding) {
+module.exports.getFixtures = function(testSuite) {
+    var raw = fs.readFileSync('test/data/fixtures.json');
+    var fixtures = JSON.parse(raw);
+    return fixtures[testSuite];
+}
+
+module.exports.MockIrcd = function(port, encoding) {
     return new MockIrcd(port, encoding);
 };

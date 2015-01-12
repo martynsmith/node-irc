@@ -1,32 +1,15 @@
 var irc = require('../lib/irc');
 var test = require('tape');
 
-var MockIrcd = require('./mockircd');
+var testHelpers = require('./helpers');
 
 test('connect and sets hostmask when nick in use', function(t) {
     var client, mock, expected;
 
-    mock = MockIrcd();
+    mock = testHelpers.MockIrcd();
     client = new irc.Client('localhost', 'testbot', {debug: true});
 
-    expected = {
-        sent: [
-            ['NICK testbot', 'Client sent NICK message'],
-            ['USER nodebot 8 * :nodeJS IRC client', 'Client sent USER message'],
-            ['NICK testbot1', 'Client sent proper response to 433 nickname in use message'],
-            ['QUIT :node-irc says goodbye', 'Client sent QUIT message']
-        ],
-
-        received: [
-            [':localhost 433 * testbot :Nickname is already in use.\r\n', 'Received nick in use error'],
-            [':localhost 001 testbot1 :Welcome to the Internet Relay Chat Network testbot\r\n', 'Received welcome message']
-        ],
-        clientInfo: [
-            ['hostmask is as expected after 433'],
-            ['nick is as expected after 433'],
-            ['maxLineLength is as expected after 433']
-        ]
-    };
+    expected = testHelpers.getFixtures('433-before-001');
 
     t.plan(expected.sent.length + expected.received.length + expected.clientInfo.length);
 
