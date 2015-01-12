@@ -45,6 +45,11 @@ MockIrcd.prototype.getIncomingMsgs = function() {
     return this.incoming.filter(function(msg) { return msg; });
 };
 
-module.exports = function(port, encoding) {
+var fixtures = require('./data/fixtures');
+module.exports.getFixtures = function(testSuite) {
+    return fixtures[testSuite];
+}
+
+module.exports.MockIrcd = function(port, encoding) {
     return new MockIrcd(port, encoding);
 };
