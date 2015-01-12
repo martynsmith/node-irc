@@ -5,19 +5,32 @@ var test = require('tape');
 
 var testHelpers = require('./helpers');
 
+var expected = testHelpers.getFixtures('basic');
+var greeting = ':localhost 001 testbot :Welcome to the Internet Relay Chat Network testbot\r\n';
+
 test('connect, register and quit', function(t) {
-    var client, mock, expected;
+    runTests(t, false);
+});
 
-    t.plan(3);
+test('connect, register and quit, securely', function(t) {
+    runTests(t, true);
+});
 
-    mock = testHelpers.MockIrcd();
-    expected = testHelpers.getFixtures('basic');
-    client = new irc.Client('localhost', 'testbot', {});
+function runTests(t, isSecure) {
+    var port = isSecure ? 6697 : 6667;
+    var mock = testHelpers.MockIrcd(port, 'utf-8', isSecure);
+    var client = new irc.Client('localhost', 'testbot', {
+        secure: isSecure,
+        selfSigned: true,
+        port: port,
+        retryCount: 0,
+        debug: true
+    });
 
     t.plan(expected.sent.length + expected.received.length);
 
-    mock.server.on('connection', function() {
-        mock.send(':localhost 001 testbot :Welcome to the Internet Relay Chat Network testbot\r\n');
+    mock.server.on(isSecure ? 'secureConnection' : 'connection', function() {
+        mock.send(greeting);
     });
 
     client.on('registered', function() {
@@ -33,4 +46,4 @@ test('connect, register and quit', function(t) {
         }
         mock.close();
     });
-});
+}
