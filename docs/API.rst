@@ -22,7 +22,7 @@ Client
             localAddress: null,
             debug: false,
             showErrors: false,
-            autoRejoin: true,
+            autoRejoin: false,
             autoConnect: true,
             channels: [],
             secure: false,
