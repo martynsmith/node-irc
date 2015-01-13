@@ -9,11 +9,12 @@ var c = new irc.Client(
     'nodebot',
     {
         channels: ['#test'],
-        //debug: true
+        debug: true,
+        showErrors: true
     }
 );
 
-c.addListener('raw', function(message) { console.log('raw: ', message) });
+//c.addListener('raw', function(message) { console.log('raw: ', message) });
 c.addListener('error', function(message) { console.log(color('error: ', 'red'), message) });
 
 var repl = require('repl').start('> ');
