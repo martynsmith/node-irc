@@ -87,6 +87,28 @@
 			"commandType": "normal",
 			"args": ["#channel", "so : colons: :are :: not a problem ::::"]
 		},
+		":nick!user@host PRIVMSG #channel :\u000314,01\u001fneither are colors or styles\u001f\u0003": {
+			"prefix": "nick!user@host",
+			"nick": "nick",
+			"user": "user",
+			"host": "host",
+			"command": "PRIVMSG",
+			"rawCommand": "PRIVMSG",
+			"commandType": "normal",
+			"args": ["#channel", "neither are colors or styles"],
+			"stripColors": true
+		},
+		":nick!user@host PRIVMSG #channel :\u000314,01\u001fwe can leave styles and colors alone if desired\u001f\u0003": {
+			"prefix": "nick!user@host",
+			"nick": "nick",
+			"user": "user",
+			"host": "host",
+			"command": "PRIVMSG",
+			"rawCommand": "PRIVMSG",
+			"commandType": "normal",
+			"args": ["#channel", "\u000314,01\u001fwe can leave styles and colors alone if desired\u001f\u0003"],
+			"stripColors": false
+		},
 		":pratchett.freenode.net 324 nodebot #ubuntu +CLcntjf 5:10 #ubuntu-unregged": {
 			"prefix": "pratchett.freenode.net",
 			"server": "pratchett.freenode.net",
