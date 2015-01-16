@@ -3,6 +3,7 @@
 * Included notes in the README about icu / iconv
 * First draft of contributor doc!
 * Log network connection errors
+* This changelog
 
 ## Changed
 * Factored out parseMessage for better decoupling
