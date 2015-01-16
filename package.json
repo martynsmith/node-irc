@@ -1,7 +1,7 @@
 {
   "name": "irc",
   "description": "An IRC client library for node",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "author": "Martyn Smith <martyn@dollyfish.net.nz>",
   "scripts": {
     "test": "./node_modules/faucet/bin/cmd.js test/test-*.js",
