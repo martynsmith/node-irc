@@ -52,7 +52,7 @@ Client
     `floodProtectionDelay` sets the amount of time that the client will wait
     between sending subsequent messages when `floodProtection` is enabled.
 
-    Set `sasl` to true to enable SASL support. You'll also want to set `nick`, 
+    Set `sasl` to true to enable SASL support. You'll also want to set `nick`,
     `userName`, and `password` for authentication.
 
     `stripColors` removes mirc colors (0x03 followed by one or two ascii
@@ -113,10 +113,10 @@ Client
 .. js:function:: Client.ctcp(target, type, text)
 
     Sends a CTCP message to the specified target.
-    
+
     :param string target: is either a nickname, or a channel.
-    :param string type: the type of the CTCP message, either "privmsg" for
-        a PRIVMSG or something else for a NOTICE.
+    :param string type: the type of the CTCP message. Specify "privmsg" for a
+    PRIVMSG, and anything else for a NOTICE.
     :param string text: the CTCP message to send.
 
 .. js:function:: Client.action(target, message)
@@ -327,28 +327,28 @@ Events
 .. js:data:: 'ctcp'
 
    `function (from, to, text, type, message) { }`
-   
+
    Emitted when a CTCP notice or privmsg was received (`type` is either `'notice'`
    or `'privmsg'`).  See the `raw` event for details on the `message` object.
 
 .. js:data:: 'ctcp-notice'
 
    `function (from, to, text, message) { }`
-   
+
    Emitted when a CTCP notice was received.
    See the `raw` event for details on the `message` object.
 
 .. js:data:: 'ctcp-privmsg'
 
    `function (from, to, text, message) { }`
-   
+
    Emitted when a CTCP privmsg was received.
    See the `raw` event for details on the `message` object.
 
 .. js:data:: 'ctcp-version'
 
    `function (from, to, message) { }`
-   
+
    Emitted when a CTCP VERSION request was received.
    See the `raw` event for details on the `message` object.
 
@@ -368,7 +368,7 @@ Events
 
 .. js:data:: '+mode'
 
-	`function (channel, by, mode, argument, message) { }`
+  `function (channel, by, mode, argument, message) { }`
 
     Emitted when a mode is added to a user or channel. `channel` is the channel
     which the mode is being set on/in. `by` is the user setting the mode. `mode`
@@ -380,7 +380,7 @@ Events
 
 .. js:data:: '-mode'
 
-	`function (channel, by, mode, argument, message) { }`
+  `function (channel, by, mode, argument, message) { }`
 
     Emitted when a mode is removed from a user or channel. `channel` is the channel
     which the mode is being set on/in. `by` is the user setting the mode. `mode`
