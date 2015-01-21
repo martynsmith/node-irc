@@ -9,23 +9,41 @@ var expected = testHelpers.getFixtures('basic');
 var greeting = ':localhost 001 testbot :Welcome to the Internet Relay Chat Network testbot\r\n';
 
 test('connect, register and quit', function(t) {
-    runTests(t, false);
+    runTests(t, false, false);
 });
 
 test('connect, register and quit, securely', function(t) {
-    runTests(t, true);
+    runTests(t, true, false);
 });
 
-function runTests(t, isSecure) {
+test('connect, register and quit, securely, with secure object', function(t) {
+    runTests(t, true, true);
+});
+
+function runTests(t, isSecure, useSecureObject) {
     var port = isSecure ? 6697 : 6667;
     var mock = testHelpers.MockIrcd(port, 'utf-8', isSecure);
-    var client = new irc.Client('localhost', 'testbot', {
-        secure: isSecure,
-        selfSigned: true,
-        port: port,
-        retryCount: 0,
-        debug: true
-    });
+    var client;
+    if (isSecure && useSecureObject) {
+        client = new irc.Client('notlocalhost', 'testbot', {
+            secure: {
+                host: 'localhost',
+                port: port,
+                rejectUnauthorized: false
+            },
+            selfSigned: true,
+            retryCount: 0,
+            debug: true
+        });
+    } else {
+        var client = new irc.Client('localhost', 'testbot', {
+            secure: isSecure,
+            selfSigned: true,
+            port: port,
+            retryCount: 0,
+            debug: true
+        });
+    }
 
     t.plan(expected.sent.length + expected.received.length);
 
