@@ -509,7 +509,7 @@ Internal
 
 .. js:data:: Client.chans
 
-    Channels joined. Updated *after* the server recognizes the join.
+    Channels joined. Includes channel modes, user list, and topic information. Only updated *after* the server recognizes the join.
 
 .. js:function:: client._whoisData
 
