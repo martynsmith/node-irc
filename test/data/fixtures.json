@@ -147,5 +147,27 @@
 			"nick is as expected after 433",
 			"maxLineLength is as expected after 433"
 		]
+	},
+	"CAP": {
+		"ACK" : {
+			"sent" : [
+					["CAP REQ identify-msg"],
+					["CAP END"]
+				],
+				"received": [
+					[":localhost CAP * ACK :identify-msg\r\n"],
+					[":localhost 001 testbot :Welcome to the Internet Relay Chat Network testbot\r\n", "Received welcome message"]
+				]
+		},
+		"NAK": {
+			"sent": [
+				["CAP REQ doesntExist"],
+				["CAP END"]
+			],
+			"received": [
+					[":localhost CAP * NAK :doesntExist\r\n"],
+					[":localhost 001 testbot :Welcome to the Internet Relay Chat Network testbot\r\n", "Received welcome message"]
+			]
+		}
 	}
 }
