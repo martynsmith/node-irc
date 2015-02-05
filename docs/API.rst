@@ -94,7 +94,7 @@ Client
         supports multiple JOIN arguments as a space separated string (similar to
         the IRC protocol).
 
-.. js:function:: Client.part(channel, message, callback)
+.. js:function:: Client.part(channel, [message], callback)
 
     Parts the specified channel.
 
@@ -116,7 +116,7 @@ Client
 
     :param string target: is either a nickname, or a channel.
     :param string type: the type of the CTCP message. Specify "privmsg" for a
-    PRIVMSG, and anything else for a NOTICE.
+        PRIVMSG, and anything else for a NOTICE.
     :param string text: the CTCP message to send.
 
 .. js:function:: Client.action(target, message)
@@ -148,7 +148,7 @@ Client
    Responses from the server are available via the `channellist_start`,
    `channellist_item`, and `channellist` events.
 
-.. js:function:: Client.connect(retryCount, callback)
+.. js:function:: Client.connect([retryCount [, callback]])
 
    Connects to the server. Used when `autoConnect` in the options is set to
    false. If `retryCount` is a function it will be treated as the `callback`
@@ -157,7 +157,7 @@ Client
     :param integer retryCount: Optional number of times to attempt reconnection
     :param function callback: Optional callback
 
-.. js:function:: Client.disconnect(message, callback)
+.. js:function:: Client.disconnect([message [, callback]])
 
     Disconnects from the IRC server. If `message` if a function it will be
     treated as the `callback` (i.e. both arguments to this function are
@@ -166,7 +166,7 @@ Client
     :param string message: Optional message to send when disconnecting.
     :param function callback: Optional callback
 
-.. js:function:: Client.activateFloodProtection(interval)
+.. js:function:: Client.activateFloodProtection([interval])
 
     Activates flood protection "after the fact". You can also use
     `floodProtection` while instantiating the Client to enable flood
