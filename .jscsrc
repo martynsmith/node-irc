@@ -1,6 +1,6 @@
 {
   "validateIndentation": 4,
-  "requireMultipleVarDecl": null,
+  "disallowMultipleVarDecl": null,
   "requireCamelCaseOrUpperCaseIdentifiers": "ignoreProperties",
   "safeContextKeyword": "self"
 }
