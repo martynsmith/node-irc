@@ -1,5 +1,6 @@
 /* Mock irc server */
 
+var path = require('path');
 var fs = require('fs');
 var net = require('net');
 var tls = require('tls');
@@ -14,8 +15,8 @@ var MockIrcd = function(port, encoding, isSecure) {
     if (isSecure) {
         connectionClass = tls;
         options = {
-            key: fs.readFileSync('test/data/ircd.key'),
-            cert: fs.readFileSync('test/data/ircd.pem')
+            key: fs.readFileSync(path.resolve(__dirname, 'data/ircd.key')),
+            cert: fs.readFileSync(path.resolve(__dirname, 'data/ircd.pem'))
         };
     } else {
         connectionClass = net;
@@ -38,7 +39,7 @@ var MockIrcd = function(port, encoding, isSecure) {
         });
 
         c.on('end', function() {
-            self.emit('end')
+            self.emit('end');
         });
     });
 
@@ -61,7 +62,7 @@ MockIrcd.prototype.getIncomingMsgs = function() {
 var fixtures = require('./data/fixtures');
 module.exports.getFixtures = function(testSuite) {
     return fixtures[testSuite];
-}
+};
 
 module.exports.MockIrcd = function(port, encoding, isSecure) {
     return new MockIrcd(port, encoding, isSecure);
