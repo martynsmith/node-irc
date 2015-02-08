@@ -10,6 +10,17 @@
 			[":localhost 001 testbot :Welcome to the Internet Relay Chat Network testbot\r\n", "Received welcome message"]
 		]
 	},
+	"double-CRLF": {
+		"sent": [
+			["NICK testbot", "Client sent NICK message"],
+			["USER nodebot 8 * :nodeJS IRC client", "Client sent USER message"],
+			["QUIT :node-irc says goodbye", "Client sent QUIT message"]
+		],
+
+		"received": [
+			[":localhost 001 testbot :Welcome to the Internet Relay Chat Network testbot\r\n\r\n", "Received welcome message"]
+		]
+	},
 	"parse-line": {
 		":irc.dollyfish.net.nz 372 nodebot :The message of the day was last changed: 2012-6-16 23:57": {
 			"prefix": "irc.dollyfish.net.nz",
