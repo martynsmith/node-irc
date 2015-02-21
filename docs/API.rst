@@ -300,6 +300,14 @@ Events
     As per 'message' event but only emits for the subscribed channel.
     See the `raw` event for details on the `message` object.
 
+.. js:data:: 'selfMessage'
+
+    `function (to, text) { }`
+
+    Emitted when a message is sent from the client. `to` can be either a nick (which
+    is most likely this clients nick and means a private message), or a channel
+    (which means a message to that channel).
+
 .. js:data:: 'notice'
 
     `function (nick, to, text, message) { }`
@@ -510,6 +518,10 @@ Internal
 .. js:data:: Client.chans
 
     Channels joined. Includes channel modes, user list, and topic information. Only updated *after* the server recognizes the join.
+
+.. js:data:: Client.nick
+
+    The current nick of the client. Updated if the nick changes (e.g. nick collision when connecting to a server).
 
 .. js:function:: client._whoisData
 
