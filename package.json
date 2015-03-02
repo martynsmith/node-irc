@@ -38,7 +38,7 @@
   },
   "optionalDependencies": {
     "iconv": "~2.1.4",
-    "node-icu-charset-detector": "0.0.7"
+    "node-icu-charset-detector": "0.1.0"
   },
   "devDependencies": {
     "faucet": "0.0.1",
