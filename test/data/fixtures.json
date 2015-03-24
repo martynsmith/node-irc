@@ -147,5 +147,27 @@
 			"nick is as expected after 433",
 			"maxLineLength is as expected after 433"
 		]
-	}
+	},
+    "_splitLongLines": [
+        {
+            "input": "abcde ",
+            "maxLength": 5,
+            "result": ["abcde"]
+        },
+        {
+            "input": "abcde",
+            "maxLength": 5,
+            "result": ["abcde"]
+        },
+        {
+            "input": "abcdefghijklmnopqrstuvwxyz",
+            "maxLength": 5,
+            "result": ["abcde", "fghij", "klmno", "pqrst", "uvwxy", "z"]
+        },
+        {
+            "input": "abc abcdef abc abcd abc",
+            "maxLength": 5,
+            "result": ["abc", "abcde", "f abc", "abcd", "abc"]
+        }
+    ]
 }
