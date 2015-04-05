@@ -13,6 +13,7 @@
     "Mischa Spiegelmock <revmischa@cpan.org>",
     "Justin Gallardo <justin.gallardo@gmail.com>",
     "Chris Nehren <cnehren@pobox.com>",
+    "Dariusz Niemczyk <palid@o2.pl>",
     "Henri Niemeläinen <aivot-on@iki.fi>"
   ],
   "repository": {
@@ -43,7 +44,7 @@
   },
   "devDependencies": {
     "faucet": "0.0.1",
-    "jscs": "1.9.0",
+    "jscs": "^1.9.0",
     "tape": "^3.0.3"
   }
 }
