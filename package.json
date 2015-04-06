@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "faucet": "0.0.1",
-    "jscs": "^1.9.0",
+    "jscs": "1.9.0",
     "tape": "^3.0.3"
   }
 }
