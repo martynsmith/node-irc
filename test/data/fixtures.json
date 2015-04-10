@@ -147,5 +147,13 @@
 			"nick is as expected after 433",
 			"maxLineLength is as expected after 433"
 		]
-	}
+	},
+    "convert-encoding": {
+        "causesException": [
+            ":ubottu!ubottu@ubuntu/bot/ubottu MODE #ubuntu -bo *!~Brian@* ubottu\r\n",
+            "Elizabeth",
+            ":sblack1!~sblack1@unaffiliated/sblack1 NICK :sblack\r\n",
+            ":TijG!~TijG@null.1ago.be PRIVMSG #ubuntu :ThinkPad\r\n"
+        ]
+    }
 }
