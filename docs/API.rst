@@ -300,6 +300,13 @@ Events
     As per 'message' event but only emits for the subscribed channel.
     See the `raw` event for details on the `message` object.
 
+.. js:data:: 'selfMessage'
+
+    `function (target, toSend) { }`
+
+    Emitted when the client sends a message. 'target' is either a nickname or a channel.
+    'toSend' is a fragment of the sent message.
+
 .. js:data:: 'notice'
 
     `function (nick, to, text, message) { }`
