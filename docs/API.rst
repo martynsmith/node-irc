@@ -304,9 +304,9 @@ Events
 
     `function (to, text) { }`
 
-    Emitted when a message is sent from the client. `to` can be either a nick (which
-    is most likely this clients nick and means a private message), or a channel
-    (which means a message to that channel).
+    Emitted when a message is sent from the client. `to` is who the message was
+    sent to. It can be either a nick (which most likely means a private message),
+    or a channel (which means a message to that channel).
 
 .. js:data:: 'notice'
 
