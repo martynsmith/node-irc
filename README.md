@@ -51,7 +51,7 @@ var client = new irc.Client('irc.yourserver.com', 'myNick', {
 Of course it's not much use once it's connected if that's all you have!
 
 The client emits a large number of events that correlate to things you'd
-normally see in your favourite IRC client. Most likely the first one you'll want
+normally see in your favorite IRC client. Most likely the first one you'll want
 to use is:
 
 ```js

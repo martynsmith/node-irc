@@ -371,7 +371,7 @@ Events
 
     `function (channel, from, message) { }`
 
-    Emitted when the client recieves an `/invite`. See the `raw` event for details
+    Emitted when the client receives an `/invite`. See the `raw` event for details
     on the `message` object.
 
 .. js:data:: '+mode'
@@ -380,7 +380,7 @@ Events
 
     Emitted when a mode is added to a user or channel. `channel` is the channel
     which the mode is being set on/in. `by` is the user setting the mode. `mode`
-    is the single character mode indentifier. If the mode is being set on a user,
+    is the single character mode identifier. If the mode is being set on a user,
     `argument` is the nick of the user.  If the mode is being set on a channel,
     `argument` is the argument to the mode. If a channel mode doesn't have any
     arguments, `argument` will be 'undefined'. See the `raw` event for details
@@ -392,7 +392,7 @@ Events
 
     Emitted when a mode is removed from a user or channel. `channel` is the channel
     which the mode is being set on/in. `by` is the user setting the mode. `mode`
-    is the single character mode indentifier. If the mode is being set on a user,
+    is the single character mode identifier. If the mode is being set on a user,
     `argument` is the nick of the user.  If the mode is being set on a channel,
     `argument` is the argument to the mode. If a channel mode doesn't have any
     arguments, `argument` will be 'undefined'. See the `raw` event for details
@@ -486,7 +486,7 @@ Colors
 
     :param string color: the name of the color as a string
     :param string text: the text you want colorized
-    :param string reset_color: the nam of the color you want set after the text (defaults to 'reset')
+    :param string reset_color: the name of the color you want set after the text (defaults to 'reset')
 
 .. js:data:: irc.colors.codes
 
