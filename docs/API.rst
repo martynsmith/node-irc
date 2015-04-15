@@ -318,6 +318,14 @@ Events
     means that the notice comes from the server. See the `raw` event for details
     on the `message` object.
 
+.. js:data:: 'selfNotice'
+
+    `function (to, text) { }`
+
+    Emitted when a notice is sent from the client. `to` is who the notice was
+    sent to. It can be either a nick or a channel.
+
+
 .. js:data:: 'ping'
 
    `function (server) { }`
