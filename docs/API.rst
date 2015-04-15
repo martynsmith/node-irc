@@ -462,6 +462,13 @@ Events
     Emitted when ever the server responds with an error-type message. The message
     parameter is exactly as in the 'raw' event.
 
+.. js:data:: 'action'
+
+    `function (from, to, text, message) { }`
+
+    Emitted whenever a user performs an action (e.g. `/me waves`).
+    The message parameter is exactly as in the 'raw' event.
+
 Colors
 ------
 
