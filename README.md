@@ -93,6 +93,8 @@ talking:
 ```js
 client.say('#yourchannel', "I'm a bot!");
 client.say('nonbeliever', "SRSLY, I AM!");
+client.say(['#yourchannel', 'nonbeliever'], 'Believe me!');
+client.say('hello world!'); // messages all channels specified in options
 ```
 
 and many others. Check out the API documentation for a complete reference.
