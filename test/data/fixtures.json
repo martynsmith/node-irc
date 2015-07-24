@@ -148,34 +148,26 @@
 			"maxLineLength is as expected after 433"
 		]
 	},
-    "convert-encoding": {
-        "causesException": [
-            ":ubottu!ubottu@ubuntu/bot/ubottu MODE #ubuntu -bo *!~Brian@* ubottu\r\n",
-            "Elizabeth",
-            ":sblack1!~sblack1@unaffiliated/sblack1 NICK :sblack\r\n",
-            ":TijG!~TijG@null.1ago.be PRIVMSG #ubuntu :ThinkPad\r\n"
-        ]
+  "_splitLongLines": [
+    {
+        "input": "abcde ",
+        "maxLength": 5,
+        "result": ["abcde"]
     },
-    "_splitLongLines": [
-        {
-            "input": "abcde ",
-            "maxLength": 5,
-            "result": ["abcde"]
-        },
-        {
-            "input": "abcde",
-            "maxLength": 5,
-            "result": ["abcde"]
-        },
-        {
-            "input": "abcdefghijklmnopqrstuvwxyz",
-            "maxLength": 5,
-            "result": ["abcde", "fghij", "klmno", "pqrst", "uvwxy", "z"]
-        },
-        {
-            "input": "abc abcdef abc abcd abc",
-            "maxLength": 5,
-            "result": ["abc", "abcde", "f abc", "abcd", "abc"]
-        }
-    ]
+    {
+        "input": "abcde",
+        "maxLength": 5,
+        "result": ["abcde"]
+    },
+    {
+        "input": "abcdefghijklmnopqrstuvwxyz",
+        "maxLength": 5,
+        "result": ["abcde", "fghij", "klmno", "pqrst", "uvwxy", "z"]
+    },
+    {
+        "input": "abc abcdef abc abcd abc",
+        "maxLength": 5,
+        "result": ["abc", "abcde", "f abc", "abcd", "abc"]
+    }
+  ]
 }
