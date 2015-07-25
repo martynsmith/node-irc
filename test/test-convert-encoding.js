@@ -63,7 +63,7 @@ test('irc.encode.convertTo', function(assert) {
     for (charSet in encoded) {
         for (key in encoded[charSet]) {
             var out = encode.convertTo(encoded[charSet][key], 'ISO-8859-15');
-            assert.ok(out.length > 0);
+            assert.ok(out.length > 0, typeof(out) + ' must be a valid string');
         }
     }
     assert.end();
