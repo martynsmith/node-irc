@@ -3,8 +3,14 @@ var encode = encodeModule.build(true);
 var test = require('tape');
 var testHelpers = require('./helpers');
 var checks = testHelpers.getFixtures('convert-encoding');
-var iconvModule = require('iconv');
-var Iconv = iconvModule.Iconv;
+
+var iconvModule = {}, Iconv = null;
+try {
+    iconvModule = require('iconv');
+    Iconv = iconvModule.Iconv;
+} catch (err) {
+    require('util').error('/!\\ ATENTION /!\\ This env has no Iconv lib.');
+}
 
 // Ensure the debug output
 var lastDebugOutput = null;
@@ -56,7 +62,7 @@ function assertConvertTwoWay(assert) {
     assert.end();
 }
 
-test('irc.encode.convert two way', function(assert) {
+if (Iconv) test('irc.encode.convert two way', function(assert) {
     lastDebugOutput = null;
     assertConvertTwoWay(assert);
     assert.equal(lastDebugOutput, null);
@@ -78,7 +84,7 @@ function assertConvertToUnfittableCharset(assert) {
     assert.end();
 }
 
-test('irc.encode.convert to unfittable charset', function(assert) {
+if (Iconv) test('irc.encode.convert to unfittable charset', function(assert) {
     lastDebugOutput = null;
     assertConvertToUnfittableCharset(assert);
     assert.equal(lastDebugOutput, null);
