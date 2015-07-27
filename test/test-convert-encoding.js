@@ -52,9 +52,11 @@ test('irc.encode.detect', function(assert) {
 function assertConvertTwoWay(assert) {
     for (charSet in encoded) {
         if (charSet != 'UTF-8') for (key in encoded[charSet]) {
+            lastDebugOutput = null;
             var str1 = encoded[charSet][key];
             var str2 = encode.convert(str1, charSet, 'UTF-8');
             var str3 = encode.convert(key, 'UTF-8', charSet);
+            assert.ok(!/Iconv bin ERROR/.test(lastDebugOutput), lastDebugOutput);
             assert.equal(str2, key, 'convert ' + charSet + ' to utf8');
             assert.equal(str3, str1.toString(), 'convert back ' + charSet);
         }
@@ -63,7 +65,6 @@ function assertConvertTwoWay(assert) {
 }
 
 if (Iconv) test('irc.encode.convert two way', function(assert) {
-    lastDebugOutput = null;
     assertConvertTwoWay(assert);
     assert.equal(lastDebugOutput, null);
 });
@@ -77,15 +78,16 @@ test('irc.encode.convert two way (force bin)', function(assert) {
 
 function assertConvertToUnfittableCharset(assert) {
     for (key in encoded.Big5) {
+        lastDebugOutput = null;
         var str1 = encoded.Big5[key];
         var str2 = encode.convert(str1, 'Big5', 'ISO-8859-15//IGNORE');
+        assert.ok(!/Iconv bin ERROR/.test(lastDebugOutput), lastDebugOutput);
         assert.equal(str2, '', 'Big5 "' + key + '" do not fit ISO-8859-15.');
     }
     assert.end();
 }
 
 if (Iconv) test('irc.encode.convert to unfittable charset', function(assert) {
-    lastDebugOutput = null;
     assertConvertToUnfittableCharset(assert);
     assert.equal(lastDebugOutput, null);
 });
