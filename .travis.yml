@@ -4,7 +4,7 @@ node_js:
   - "0.12"
   - "iojs"
 before_install:
-  - sudo apt-get -y install libicu-dev
+  - sudo apt-get -y install libc-bin
   - npm install -g npm
 script:
   - "npm run-script lint"
