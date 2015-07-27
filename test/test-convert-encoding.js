@@ -4,6 +4,9 @@ var test = require('tape');
 var testHelpers = require('./helpers');
 var checks = testHelpers.getFixtures('convert-encoding');
 
+var runBin = !!require('child_process').spawnSync;
+if (!runBin) require('util').error('/!\\ ATENTION /!\\ Will not test Iconv bin.');
+
 var iconvModule = {}, Iconv = null;
 try {
     iconvModule = require('iconv');
@@ -69,7 +72,7 @@ if (Iconv) test('irc.encode.convert two way', function(assert) {
     assert.equal(lastDebugOutput, null);
 });
 
-test('irc.encode.convert two way (force bin)', function(assert) {
+if (runBin) test('irc.encode.convert two way (force bin)', function(assert) {
     iconvModule.Iconv = null;
     assertConvertTwoWay(assert);
     assert.ok(/Iconv lib ERROR/.test(lastDebugOutput));
@@ -92,7 +95,7 @@ if (Iconv) test('irc.encode.convert to unfittable charset', function(assert) {
     assert.equal(lastDebugOutput, null);
 });
 
-test('irc.encode.convert to unfittable charset (force bin)', function(assert) {
+if (runBin) test('irc.encode.convert to unfittable charset (force bin)', function(assert) {
     iconvModule.Iconv = null;
     assertConvertToUnfittableCharset(assert);
     assert.ok(/Iconv lib ERROR/.test(lastDebugOutput));
