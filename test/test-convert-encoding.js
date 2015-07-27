@@ -1,7 +1,14 @@
-var encode = require('../lib/encode');
+var encodeModule = require('../lib/encode');
+var encode = encodeModule.build(true);
 var test = require('tape');
 var testHelpers = require('./helpers');
 var checks = testHelpers.getFixtures('convert-encoding');
+var iconvModule = require('iconv');
+var Iconv = iconvModule.Iconv;
+
+// Ensure the debug output
+var lastDebugOutput = null;
+require('util').error = function(str) { lastDebugOutput = str };
 
 var encoded = {
     'UTF-8': {
@@ -30,14 +37,13 @@ test('irc.encode.detect', function(assert) {
     for (charSet in encoded) {
         for (key in encoded[charSet]) {
             var str = encoded[charSet][key];
-            console.log(key, str, encode.detect(str));
             assert.equal(encode.detect(str), charSet);
         }
     }
     assert.end();
 });
 
-test('irc.encode.convert (two way)', function(assert) {
+function assertConvertTwoWay(assert) {
     for (charSet in encoded) {
         if (charSet != 'UTF-8') for (key in encoded[charSet]) {
             var str1 = encoded[charSet][key];
@@ -48,15 +54,41 @@ test('irc.encode.convert (two way)', function(assert) {
         }
     }
     assert.end();
+}
+
+test('irc.encode.convert two way', function(assert) {
+    lastDebugOutput = null;
+    assertConvertTwoWay(assert);
+    assert.equal(lastDebugOutput, null);
 });
 
-test('irc.encode.convert (to unfittable charset)', function(assert) {
+test('irc.encode.convert two way (force bin)', function(assert) {
+    iconvModule.Iconv = null;
+    assertConvertTwoWay(assert);
+    assert.ok(/Iconv lib ERROR/.test(lastDebugOutput));
+    iconvModule.Iconv = Iconv;
+});
+
+function assertConvertToUnfittableCharset(assert) {
     for (key in encoded.Big5) {
         var str1 = encoded.Big5[key];
-        var str2 = encode.convert(str1, 'Big5', 'ISO-8859-15');
+        var str2 = encode.convert(str1, 'Big5', 'ISO-8859-15//IGNORE');
         assert.equal(str2, '', 'Big5 "' + key + '" do not fit ISO-8859-15.');
     }
     assert.end();
+}
+
+test('irc.encode.convert to unfittable charset', function(assert) {
+    lastDebugOutput = null;
+    assertConvertToUnfittableCharset(assert);
+    assert.equal(lastDebugOutput, null);
+});
+
+test('irc.encode.convert to unfittable charset (force bin)', function(assert) {
+    iconvModule.Iconv = null;
+    assertConvertToUnfittableCharset(assert);
+    assert.ok(/Iconv lib ERROR/.test(lastDebugOutput));
+    iconvModule.Iconv = Iconv;
 });
 
 test('irc.encode.convertTo', function(assert) {
@@ -66,5 +98,22 @@ test('irc.encode.convertTo', function(assert) {
             assert.ok(out.length > 0, typeof(out) + ' must be a valid string');
         }
     }
+    assert.end();
+});
+
+test('irc.encode.uniformString (dont change successful convertion)', function(assert) {
+    var f = encodeModule.uniformString;
+    assert.equal(f('abc def', 'xyz kyw', 'x'          ), 'xyz kyw');
+    assert.equal(f('abc def', 'xyz kyw', 'x//TRANSLIT'), 'xyz kyw');
+    assert.end();
+});
+
+test('irc.encode.uniformString (recover bad translit)', function(assert) {
+    // solve the empty string case.
+    var f = encodeModule.uniformString;
+    assert.equal(f('ab cd', '' , 'x'          ), ''     , 'no translit, no output space');
+    assert.equal(f('ab cd', '' , 'x//TRANSLIT'), '?? ??', 'with translit, no output space');
+    assert.equal(f('ab cd', ' ', 'x'          ), ' '    , 'no translit, with output space');
+    assert.equal(f('ab cd', ' ', 'x//TRANSLIT'), '?? ??', 'with translit, with output space');
     assert.end();
 });
