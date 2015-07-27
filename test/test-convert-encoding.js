@@ -95,7 +95,7 @@ test('irc.encode.convertTo', function(assert) {
     for (charSet in encoded) {
         for (key in encoded[charSet]) {
             var out = encode.convertTo(encoded[charSet][key], 'ISO-8859-15');
-            assert.ok(out.length > 0, typeof(out) + ' must be a valid string');
+            assert.ok(out.length > 0, 'must be a valid string');
         }
     }
     assert.end();
@@ -103,7 +103,7 @@ test('irc.encode.convertTo', function(assert) {
 
 test('irc.encode.uniformString (dont change successful convertion)', function(assert) {
     var f = encodeModule.uniformString;
-    assert.equal(f('abc def', 'xyz kyw', 'x'          ), 'xyz kyw');
+    assert.equal(f('abc def', 'xyz kyw', 'x'),           'xyz kyw');
     assert.equal(f('abc def', 'xyz kyw', 'x//TRANSLIT'), 'xyz kyw');
     assert.end();
 });
@@ -111,9 +111,9 @@ test('irc.encode.uniformString (dont change successful convertion)', function(as
 test('irc.encode.uniformString (recover bad translit)', function(assert) {
     // solve the empty string case.
     var f = encodeModule.uniformString;
-    assert.equal(f('ab cd', '' , 'x'          ), ''     , 'no translit, no output space');
-    assert.equal(f('ab cd', '' , 'x//TRANSLIT'), '?? ??', 'with translit, no output space');
-    assert.equal(f('ab cd', ' ', 'x'          ), ' '    , 'no translit, with output space');
+    assert.equal(f('ab cd', '',  'x'),           '',      'no translit, no output space');
+    assert.equal(f('ab cd', '',  'x//TRANSLIT'), '?? ??', 'with translit, no output space');
+    assert.equal(f('ab cd', ' ', 'x'),           ' ',     'no translit, with output space');
     assert.equal(f('ab cd', ' ', 'x//TRANSLIT'), '?? ??', 'with translit, with output space');
     assert.end();
 });
