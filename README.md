@@ -1,3 +1,5 @@
+[![License](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat)](http://opensource.org/licenses/GPL-3.0)
+
 This is a fork of [node-irc](http://node-irc.readthedocs.org/), which is an IRC client library written in [JavaScript](http://en.wikipedia.org/wiki/JavaScript) for [Node](http://nodejs.org/). This fork is used by the [Matrix-IRC application service](http://github.com/matrix-org/matrix-appservice-irc).
 
 

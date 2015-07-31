@@ -2,38 +2,26 @@
   "name": "irc",
   "description": "An IRC client library for node",
   "version": "0.3.12",
-  "author": "Martyn Smith <martyn@dollyfish.net.nz>",
+  "author": "Matrix.org (original fork from Martyn Smith <martyn@dollyfish.net.nz>)",
   "scripts": {
     "test": "./node_modules/faucet/bin/cmd.js test/test-*.js",
     "lint": "./node_modules/jscs/bin/jscs --preset=airbnb */*.js"
   },
   "contributors": [
-    "Fionn Kelleher <me@fionn.co>",
-    "xAndy <xandy@hackerspace-bamberg.de>",
-    "Mischa Spiegelmock <revmischa@cpan.org>",
-    "Justin Gallardo <justin.gallardo@gmail.com>",
-    "Chris Nehren <cnehren@pobox.com>",
-    "Henri Niemeläinen <aivot-on@iki.fi>",
-    "Alex Miles <ghostaldev@gmail.com>"
+    "node-irc contributors"
   ],
   "repository": {
     "type": "git",
-    "url": "http://github.com/martynsmith/node-irc"
+    "url": "http://github.com/matrix-org/node-irc"
   },
   "bugs": {
-    "mail": "martyn@dollyfish.net.nz",
-    "url": "http://github.com/martynsmith/node-irc/issues"
+    "url": "http://github.com/matrix-org/node-irc/issues"
   },
   "main": "lib/irc",
   "engines": {
     "node": ">=0.10.0"
   },
-  "licenses": [
-    {
-      "type": "GPL",
-      "url": "http://github.com/martynsmith/node-irc/raw/master/COPYING"
-    }
-  ],
+  "license": "GPLv3",
   "dependencies": {
     "ansi-color": "0.2.1",
     "irc-colors": "^1.1.0"
