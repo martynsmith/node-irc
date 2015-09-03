@@ -37,11 +37,11 @@
   ],
   "dependencies": {
     "ansi-color": "0.2.1",
-    "irc-colors": "^1.1.0"
+    "irc-colors": "^1.1.0",
+    "jschardet": "~1.3.0"
   },
   "optionalDependencies": {
-    "iconv": "~2.1.6",
-    "node-icu-charset-detector": "0.1.0"
+    "iconv": "~2.1.6"
   },
   "devDependencies": {
     "faucet": "0.0.1",
