@@ -36,7 +36,6 @@
     }
   ],
   "dependencies": {
-    "ansi-color": "0.2.1",
     "irc-colors": "^1.1.0"
   },
   "optionalDependencies": {
@@ -44,6 +43,7 @@
     "node-icu-charset-detector": "~0.1.2"
   },
   "devDependencies": {
+    "ansi-color": "0.2.1",
     "faucet": "0.0.1",
     "jscs": "1.9.0",
     "tape": "^3.0.3"
