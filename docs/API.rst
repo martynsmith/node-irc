@@ -18,6 +18,7 @@ Client
         {
             userName: 'nodebot',
             realName: 'nodeJS IRC client',
+            nickMod: undefined
             port: 6667,
             localAddress: null,
             debug: false,
@@ -54,6 +55,11 @@ Client
 
     Set `sasl` to true to enable SASL support. You'll also want to set `nick`,
     `userName`, and `password` for authentication.
+
+    `nickMod` is used to change your nickname in case of "nickname in use" error,
+    which disconnects the user until nick change.
+    This can be a function that `return`s a `string`, a `string` or a number;
+    This function emits a `nickinuse` event with `{old:'youOldNickname', now: 'yourNewNickname'}`
 
     `stripColors` removes mirc colors (0x03 followed by one or two ascii
     numbers for foreground,background) and ircII "effect" codes (0x02
