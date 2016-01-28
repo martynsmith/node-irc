@@ -2,7 +2,8 @@ language: node_js
 node_js:
   - "0.10"
   - "0.12"
-  - "iojs"
+  - "4"
+  - "5"
 before_install:
   - sudo apt-get -y install libicu-dev
   - npm install -g npm
