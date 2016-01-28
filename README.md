@@ -3,6 +3,8 @@
 [![Dependency Status](https://img.shields.io/david/martynsmith/node-irc.svg?style=flat)](https://david-dm.org/martynsmith/node-irc#info=Dependencies)
 [![devDependency Status](https://img.shields.io/david/dev/martynsmith/node-irc.svg?style=flat)](https://david-dm.org/martynsmith/node-irc#info=devDependencies)
 [![License](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat)](http://opensource.org/licenses/GPL-3.0)
+[![Join the chat at https://gitter.im/martynsmith/node-irc](https://badges.gitter.im/martynsmith/node-irc.svg)](https://gitter.im/martynsmith/node-irc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 
 [node-irc](http://node-irc.readthedocs.org/) is an IRC client library written in [JavaScript](http://en.wikipedia.org/wiki/JavaScript) for [Node](http://nodejs.org/).
 
@@ -10,8 +12,6 @@ You can access more detailed documentation for this module at [Read the Docs](ht
 
 
 ## Installation
-
-[![Join the chat at https://gitter.im/martynsmith/node-irc](https://badges.gitter.im/martynsmith/node-irc.svg)](https://gitter.im/martynsmith/node-irc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 The easiest way to get it is via [npm](http://github.com/isaacs/npm):
 
