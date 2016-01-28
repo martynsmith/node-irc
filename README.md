@@ -11,6 +11,8 @@ You can access more detailed documentation for this module at [Read the Docs](ht
 
 ## Installation
 
+[![Join the chat at https://gitter.im/martynsmith/node-irc](https://badges.gitter.im/martynsmith/node-irc.svg)](https://gitter.im/martynsmith/node-irc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 The easiest way to get it is via [npm](http://github.com/isaacs/npm):
 
 ```
