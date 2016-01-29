@@ -177,5 +177,11 @@
             "maxLength": 5,
             "result": ["abc", "abcde", "f abc", "abcd", "abc"]
         }
-    ]
+    ],
+	"_splitLongLines_no_max": [
+		{
+			"input": "abcdefghijklmnopqrstuvwxyz",
+			"result": ["abcdefghijklmnopqrstuvwxyz"]
+		}
+	]
 }
