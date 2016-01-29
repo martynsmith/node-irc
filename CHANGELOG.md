@@ -4,13 +4,29 @@
 
 [Full Changelog](https://github.com/martynsmith/node-irc/compare/v0.4.1...HEAD)
 
+**Implemented enhancements:**
+
+- Allow tilde in nicks [\#438](https://github.com/martynsmith/node-irc/pull/438) ([hexjelly](https://github.com/hexjelly))
+
+**Fixed bugs:**
+
+- Fixes \#427 [\#429](https://github.com/martynsmith/node-irc/pull/429) ([ghost](https://github.com/ghost))
+
 **Merged pull requests:**
 
 - Add a Gitter chat badge to README.md [\#444](https://github.com/martynsmith/node-irc/pull/444) ([gitter-badger](https://github.com/gitter-badger))
-- Fixes \#427 [\#429](https://github.com/martynsmith/node-irc/pull/429) ([ghost](https://github.com/ghost))
+- Adding support for command rpl\_whoreply \(352\) [\#413](https://github.com/martynsmith/node-irc/pull/413) ([lan17](https://github.com/lan17))
 
 ## [v0.4.1](https://github.com/martynsmith/node-irc/tree/v0.4.1) (2016-01-27)
 [Full Changelog](https://github.com/martynsmith/node-irc/compare/v0.4.0...v0.4.1)
+
+**Implemented enhancements:**
+
+- Dealing with OPER command replies. [\#439](https://github.com/martynsmith/node-irc/pull/439) ([ellisgl](https://github.com/ellisgl))
+
+**Fixed bugs:**
+
+- Fix SASL auth [\#443](https://github.com/martynsmith/node-irc/pull/443) ([ggreer](https://github.com/ggreer))
 
 **Closed issues:**
 
@@ -27,12 +43,15 @@
 
 **Merged pull requests:**
 
-- Fix SASL auth [\#443](https://github.com/martynsmith/node-irc/pull/443) ([ggreer](https://github.com/ggreer))
 - Remove \#blah from the example [\#440](https://github.com/martynsmith/node-irc/pull/440) ([ben-rabid](https://github.com/ben-rabid))
 - Move dependency 'ansi-color' to devDependencies [\#407](https://github.com/martynsmith/node-irc/pull/407) ([ho-ho-ho](https://github.com/ho-ho-ho))
 
 ## [v0.4.0](https://github.com/martynsmith/node-irc/tree/v0.4.0) (2015-09-30)
 [Full Changelog](https://github.com/martynsmith/node-irc/compare/v0.3.12...v0.4.0)
+
+**Fixed bugs:**
+
+- Fix compile warnings on node v4 [\#409](https://github.com/martynsmith/node-irc/pull/409) ([feross](https://github.com/feross))
 
 **Closed issues:**
 
@@ -54,7 +73,6 @@
 
 **Merged pull requests:**
 
-- Fix compile warnings on node v4 [\#409](https://github.com/martynsmith/node-irc/pull/409) ([feross](https://github.com/feross))
 - Bug fix: 'pm' event wouldnt always be trigged [\#397](https://github.com/martynsmith/node-irc/pull/397) ([ravenstar](https://github.com/ravenstar))
 - Call updateMaxLineLength on connection [\#396](https://github.com/martynsmith/node-irc/pull/396) ([secretrobotron](https://github.com/secretrobotron))
 - Fix typo. [\#383](https://github.com/martynsmith/node-irc/pull/383) ([schmich](https://github.com/schmich))
