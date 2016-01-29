@@ -7,10 +7,17 @@
 **Implemented enhancements:**
 
 - Allow tilde in nicks [\#438](https://github.com/martynsmith/node-irc/pull/438) ([hexjelly](https://github.com/hexjelly))
+- Implement chanmode params. [\#351](https://github.com/martynsmith/node-irc/pull/351) ([Timer](https://github.com/Timer))
 
 **Fixed bugs:**
 
 - Fixes \#427 [\#429](https://github.com/martynsmith/node-irc/pull/429) ([ghost](https://github.com/ghost))
+
+**Closed issues:**
+
+- Changelog for v4.0? [\#435](https://github.com/martynsmith/node-irc/issues/435)
+- Message Events Ignored [\#242](https://github.com/martynsmith/node-irc/issues/242)
+- QUIT, KILL removes users from user list before processing event hooks [\#73](https://github.com/martynsmith/node-irc/issues/73)
 
 **Merged pull requests:**
 
