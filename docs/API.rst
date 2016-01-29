@@ -477,6 +477,13 @@ Events
     Emitted whenever a user performs an action (e.g. `/me waves`).
     The message parameter is exactly as in the 'raw' event.
 
+.. js:data:: 'send'
+
+    `function (text) { }`
+
+    Emitted whenever the client sends a message to the server.
+    `text` is exactly what the server sees.
+
 Colors
 ------
 
