@@ -15,7 +15,8 @@
     "Chris Nehren <cnehren@pobox.com>",
     "Henri Niemeläinen <aivot-on@iki.fi>",
     "Alex Miles <ghostaldev@gmail.com>",
-    "Simmo Saan <simmo.saan@gmail.com>"
+    "Simmo Saan <simmo.saan@gmail.com>",
+    "Blay <blay09@hotmail.de>"
   ],
   "repository": {
     "type": "git",
@@ -36,7 +37,9 @@
     }
   ],
   "dependencies": {
-    "irc-colors": "^1.1.0"
+    "irc-colors": "^1.1.0",
+    "irc-message": "^3.0.2",
+    "irc-prefix-parser": "^1.0.1"
   },
   "optionalDependencies": {
     "iconv": "~2.1.6",
