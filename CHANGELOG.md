@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased](https://github.com/martynsmith/node-irc/tree/HEAD)
+
+[Full Changelog](https://github.com/martynsmith/node-irc/compare/v0.5.0...HEAD)
+
+**Fixed bugs:**
+
+- Many servers do not send a meaningful hostname in 001 [\#288](https://github.com/martynsmith/node-irc/issues/288)
+
 ## [v0.5.0](https://github.com/martynsmith/node-irc/tree/v0.5.0) (2016-03-26)
 [Full Changelog](https://github.com/martynsmith/node-irc/compare/v0.4.1...v0.5.0)
 
