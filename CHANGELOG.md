@@ -1,13 +1,11 @@
 # Change Log
 
-## [Unreleased](https://github.com/martynsmith/node-irc/tree/HEAD)
-
-[Full Changelog](https://github.com/martynsmith/node-irc/compare/v0.4.1...HEAD)
+## [v0.5.0](https://github.com/martynsmith/node-irc/tree/v0.5.0) (2016-03-26)
+[Full Changelog](https://github.com/martynsmith/node-irc/compare/v0.4.1...v0.5.0)
 
 **Implemented enhancements:**
 
 - Allow tilde in nicks [\#438](https://github.com/martynsmith/node-irc/pull/438) ([hexjelly](https://github.com/hexjelly))
-- Implement chanmode params. [\#351](https://github.com/martynsmith/node-irc/pull/351) ([Timer](https://github.com/Timer))
 
 **Fixed bugs:**
 
@@ -15,14 +13,37 @@
 
 **Closed issues:**
 
+- How to get current server. [\#453](https://github.com/martynsmith/node-irc/issues/453)
+- Library never connects to server  [\#451](https://github.com/martynsmith/node-irc/issues/451)
+- Ping timeout causes double reconnect [\#449](https://github.com/martynsmith/node-irc/issues/449)
 - Changelog for v4.0? [\#435](https://github.com/martynsmith/node-irc/issues/435)
+- How to multiple server connections at the same time [\#434](https://github.com/martynsmith/node-irc/issues/434)
+- Add connected flag [\#430](https://github.com/martynsmith/node-irc/issues/430)
+- Add link to docs on github wiki page [\#422](https://github.com/martynsmith/node-irc/issues/422)
+- maxLineLength is not set by default and can crash the bot [\#419](https://github.com/martynsmith/node-irc/issues/419)
+- PING/PONG Error! [\#415](https://github.com/martynsmith/node-irc/issues/415)
+- quit event provides wrong channel information [\#398](https://github.com/martynsmith/node-irc/issues/398)
+- Detect client timeout ? [\#375](https://github.com/martynsmith/node-irc/issues/375)
+- User MODE changes are not being received in +MODE/-MODE handlers [\#374](https://github.com/martynsmith/node-irc/issues/374)
+- Error client.say\(nick, "record\\w3xp\\random\\wins"\); [\#369](https://github.com/martynsmith/node-irc/issues/369)
+- SASL over SSL never happens [\#250](https://github.com/martynsmith/node-irc/issues/250)
 - Message Events Ignored [\#242](https://github.com/martynsmith/node-irc/issues/242)
+- Bot crashes on mode +q-o [\#221](https://github.com/martynsmith/node-irc/issues/221)
+- Cannot pass MODE command with multiple arguments [\#147](https://github.com/martynsmith/node-irc/issues/147)
+- Certain MODE messages could access on undefined [\#144](https://github.com/martynsmith/node-irc/issues/144)
+- mode emit event [\#136](https://github.com/martynsmith/node-irc/issues/136)
 - QUIT, KILL removes users from user list before processing event hooks [\#73](https://github.com/martynsmith/node-irc/issues/73)
 
 **Merged pull requests:**
 
+- fix\(ping timeouts\): When a ping timeout is detected properly destroy … [\#452](https://github.com/martynsmith/node-irc/pull/452) ([jirwin](https://github.com/jirwin))
+- Added link to install instructions for ICU [\#450](https://github.com/martynsmith/node-irc/pull/450) ([spalger](https://github.com/spalger))
+- User status isn't updated on MODE if he's not VOICE or OP [\#448](https://github.com/martynsmith/node-irc/pull/448) ([Zoddo](https://github.com/Zoddo))
 - Add a Gitter chat badge to README.md [\#444](https://github.com/martynsmith/node-irc/pull/444) ([gitter-badger](https://github.com/gitter-badger))
+- Detect and recover from ping timeouts [\#418](https://github.com/martynsmith/node-irc/pull/418) ([philip-peterson](https://github.com/philip-peterson))
 - Adding support for command rpl\_whoreply \(352\) [\#413](https://github.com/martynsmith/node-irc/pull/413) ([lan17](https://github.com/lan17))
+- Update .gitignore [\#373](https://github.com/martynsmith/node-irc/pull/373) ([Phalanxia](https://github.com/Phalanxia))
+- Update license attribute [\#372](https://github.com/martynsmith/node-irc/pull/372) ([pdehaan](https://github.com/pdehaan))
 
 ## [v0.4.1](https://github.com/martynsmith/node-irc/tree/v0.4.1) (2016-01-27)
 [Full Changelog](https://github.com/martynsmith/node-irc/compare/v0.4.0...v0.4.1)
@@ -126,7 +147,7 @@
 - Documentation improvements [\#323](https://github.com/martynsmith/node-irc/pull/323) ([TimothyGu](https://github.com/TimothyGu))
 - fix blank lines being passed to parse message [\#318](https://github.com/martynsmith/node-irc/pull/318) ([helderroem](https://github.com/helderroem))
 - Rember to add path.resolve while requiring things! [\#316](https://github.com/martynsmith/node-irc/pull/316) ([Palid](https://github.com/Palid))
-- Fix option handling when passing a secure object [\#311](https://github.com/martynsmith/node-irc/pull/311) ([apeiron](https://github.com/apeiron))
+- Fix option handling when passing a secure object [\#311](https://github.com/martynsmith/node-irc/pull/311) ([masochist](https://github.com/masochist))
 - Added a bit more information about Client.chans [\#310](https://github.com/martynsmith/node-irc/pull/310) ([itsrachelfish](https://github.com/itsrachelfish))
 
 ## [v0.3.9](https://github.com/martynsmith/node-irc/tree/v0.3.9) (2015-01-16)
@@ -134,11 +155,11 @@
 
 **Implemented enhancements:**
 
-- Factor out test data into a fixtures file. [\#302](https://github.com/martynsmith/node-irc/pull/302) ([apeiron](https://github.com/apeiron))
+- Factor out test data into a fixtures file. [\#302](https://github.com/martynsmith/node-irc/pull/302) ([masochist](https://github.com/masochist))
 
 **Fixed bugs:**
 
-- Fix TLS connections. [\#304](https://github.com/martynsmith/node-irc/pull/304) ([apeiron](https://github.com/apeiron))
+- Fix TLS connections. [\#304](https://github.com/martynsmith/node-irc/pull/304) ([masochist](https://github.com/masochist))
 
 **Closed issues:**
 
@@ -153,13 +174,13 @@
 **Merged pull requests:**
 
 - Log net connection errors. Thanks Trinitas. [\#307](https://github.com/martynsmith/node-irc/pull/307) ([jirwin](https://github.com/jirwin))
-- Bring in irc-colors for stripping colors [\#306](https://github.com/martynsmith/node-irc/pull/306) ([apeiron](https://github.com/apeiron))
-- do not autorejoin on kicks. bad bot! no cookie! [\#303](https://github.com/martynsmith/node-irc/pull/303) ([apeiron](https://github.com/apeiron))
+- Bring in irc-colors for stripping colors [\#306](https://github.com/martynsmith/node-irc/pull/306) ([masochist](https://github.com/masochist))
+- do not autorejoin on kicks. bad bot! no cookie! [\#303](https://github.com/martynsmith/node-irc/pull/303) ([masochist](https://github.com/masochist))
 - fix\(style\): Clean up various style issues in irc.js [\#299](https://github.com/martynsmith/node-irc/pull/299) ([jirwin](https://github.com/jirwin))
-- Write a test for setting the hostmask when nick is in use [\#294](https://github.com/martynsmith/node-irc/pull/294) ([apeiron](https://github.com/apeiron))
+- Write a test for setting the hostmask when nick is in use [\#294](https://github.com/martynsmith/node-irc/pull/294) ([masochist](https://github.com/masochist))
 - fix\(parseMessage\): Factor parseMessage to another file for decoupling. [\#293](https://github.com/martynsmith/node-irc/pull/293) ([jirwin](https://github.com/jirwin))
-- Set self.hostMask to the empty string to elegantly solve \#286 [\#292](https://github.com/martynsmith/node-irc/pull/292) ([apeiron](https://github.com/apeiron))
-- First draft of contributing doc [\#287](https://github.com/martynsmith/node-irc/pull/287) ([apeiron](https://github.com/apeiron))
+- Set self.hostMask to the empty string to elegantly solve \#286 [\#292](https://github.com/martynsmith/node-irc/pull/292) ([masochist](https://github.com/masochist))
+- First draft of contributing doc [\#287](https://github.com/martynsmith/node-irc/pull/287) ([masochist](https://github.com/masochist))
 - Fix data split delimiter [\#280](https://github.com/martynsmith/node-irc/pull/280) ([ota42y](https://github.com/ota42y))
 
 ## [v0.3.8](https://github.com/martynsmith/node-irc/tree/v0.3.8) (2015-01-09)
@@ -184,13 +205,13 @@
 - fix\(webirc\): Set sane defaults for WEBIRC options. [\#283](https://github.com/martynsmith/node-irc/pull/283) ([jirwin](https://github.com/jirwin))
 - WIP: fix\(tests\): A first attempt at a sane pattern to begin testing the handling of the protocol. [\#282](https://github.com/martynsmith/node-irc/pull/282) ([jirwin](https://github.com/jirwin))
 - fix\(irc.js\): Use the proper EventEmitter class. [\#281](https://github.com/martynsmith/node-irc/pull/281) ([jirwin](https://github.com/jirwin))
-- Update colors.js [\#279](https://github.com/martynsmith/node-irc/pull/279) ([dwarf2000](https://github.com/dwarf2000))
+- Update colors.js [\#279](https://github.com/martynsmith/node-irc/pull/279) ([bcome](https://github.com/bcome))
 - Optional encoding option [\#278](https://github.com/martynsmith/node-irc/pull/278) ([tarlepp](https://github.com/tarlepp))
 - WEBIRC support [\#276](https://github.com/martynsmith/node-irc/pull/276) ([Trinitas](https://github.com/Trinitas))
 - fix\(style\): Remove folding hints from codes and irc. [\#275](https://github.com/martynsmith/node-irc/pull/275) ([jirwin](https://github.com/jirwin))
 - fix\(tests\): Ditch mocha and should for tape! [\#274](https://github.com/martynsmith/node-irc/pull/274) ([jirwin](https://github.com/jirwin))
 - Add travis with lint and tests [\#271](https://github.com/martynsmith/node-irc/pull/271) ([jirwin](https://github.com/jirwin))
-- Add proper long line wrapping. [\#268](https://github.com/martynsmith/node-irc/pull/268) ([apeiron](https://github.com/apeiron))
+- Add proper long line wrapping. [\#268](https://github.com/martynsmith/node-irc/pull/268) ([masochist](https://github.com/masochist))
 - update README regarding npm and the 0.3.x branch [\#256](https://github.com/martynsmith/node-irc/pull/256) ([mbouchenoire](https://github.com/mbouchenoire))
 - Updated API information [\#240](https://github.com/martynsmith/node-irc/pull/240) ([Hydrothermal](https://github.com/Hydrothermal))
 - Add option to specify bind address when connecting [\#146](https://github.com/martynsmith/node-irc/pull/146) ([revmischa](https://github.com/revmischa))
