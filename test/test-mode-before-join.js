@@ -8,11 +8,11 @@ test('chanmodes being unset when joining a channel', function(t) {
 
     var mock = testHelpers.MockIrcd();
     var client = new irc.Client('localhost', 'testbot', { debug: true });
-    
+
     var count = 0;
     client.on('+mode', function() {
         // console.log('+mode: ', client.chans['#channel']);
-        t.deepEqual(client.chans['#channel'], expected[count++]); 
+        t.deepEqual(client.chans['#channel'], expected[count++]);
     });
     client.on('-mode', function() {
         // console.log('-mode: ', client.chans['#channel']);
