@@ -176,6 +176,11 @@
             "input": "abc abcdef abc abcd abc",
             "maxLength": 5,
             "result": ["abc", "abcde", "f abc", "abcd", "abc"]
+        },
+        {
+            "input": "æøå",
+            "maxLength": 4,
+            "result": ["æø", "å"]
         }
     ],
 	"_splitLongLines_no_max": [
