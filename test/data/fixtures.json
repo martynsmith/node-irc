@@ -181,6 +181,11 @@
             "input": "æøå",
             "maxLength": 4,
             "result": ["æø", "å"]
+        },
+        {
+            "input": "æøå",
+            "maxLength": 5,
+            "result": ["æø", "å"]
         }
     ],
 	"_splitLongLines_no_max": [
