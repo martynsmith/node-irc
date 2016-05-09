@@ -186,6 +186,11 @@
             "input": "æøå",
             "maxLength": 5,
             "result": ["æø", "å"]
+        },
+        {
+            "input": "\u000308\u0002\u0002\u0002bold and yellow\u0002\u0003",
+            "maxLength": 12,
+            "result": ["\u000308\u0002\u0002\u0002bold", "and yellow\u0002\u0003"]
         }
     ],
 	"_splitLongLines_no_max": [
