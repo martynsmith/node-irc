@@ -23,8 +23,7 @@
   },
   "license": "GPL-3.0",
   "dependencies": {
-    "irc-colors": "^1.1.0",
-    "shuffle-list": "^1.0.0"
+    "irc-colors": "^1.1.0"
   },
   "optionalDependencies": {
     "iconv": "~2.1.6",
