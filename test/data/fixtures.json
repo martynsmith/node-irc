@@ -183,5 +183,15 @@
 			"input": "abcdefghijklmnopqrstuvwxyz",
 			"result": ["abcdefghijklmnopqrstuvwxyz"]
 		}
+	],
+	"_speak": [
+		{
+			"length": 30,
+			"expected": 10
+		},
+		{
+			"length": 7,
+			"expected": 1
+		}
 	]
 }
