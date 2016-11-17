@@ -1,12 +1,37 @@
 # Change Log
 
-## [Unreleased](https://github.com/martynsmith/node-irc/tree/HEAD)
+## [v0.5.1](https://github.com/martynsmith/node-irc/tree/v0.5.1) (2016-11-17)
+[Full Changelog](https://github.com/martynsmith/node-irc/compare/v0.5.0...v0.5.1)
 
-[Full Changelog](https://github.com/martynsmith/node-irc/compare/v0.5.0...HEAD)
+**Implemented enhancements:**
+
+- Detect ping timeout [\#76](https://github.com/martynsmith/node-irc/issues/76)
 
 **Fixed bugs:**
 
+- Call stack size exceeded [\#337](https://github.com/martynsmith/node-irc/issues/337)
 - Many servers do not send a meaningful hostname in 001 [\#288](https://github.com/martynsmith/node-irc/issues/288)
+- disconnect does not appear to send the reason to the server [\#89](https://github.com/martynsmith/node-irc/issues/89)
+
+**Closed issues:**
+
+- Creating a whitelist against the nickname  [\#484](https://github.com/martynsmith/node-irc/issues/484)
+- Deployed on Heroku, app is running, no IRC connection [\#481](https://github.com/martynsmith/node-irc/issues/481)
+- Install does not work on Debian stable. [\#475](https://github.com/martynsmith/node-irc/issues/475)
+- Non private reply with highlighted nick [\#474](https://github.com/martynsmith/node-irc/issues/474)
+- retryDelay not mentioned in the docs [\#446](https://github.com/martynsmith/node-irc/issues/446)
+- 'names' event returns only 10 nicks [\#414](https://github.com/martynsmith/node-irc/issues/414)
+- can't get chat messages [\#384](https://github.com/martynsmith/node-irc/issues/384)
+- parse message TypeError: Cannot read property '1' of null [\#331](https://github.com/martynsmith/node-irc/issues/331)
+- TypeError: No method channel [\#254](https://github.com/martynsmith/node-irc/issues/254)
+- Unable to connect to OFTC network over SSL [\#247](https://github.com/martynsmith/node-irc/issues/247)
+- Specific mode sequences can crash the bot [\#233](https://github.com/martynsmith/node-irc/issues/233)
+- Event listener ctcp-privmsg's "message" is empty [\#207](https://github.com/martynsmith/node-irc/issues/207)
+- Mass channel MODE with -lk throws error [\#177](https://github.com/martynsmith/node-irc/issues/177)
+
+**Merged pull requests:**
+
+- Respect opt.messageSplit when calculating message length [\#385](https://github.com/martynsmith/node-irc/pull/385) ([LinuxMercedes](https://github.com/LinuxMercedes))
 
 ## [v0.5.0](https://github.com/martynsmith/node-irc/tree/v0.5.0) (2016-03-26)
 [Full Changelog](https://github.com/martynsmith/node-irc/compare/v0.4.1...v0.5.0)
