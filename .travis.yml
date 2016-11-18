@@ -4,6 +4,8 @@ node_js:
   - "0.12"
   - "4"
   - "5"
+  - "6"
+  - "7"
 before_install:
   - sudo apt-get -y install libicu-dev
   - npm install -g npm
