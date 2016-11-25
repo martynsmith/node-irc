@@ -1,5 +1,12 @@
 # Change Log
 
+## [v0.5.2](https://github.com/martynsmith/node-irc/tree/v0.5.2) (2016-11-25)
+[Full Changelog](https://github.com/martynsmith/node-irc/compare/v0.5.1...v0.5.2)
+
+**Merged pull requests:**
+
+- Update iconv to 2.2.1 and node-icu-charset-detector to 0.2.0 to fix node 6+ support [\#487](https://github.com/martynsmith/node-irc/pull/487) ([paladox](https://github.com/paladox))
+
 ## [v0.5.1](https://github.com/martynsmith/node-irc/tree/v0.5.1) (2016-11-17)
 [Full Changelog](https://github.com/martynsmith/node-irc/compare/v0.5.0...v0.5.1)
 
