@@ -7,7 +7,7 @@ var tls = require('tls');
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
 
-var MockIrcd = function(port, encoding, isSecure) {
+var MockIrcd = function (port, encoding, isSecure) {
     var self = this;
     var connectionClass;
     var options = {};
@@ -16,7 +16,7 @@ var MockIrcd = function(port, encoding, isSecure) {
         connectionClass = tls;
         options = {
             key: fs.readFileSync(path.resolve(__dirname, 'data/ircd.key')),
-            cert: fs.readFileSync(path.resolve(__dirname, 'data/ircd.pem'))
+            cert: fs.readFileSync(path.resolve(__dirname, 'data/ircd.pem')),
         };
     } else {
         connectionClass = net;
@@ -27,43 +27,45 @@ var MockIrcd = function(port, encoding, isSecure) {
     this.incoming = [];
     this.outgoing = [];
 
-    this.server = connectionClass.createServer(options, function(c) {
-        c.on('data', function(data) {
-            var msg = data.toString(self.encoding).split('\r\n').filter(function(m) { return m; });
+    this.server = connectionClass.createServer(options, function (c) {
+        c.on('data', function (data) {
+            var msg = data.toString(self.encoding).split('\r\n').filter(function (m) { return m; });
+
             self.incoming = self.incoming.concat(msg);
         });
 
-        self.on('send', function(data) {
+        self.on('send', function (data) {
             self.outgoing.push(data);
             c.write(data);
         });
 
-        c.on('end', function() {
+        c.on('end', function () {
             self.emit('end');
         });
     });
 
     this.server.listen(this.port);
 };
+
 util.inherits(MockIrcd, EventEmitter);
 
-MockIrcd.prototype.send = function(data) {
+MockIrcd.prototype.send = function (data) {
     this.emit('send', data);
 };
 
-MockIrcd.prototype.close = function() {
+MockIrcd.prototype.close = function () {
     this.server.close();
 };
 
-MockIrcd.prototype.getIncomingMsgs = function() {
+MockIrcd.prototype.getIncomingMsgs = function () {
     return this.incoming;
 };
 
 var fixtures = require('./data/fixtures');
-module.exports.getFixtures = function(testSuite) {
+module.exports.getFixtures = function (testSuite) {
     return fixtures[testSuite];
 };
 
-module.exports.MockIrcd = function(port, encoding, isSecure) {
+module.exports.MockIrcd = function (port, encoding, isSecure) {
     return new MockIrcd(port, encoding, isSecure);
 };

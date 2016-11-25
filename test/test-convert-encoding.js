@@ -4,8 +4,8 @@ var testHelpers = require('./helpers');
 var checks = testHelpers.getFixtures('convert-encoding');
 var bindTo = { opt: { encoding: 'utf-8' } };
 
-test('irc.Client.convertEncoding old', function(assert) {
-    var convertEncoding = function(str) {
+test('irc.Client.convertEncoding old', function (assert) {
+    var convertEncoding = function (str) {
         var self = this;
 
         if (self.opt.encoding) {
@@ -34,7 +34,7 @@ test('irc.Client.convertEncoding old', function(assert) {
     assert.end();
 });
 
-test('irc.Client.convertEncoding', function(assert) {
+test('irc.Client.convertEncoding', function (assert) {
     var convertEncoding = irc.Client.prototype.convertEncoding.bind(bindTo);
 
     checks.causesException.forEach(function iterate(line) {
