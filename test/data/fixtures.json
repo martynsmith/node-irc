@@ -193,5 +193,16 @@
 			"length": 7,
 			"expected": 1
 		}
-	]
+	],
+	"quit": {
+		"sent": [
+			["NICK testbot", "Client sent NICK message"],
+			["USER nodebot 8 * :nodeJS IRC client", "Client sent USER message"],
+			["QUIT :quitting as a test", "Client sent QUIT message"]
+		],
+
+		"received": [
+			[":localhost 001 testbot :Welcome to the Internet Relay Chat Network testbot\r\n", "Received welcome message"]
+		]
+	}
 }
