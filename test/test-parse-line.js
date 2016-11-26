@@ -13,8 +13,8 @@ test('irc.parseMessage', function(t) {
             delete checks[line].stripColors;
         }
         t.equal(
-            JSON.stringify(checks[line]),
             JSON.stringify(parseMessage(line, stripColors)),
+            JSON.stringify(checks[line]),
             line + ' parses correctly'
         );
     });
