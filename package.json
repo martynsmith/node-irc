@@ -5,7 +5,7 @@
   "author": "Martyn Smith <martyn@dollyfish.net.nz>",
   "scripts": {
     "test": "./node_modules/faucet/bin/cmd.js test/test-*.js",
-    "lint": "./node_modules/jscs/bin/jscs --preset=airbnb */*.js"
+    "lint": "standard"
   },
   "contributors": [
     "Fionn Kelleher <me@fionn.co>",
@@ -40,7 +40,7 @@
   "devDependencies": {
     "ansi-color": "0.2.1",
     "faucet": "0.0.1",
-    "jscs": "3.0.7",
+    "standard": "^8.6.0",
     "tape": "^4.6.2"
   }
 }
