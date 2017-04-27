@@ -3,6 +3,7 @@
 var path = require('path');
 var fs = require('fs');
 var net = require('net');
+var os = require('os');
 var tls = require('tls');
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
@@ -58,6 +59,17 @@ MockIrcd.prototype.close = function() {
 MockIrcd.prototype.getIncomingMsgs = function() {
     return this.incoming;
 };
+
+module.exports.getTempSocket = function() {
+    var tempDir = os.tmpdir();
+    var sockPath = path.join(tempDir, 'mock_ircd.sock');
+    try {
+        fs.unlinkSync(sockPath);
+    } catch (e) {
+        // ignore
+    }
+    return sockPath;
+}
 
 var fixtures = require('./data/fixtures');
 module.exports.getFixtures = function(testSuite) {
