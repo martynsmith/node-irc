@@ -130,5 +130,5 @@ reStructuredText format in the docs/ folder of this project, or online at [Read 
 If you find any issues with the documentation (or the module) please send a pull
 request or file an issue and we'll do our best to accommodate.
 
-You can also visit us on ##node-irc on freenode to discuss issues you're having
+You can also visit us on #node-irc on freenode to discuss issues you're having
 with the library, pull requests, or anything else related to node-irc.
