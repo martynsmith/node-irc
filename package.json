@@ -23,15 +23,16 @@
   },
   "license": "GPL-3.0",
   "dependencies": {
-    "irc-colors": "^1.1.0"
+    "irc-colors": "^1.1.0",
+    "rebuild": "^0.1.2"
   },
   "optionalDependencies": {
-    "iconv": "~2.2.1",
-    "node-icu-charset-detector": "~0.2.0"
+    "iconv": "~2.3.4",
+    "detect-character-encoding": "^0.8.0"
   },
   "devDependencies": {
     "faucet": "0.0.1",
-    "jscs": "1.9.0",
-    "tape": "^3.0.3"
+    "jscs": "^3.0.7",
+    "tape": "^4.11.0"
   }
 }
