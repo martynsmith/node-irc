@@ -1,7 +1,3 @@
-
-import { Socket } from "net";
-import { EventEmitter } from "events";
-
 /*
 Copyright 2019 The Matrix.org Foundation C.I.C.
 
@@ -18,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { Socket } from "net";
+import { EventEmitter } from "events";
 
 type CbFunction = (err: Error|null) => void;
 
