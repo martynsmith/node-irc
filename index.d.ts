@@ -90,8 +90,11 @@ export class Client extends EventEmitter {
     part(channel: string, reason: string, cb?: () => void): Promise<void>;
     ctcp(to: string, type: string, text: string): Promise<void>;
     whois(nick: string, cb: (whois: WhoisResponse) => void): void;
+    mode(channelOrNick: string, cb?: () => void): Promise<void>;
     setUserMode(mode: string, nick?: string): Promise<void>;
     names(channel: string, cb: (channelName: string, names: {[nick: string]: string}) => void): void;
     isUserPrefixMorePowerfulThan(prefix: string, testPrefix: string): boolean;
     _toLowerCase(str: string): string;
+    getSplitMessages(target: string, text: string): string[];
+    chanData(channel: string, create?: boolean): ChanData|undefined;
 }
