@@ -84,3 +84,49 @@ test ('splitting of long lines', function(t) {
     });
     mock.close();
 });
+
+test ('splitting of long lines with no maxLength defined.', function(t) {
+    var port = 6667;
+    var mock = testHelpers.MockIrcd(port, 'utf-8', false);
+    var client = new irc.Client('localhost', 'testbot', {
+        secure: false,
+        selfSigned: true,
+        port: port,
+        retryCount: 0,
+        debug: true
+    });
+
+    var group = testHelpers.getFixtures('_splitLongLines_no_max');
+    console.log(group.length);
+    t.plan(group.length);
+    group.forEach(function(item) {
+        t.deepEqual(client._splitLongLines(item.input, null, []), item.result);
+    });
+    mock.close();
+});
+
+test ('opt.messageSplit used when set', function(t) {
+    var port = 6667;
+    var mock = testHelpers.MockIrcd(port, 'utf-8', false);
+    var client = new irc.Client('localhost', 'testbot', {
+        secure: false,
+        selfSigned: true,
+        port: port,
+        retryCount: 0,
+        debug: true,
+        messageSplit: 10
+    });
+
+    var group = testHelpers.getFixtures('_speak');
+    t.plan(group.length);
+    group.forEach(function(item) {
+        client.maxLineLength = item.length;
+        client._splitLongLines = function(words, maxLength, destination) {
+            t.equal(maxLength, item.expected);
+            return [words];
+        }
+        client._speak('kind', 'target', 'test message');
+    });
+
+    mock.close();
+});
