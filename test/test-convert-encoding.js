@@ -9,9 +9,9 @@ test('irc.Client.convertEncoding old', function(assert) {
         var self = this;
 
         if (self.opt.encoding) {
-            var charsetDetector = require('node-icu-charset-detector');
+            var charsetDetector = require('detect-character-encoding');
             var Iconv = require('iconv').Iconv;
-            var charset = charsetDetector.detectCharset(str).toString();
+            var charset = charsetDetector(str).toString();
             var to = new Iconv(charset, self.opt.encoding);
 
             return to.convert(str);
