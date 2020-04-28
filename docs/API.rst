@@ -35,7 +35,8 @@ Client
             stripColors: false,
             channelPrefixes: "&#",
             messageSplit: 512,
-            encoding: ''
+            encoding: '', 
+            encodingFallback: null,
         }
 
     `secure` (SSL connection) can be a true value or an object (the kind of object
@@ -68,6 +69,10 @@ Client
 
     With `encoding` you can set IRC bot to convert all messages to specified character set. If you don't want to use
     this just leave value blank or false. Example values are UTF-8, ISO-8859-15, etc.
+
+    With `encodingFallback` you can choose what encoding to use for non-UTF-8 messages.
+    Leave null for no fallback. Do not set `encoding` when using this as it assumes incoming
+    messages are UTF-8 OR fallback encoding.
 
     Setting `debug` to true will emit timestamped messages to the console
     using `util.log` when certain events are fired.

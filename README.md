@@ -33,8 +33,8 @@ The `node-irc` library isn't well maintained and there are a number of issues wh
  - Add function for getting channel modes.
  - Workaround terrible RFC3484 rules which means that IPv6 DNS rotations would not be honoured.
  - Add `setUserMode` to set a user's mode.
+ - Addition of `encodingFallback` option which allows setting encoding to use for non-UTF-8 encoded messages.
  - Addition of `onNickConflict()` option which is called on `err_nicknameinuse`. This function should return the next nick to try. The function defaults to suffixing monotonically increasing integers. Usage:
-
    ```javascript
    new Client("server.com", "MyNick", {
       onNickConflict: function() {
