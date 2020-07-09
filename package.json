@@ -26,7 +26,7 @@
   "dependencies": {
     "irc-colors": "^1.1.0",
     "rebuild": "^0.1.2",
-    "is-utf8": "^0.2.1"
+    "utf-8-validate": "^5.0.2"
   },
   "optionalDependencies": {
     "iconv": "~2.3.4",
