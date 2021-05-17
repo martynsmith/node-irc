@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.wrap = exports.codes = void 0;
-exports.codes = {
+export const codes = {
     white: '\u000300',
     black: '\u000301',
     dark_blue: '\u000302',
@@ -18,16 +15,17 @@ exports.codes = {
     light_magenta: '\u000313',
     gray: '\u000314',
     light_gray: '\u000315',
+
     bold: '\u0002',
     underline: '\u001f',
+
     reset: '\u000f'
 };
-function wrap(color, text, resetColor) {
-    if (exports.codes[color]) {
-        text = exports.codes[color] + text;
-        text += (exports.codes[resetColor]) ? exports.codes[resetColor] : exports.codes.reset;
+
+export function wrap(color: keyof(typeof codes), text: string, resetColor: keyof(typeof codes)) {
+    if (codes[color]) {
+        text = codes[color] + text;
+        text += (codes[resetColor]) ? codes[resetColor] : codes.reset;
     }
     return text;
 }
-exports.wrap = wrap;
-//# sourceMappingURL=colors.js.map
