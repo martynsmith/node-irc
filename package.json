@@ -12,7 +12,7 @@
   "contributors": [
     "node-irc contributors"
   ],
-  "types": "index.d.ts",
+  "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "http://github.com/matrix-org/node-irc"
