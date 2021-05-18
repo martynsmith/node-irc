@@ -166,9 +166,19 @@ export class Client extends EventEmitter {
      */
     private motd?: string = "";
     private channelListState?: ChanListItem[];
+
+    /**
+     * This will either be the requested nick or the actual nickname.
+     */
+    private currentNick: string;
+
+    get nick() {
+        return this.currentNick;
+    }
     
-    constructor (private server: string, private nick: string, opt: IrcClientOpts) {
+    constructor (private server: string, requestedNick: string, opt: IrcClientOpts) {
         super();
+        this.currentNick = requestedNick;
         /**
          * This promise is used to block new sends until the previous one completes.
          */
@@ -262,7 +272,7 @@ export class Client extends EventEmitter {
                 // Set nick to whatever the server decided it really is
                 // (normally this is because you chose something too long and
                 // the server has shortened it
-                this.nick = message.args[0];
+                this.currentNick = message.args[0];
                 // Note our hostmask to use it in splitting long messages.
                 // We don't send our hostmask when issuing PRIVMSGs or NOTICEs,
                 // of course, but rather the servers on the other side will
@@ -274,7 +284,7 @@ export class Client extends EventEmitter {
                 this._updateMaxLineLength();
                 this.emit('registered', message);
                 this.whois(this.nick, (args) => {
-                    this.nick = args.nick;
+                    this.currentNick = args.nick;
                     this.hostMask = args.user + "@" + args.host;
                     this._updateMaxLineLength();
                 });
@@ -405,7 +415,7 @@ export class Client extends EventEmitter {
                 }
 
                 this._send('NICK', nextNick);
-                this.nick = nextNick;
+                this.currentNick = nextNick;
                 this._updateMaxLineLength();
                 break;
             case 'PING':
@@ -492,7 +502,7 @@ export class Client extends EventEmitter {
             case 'NICK':
                 if (message.nick == this.nick) {
                     // the user just changed their own nick
-                    this.nick = message.args[0];
+                    this.currentNick = message.args[0];
                     this._updateMaxLineLength();
                 }
 
@@ -844,7 +854,7 @@ export class Client extends EventEmitter {
                 // the nick they wanted.
                 var rndNick = "enick_" + Math.floor(Math.random() * 1000) // random 3 digits
                 this._send('NICK', rndNick);
-                this.nick = rndNick;
+                this.currentNick = rndNick;
                 this._updateMaxLineLength();
                 break;
 
@@ -914,7 +924,7 @@ export class Client extends EventEmitter {
         if (this.opt.debug)
             util.log('Sending irc NICK/USER');
         this._send('NICK', this.nick);
-        this.nick = this.nick;
+        this.currentNick = this.nick;
         this._updateMaxLineLength();
         this._send('USER', this.opt.userName, '8', '*', this.opt.realName);
         this.emit('connect');
