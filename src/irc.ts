@@ -1010,8 +1010,7 @@ export class Client extends EventEmitter {
                 };
             }
 
-
-            this.conn = tls.connect(connectionOpts, () => {
+            this.conn = tls.connect(secureOpts, () => {
                 if (this.conn === undefined) {
                     throw Error('Conn was not defined');
                 }
@@ -1030,10 +1029,12 @@ export class Client extends EventEmitter {
                             if (!this.opt.selfSigned) {
                                 return this.conn.destroy(this.conn.authorizationError);
                             }
+                            break;
                         case 'CERT_HAS_EXPIRED':
                             if (!this.opt.certExpired) {
                                 return this.conn.destroy(this.conn.authorizationError);
                             }
+                            break;
                         default:
                             // Fail on other errors
                             return this.conn.destroy(this.conn.authorizationError)

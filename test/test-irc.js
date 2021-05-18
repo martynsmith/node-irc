@@ -21,9 +21,9 @@ test('connect, register and quit, securely, with secure object', function(t) {
 });
 
 function runTests(t, isSecure, useSecureObject) {
-    var port = isSecure ? 6697 : 6667;
-    var mock = testHelpers.MockIrcd(port, 'utf-8', isSecure);
-    var client;
+    const port = isSecure ? 6697 : 6667;
+    const mock = testHelpers.MockIrcd(port, 'utf-8', isSecure);
+    let client;
     if (isSecure) {
         client = new irc.Client( useSecureObject ? 'notlocalhost' : 'localhost', 'testbot', {
             secure: useSecureObject ? {
@@ -31,12 +31,13 @@ function runTests(t, isSecure, useSecureObject) {
                 port: port,
                 rejectUnauthorized: false
             } : true,
+            port,
             selfSigned: true,
             retryCount: 0,
             debug: true
         });
     } else {
-        var client = new irc.Client('localhost', 'testbot', {
+        client = new irc.Client('localhost', 'testbot', {
             secure: isSecure,
             selfSigned: true,
             port: port,
@@ -57,7 +58,7 @@ function runTests(t, isSecure, useSecureObject) {
     });
 
     mock.on('end', function() {
-        var msgs = mock.getIncomingMsgs();
+        const msgs = mock.getIncomingMsgs();
 
         for (var i = 0; i < msgs.length; i++) {
             t.equal(msgs[i], expected.sent[i][0], expected.sent[i][1]);
@@ -67,9 +68,9 @@ function runTests(t, isSecure, useSecureObject) {
 }
 
 test ('splitting of long lines', function(t) {
-    var port = 6667;
-    var mock = testHelpers.MockIrcd(port, 'utf-8', false);
-    var client = new irc.Client('localhost', 'testbot', {
+    const port = 6667;
+    const mock = testHelpers.MockIrcd(port, 'utf-8', false);
+    const client = new irc.Client('localhost', 'testbot', {
         secure: false,
         selfSigned: true,
         port: port,
@@ -77,7 +78,7 @@ test ('splitting of long lines', function(t) {
         debug: true
     });
 
-    var group = testHelpers.getFixtures('_splitLongLines');
+    const group = testHelpers.getFixtures('_splitLongLines');
     t.plan(group.length);
     group.forEach(function(item) {
         t.deepEqual(client._splitLongLines(item.input, item.maxLength, []), item.result);
