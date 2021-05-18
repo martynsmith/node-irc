@@ -458,17 +458,17 @@ export class Client extends EventEmitter {
                 this._casemap(message, 0);
                 from = message.nick;
                 to = message.args[0];
-                let text = message.args[1] || '';
-                if (text[0] === '\u0001' && text.lastIndexOf('\u0001') > 0) {
-                    if (from && to && text) {
-                        this._handleCTCP(from, to, text, 'notice', message);
+                let noticeText = message.args[1] || '';
+                if (noticeText[0] === '\u0001' && noticeText.lastIndexOf('\u0001') > 0) {
+                    if (from && to && noticeText) {
+                        this._handleCTCP(from, to, noticeText, 'notice', message);
                     }
                     break;
                 }
-                this.emit('notice', from, to, text, message);
+                this.emit('notice', from, to, noticeText, message);
 
                 if (this.opt.debug && to == this.nick)
-                    util.log('GOT NOTICE from ' + (from ? '"' + from + '"' : 'the server') + ': "' + text + '"');
+                    util.log('GOT NOTICE from ' + (from ? '"' + from + '"' : 'the server') + ': "' + noticeText + '"');
                 break;
             case 'MODE':
                 this._casemap(message, 0);
@@ -775,23 +775,23 @@ export class Client extends EventEmitter {
                 this._casemap(message, 0);
                 from = message.nick;
                 to = message.args[0];
-                text = message.args[1] || '';
-                if (from && text[0] === '\u0001' && text.lastIndexOf('\u0001') > 0) {
-                    this._handleCTCP(from, to, text, 'privmsg', message);
+                let msgText = message.args[1] || '';
+                if (from && msgText[0] === '\u0001' && msgText.lastIndexOf('\u0001') > 0) {
+                    this._handleCTCP(from, to, msgText, 'privmsg', message);
                     break;
                 }
-                this.emit('message', from, to, text, message);
+                this.emit('message', from, to, msgText, message);
                 if (this.supportedState.channel.types.indexOf(to.charAt(0)) !== -1) {
-                    this.emit('message#', from, to, text, message);
-                    this.emit('message' + to, from, text, message);
+                    this.emit('message#', from, to, msgText, message);
+                    this.emit('message' + to, from, msgText, message);
                     if (to != to.toLowerCase()) {
-                        this.emit('message' + to.toLowerCase(), from, text, message);
+                        this.emit('message' + to.toLowerCase(), from, msgText, message);
                     }
                 }
-                if (to.toUpperCase() === this.nick.toUpperCase()) this.emit('pm', from, text, message);
+                if (to.toUpperCase() === this.nick.toUpperCase()) this.emit('pm', from, msgText, message);
 
                 if (this.opt.debug && to == this.nick)
-                    util.log('GOT MESSAGE from ' + from + ': ' + text);
+                    util.log('GOT MESSAGE from ' + from + ': ' + msgText);
                 break;
             case 'INVITE':
                 this._casemap(message, 1);
