@@ -1,7 +1,7 @@
 const irc = require('../lib/irc');
 const test = require('tape');
 const testHelpers = require('./helpers');
-const { Iconv } = require('iconv-lite');
+const Iconv = require('iconv-lite');
 const chardet = require('chardet');
 const checks = testHelpers.getFixtures('convert-encoding');
 
@@ -10,9 +10,7 @@ test('irc.Client.convertEncoding old', (assert) => {
     const convertEncoding = ((str) => {
         if (self.opt.encoding) {
             const charset = chardet.detect(str);
-            const to = new Iconv(charset, this.opt.encoding);
-
-            return to.convert(str);
+            return Iconv.encode(Iconv.decode(Buffer.from(str), charset), this.opt.encoding);
         } else {
             return str;
         }

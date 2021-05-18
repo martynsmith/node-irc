@@ -24,13 +24,13 @@ function runTests(t, isSecure, useSecureObject) {
     var port = isSecure ? 6697 : 6667;
     var mock = testHelpers.MockIrcd(port, 'utf-8', isSecure);
     var client;
-    if (isSecure && useSecureObject) {
-        client = new irc.Client('notlocalhost', 'testbot', {
-            secure: {
+    if (isSecure) {
+        client = new irc.Client( useSecureObject ? 'notlocalhost' : 'localhost', 'testbot', {
+            secure: useSecureObject ? {
                 host: 'localhost',
                 port: port,
                 rejectUnauthorized: false
-            },
+            } : true,
             selfSigned: true,
             retryCount: 0,
             debug: true
