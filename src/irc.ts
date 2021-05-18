@@ -999,31 +999,31 @@ export class Client extends EventEmitter {
                         if (options.all) {
                             // @types/node doesn't provision for an all callback response, so we have to
                             // do some unsafe typing here.
-                            return callback(err, addresses as any, null as any);
+                            return (callback as any)(err, addresses);
                         }
                         else {
-                            return callback(err, '', 4);
+                            return (callback as any)(err, null, null);
                         }
                     }
 
                     if (options.all) {
-                        const shuffled = [];
+                        const shuffled: dns.LookupAddress[] = [];
                         while (Array.isArray(addresses) && addresses.length) {
                             var i = randomInt(addresses.length);
                             shuffled.push(addresses.splice(i, 1)[0]);
                         }
                         // @types/node doesn't provision for an all callback response, so we have to
                         // do some unsafe typing here.
-                        callback(err, shuffled as any, undefined as any);
+                        (callback as any)(err, shuffled);
                     }
                     else {
-                        const chosen = addresses[randomInt(addresses.length)];
+                        const chosen = addresses[randomInt(addresses.length)] as dns.LookupAddress;
                         if (typeof chosen === 'object') {
 
                         }
                         // @types/node doesn't provision for an all callback response, so we have to
                         // do some unsafe typing here.
-                        callback(err, typeof chosen === 'object' ? chosen.address : chosen, undefined as any);
+                        (callback as any)(err, chosen.address, chosen.family);
                     }
                 });
             };
