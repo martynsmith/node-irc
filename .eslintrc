@@ -1,7 +1,9 @@
 // taken from https://github.com/matrix-org/matrix-appservice-irc/blob/d69e4d1c40f9856812c948e4dc17e7747273fd67/.eslintrc
 {
     "parser": "@typescript-eslint/parser",
-    "plugins": ["@typescript-eslint"],
+    "plugins": [
+        "@typescript-eslint"
+    ],
     "parserOptions": {
       "ecmaVersion": 9,
       "ecmaFeatures": {
@@ -19,7 +21,7 @@
     ],
     "rules": {
       "camelcase": 0,
-      "consistent-return": 2,
+      "consistent-return": "off",
       "curly": 1,
       "default-case": 2,
       "guard-for-in": 2,
@@ -93,7 +95,8 @@
         "FunctionDeclaration": {"parameters": "first"},
         "FunctionExpression": {"parameters": "first"},
         "SwitchCase": 1}
-      ]
+      ],
+      "no-control-regex": "off",
     }
   }
   
