@@ -1,27 +1,25 @@
-var irc = require('../lib/irc');
-var test = require('tape');
-var testHelpers = require('./helpers');
-var checks = testHelpers.getFixtures('convert-encoding');
-var bindTo = { opt: { encoding: 'utf-8' } };
+const irc = require('../lib/irc');
+const test = require('tape');
+const testHelpers = require('./helpers');
+const { Iconv } = require('iconv-lite');
+const chardet = require('chardet');
+const checks = testHelpers.getFixtures('convert-encoding');
 
-test('irc.Client.convertEncoding old', function(assert) {
-    var convertEncoding = function(str) {
-        var self = this;
-
+const bindTo = { opt: { encoding: 'utf-8' } };
+test('irc.Client.convertEncoding old', (assert) => {
+    const convertEncoding = ((str) => {
         if (self.opt.encoding) {
-            const detectCharset = require('detect-character-encoding');
-            const Iconv = require('iconv').Iconv;
-            const charset = detectCharset(str).encoding;
-            const to = new Iconv(charset, self.opt.encoding);
+            const charset = chardet.detect(str);
+            const to = new Iconv(charset, this.opt.encoding);
 
             return to.convert(str);
         } else {
             return str;
         }
-    }.bind(bindTo);
+    }).bind(bindTo);
 
-    checks.causesException.forEach(function iterate(line) {
-        var causedException = false;
+    checks.causesException.forEach((line) => {
+        let causedException = false;
         try {
             convertEncoding(line);
         } catch (e) {
@@ -35,10 +33,10 @@ test('irc.Client.convertEncoding old', function(assert) {
 });
 
 test('irc.Client.convertEncoding', function(assert) {
-    var convertEncoding = irc.Client.prototype.convertEncoding.bind(bindTo);
+    const convertEncoding = irc.Client.prototype.convertEncoding.bind(bindTo);
 
-    checks.causesException.forEach(function iterate(line) {
-        var causedException = false;
+    checks.causesException.forEach((line) => {
+        let causedException = false;
 
         try {
             convertEncoding(line);

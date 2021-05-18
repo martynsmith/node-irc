@@ -24,17 +24,14 @@
   },
   "license": "GPL-3.0",
   "dependencies": {
-    "irc-colors": "^1.1.0",
-    "rebuild": "^0.1.2",
-    "utf-8-validate": "^5.0.2"
-  },
-  "optionalDependencies": {
-    "iconv": "~2.3.4",
-    "detect-character-encoding": "^0.8.0"
+    "irc-colors": "^1.5.0",
+    "utf-8-validate": "^5.0.2",
+    "iconv-lite": "^0.6.2",
+    "chardet": "^1.3.0"
   },
   "devDependencies": {
     "faucet": "0.0.1",
     "jscs": "^3.0.7",
-    "tape": "^4.11.0"
+    "tape": "^5.2.2"
   }
 }
