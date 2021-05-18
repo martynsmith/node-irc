@@ -1501,7 +1501,7 @@ export class Client extends EventEmitter {
         if (!msg.args || !msg.args[index] || msg.args[index][0] !== "#") {
             return;
         }
-        msg.args[index] = this._toLowerCase(msg.args[index]);
+        msg.args[index] = this.toLowerCase(msg.args[index]);
     }
 
     public toLowerCase(str: string): string {
