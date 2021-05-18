@@ -1,25 +1,39 @@
-var ircColors = require('irc-colors');
-var replyFor = require('./codes');
+import * as ircColors from 'irc-colors';
+import {CommandType, replyCodes} from './codes';
+
+export interface Message {
+    prefix?: string;
+    server?: string;
+    nick?: string;
+    user?: string;
+    host?: string;
+    args: string[];
+    command?: string;
+    rawCommand?: string;
+    commandType: CommandType;
+};
 
 /**
  * parseMessage(line, stripColors)
  *
  * takes a raw "line" from the IRC server and turns it into an object with
  * useful keys
- * @param {String} line Raw message from IRC server.
- * @param {Boolean} stripColors If true, strip IRC colors.
- * @return {Object} A parsed message object.
+ * @param line Raw message from IRC server.
+ * @param stripColors If true, strip IRC colors.
+ * @return A parsed message object.
  */
-module.exports = function parseMessage(line, stripColors) {
-    var message = {};
-    var match;
+export function parseMessage(line: string, stripColors: boolean): Message {
+    const message: Message = {
+        args: [],
+        commandType: 'normal',
+    };
 
     if (stripColors) {
         line = ircColors.stripColorsAndStyle(line);
     }
 
     // Parse prefix
-    match = line.match(/^:([^ ]+) +/);
+    let match = line.match(/^:([^ ]+) +/);
     if (match) {
         message.prefix = match[1];
         line = line.replace(/^:[^ ]+ +/, '');
@@ -36,22 +50,22 @@ module.exports = function parseMessage(line, stripColors) {
 
     // Parse command
     match = line.match(/^([^ ]+) */);
-    message.command = match[1];
-    message.rawCommand = match[1];
-    message.commandType = 'normal';
+    message.command = match?.[1];
+    message.rawCommand = match?.[1];
     line = line.replace(/^[^ ]+ +/, '');
-
-    if (replyFor[message.rawCommand]) {
-        message.command     = replyFor[message.rawCommand].name;
-        message.commandType = replyFor[message.rawCommand].type;
+    if (message.rawCommand && replyCodes[message.rawCommand]) {
+        message.command     = replyCodes[message.rawCommand].name;
+        message.commandType = replyCodes[message.rawCommand].type;
     }
 
-    message.args = [];
-    var middle, trailing;
+    let middle, trailing;
 
     // Parse parameters
     if (line.search(/^:|\s+:/) != -1) {
         match = line.match(/(.*?)(?:^:|\s+:)(.*)/);
+        if (!match) {
+            throw Error('Invalid format, could not parse parameters');
+        }
         middle = match[1].trimRight();
         trailing = match[2];
     }

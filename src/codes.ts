@@ -1,4 +1,6 @@
-module.exports = {
+export type CommandType = 'reply'|'error'|'normal';
+
+export const replyCodes = {
    '001': {
       name: 'rpl_welcome',
       type: 'reply'
@@ -229,6 +231,10 @@ module.exports = {
    },
    329: {
       name: 'rpl_creationtime',
+      type: 'reply'
+   },
+   330: {
+      name: 'rpl_whoisaccount',
       type: 'reply'
    },
    331: {
@@ -543,4 +549,4 @@ module.exports = {
       name: 'err_usersdontmatch',
       type: 'error'
    }
-};
+} as {[id: string]: {name: string, type: CommandType}};

@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+      "incremental": true,
+      "target": "ES2019",
+      "module": "commonjs",
+      "allowJs": true,
+      "checkJs": false,
+      "declaration": true,
+      "sourceMap": true,
+      "outDir": "./lib",
+      "composite": false,
+      "strict": true,
+      "esModuleInterop": true,
+      "strictNullChecks": true,
+      "baseUrl": "./src",
+      "paths": {
+        "*": ["./typings/*"]
+      }
+    },
+    "include": [
+      "src/**/*"
+    ],
+    "exclude": [
+      "test/**/*",
+      "example/**/*",
+      "app.js"
+    ]
+  }
+  
