@@ -66,7 +66,7 @@ export interface IrcClientOpts {
     userName?: string;
     realName?: string;
     port?: number;
-    family?: 4|6;
+    family?: 4|6|null;
     bustRfc3484?: boolean;
     localAddress?: string|null;
     localPort?: number|null;
@@ -139,19 +139,39 @@ interface IrcClientOptInternal extends IrcClientOpts {
     };
 }
 
+interface IrcSupported {
+    channel: {
+        idlength: {[key: string]: string};
+        length: number;
+        limit: {[key: string]: number};
+        modes: { a: string; b: string; c: string; d: string;},
+        types: string;
+    };
+    maxlist: {[key: string]: number};
+    maxtargets:{[key: string]: number};
+    modes: number;
+    nicklength: number;
+    topiclength: number;
+    kicklength: number;
+    usermodes: string;
+    usermodepriority: string; // E.g "ov"
+    // http://www.irc.org/tech_docs/005.html
+    casemapping: 'ascii'|'rfc1459'|'strict-rfc1459';
+    
+}
+
 
 export class Client extends EventEmitter {
     private sendingPromise = Promise.resolve();
     private lastSendTime = 0;
     private nickMod = 0;
     private opt: IrcClientOptInternal;
-    private supported: any;
     private hostMask = '';
     private prevClashNick = '';
     private maxLineLength: number = 0;
-
     public conn?: Socket|tls.TLSSocket;
     private requestedDisconnect = false;
+    private supportedState: IrcSupported;
 
     /**
      * Cached data
@@ -175,6 +195,12 @@ export class Client extends EventEmitter {
     get nick() {
         return this.currentNick;
     }
+
+    get supported(): IrcSupported {
+        return {
+            ...this.supportedState,
+        };
+    }
     
     constructor (private server: string, requestedNick: string, opt: IrcClientOpts) {
         super();
@@ -189,7 +215,6 @@ export class Client extends EventEmitter {
             userName: 'nodebot',
             realName: 'nodeJS IRC client',
             port: 6667,
-            family: 4,
             bustRfc3484: false,
             localAddress: null,
             localPort: null,
@@ -218,23 +243,24 @@ export class Client extends EventEmitter {
               user: ''
             },
             ...opt,
+            family: opt.family ? opt.family : 4,
         };
         this.nickMod = opt.nickMod ?? 0;
     
         // Features supported by the server
         // (initial values are RFC 1459 defaults. Zeros signify
         // no default or unlimited value)
-        this.supported = {
+        this.supportedState = {
             channel: {
-                idlength: [],
+                idlength: {},
                 length: 200,
-                limit: [],
+                limit: {},
                 modes: { a: '', b: '', c: '', d: ''},
                 types: this.opt.channelPrefixes
             },
             kicklength: 0,
-            maxlist: [],
-            maxtargets: [],
+            maxlist: {},
+            maxtargets: {},
             modes: 3,
             nicklength: 9,
             topiclength: 0,
@@ -290,7 +316,7 @@ export class Client extends EventEmitter {
                 });
                 break;
             case 'rpl_myinfo':
-                this.supported.usermodes = message.args[3];
+                this.supportedState.usermodes = message.args[3];
                 break;
             case 'rpl_isupport':
                 message.args.forEach((arg) => {
@@ -301,54 +327,55 @@ export class Client extends EventEmitter {
                         var value = match[2];
                         switch (param) {
                             case 'CASEMAPPING':
-                                this.supported.casemapping = value;
+                                // We assume this is fine.
+                                this.supportedState.casemapping = value as any;
                                 break;
                             case 'CHANLIMIT':
                                 value.split(',').forEach((val) => {
                                     const [val0, val1] = val.split(':');
-                                    this.supported.channel.limit[val0] = parseInt(val1);
+                                    this.supportedState.channel.limit[val0] = parseInt(val1);
                                 });
                                 break;
                             case 'CHANMODES':
                                 const values = value.split(',');
-                                const type = ['a', 'b', 'c', 'd'];
+                                const type: ['a','b','c','d'] = ['a', 'b', 'c', 'd'];
                                 for (var i = 0; i < type.length; i++) {
-                                    this.supported.channel.modes[type[i]] += values[i];
+                                    this.supportedState.channel.modes[type[i]] += values[i];
                                 }
                                 break;
                             case 'CHANTYPES':
-                                this.supported.channel.types = value;
+                                this.supportedState.channel.types = value;
                                 break;
                             case 'CHANNELLEN':
-                                this.supported.channel.length = parseInt(value);
+                                this.supportedState.channel.length = parseInt(value);
                                 break;
                             case 'IDCHAN':
                                 value.split(',').forEach((val) => {
                                     const [val0, val1] = val.split(':');
-                                    this.supported.channel.idlength[val0] = val1;
+                                    this.supportedState.channel.idlength[val0] = val1;
                                 });
                                 break;
                             case 'KICKLEN':
-                                this.supported.kicklength = value;
+                                this.supportedState.kicklength = parseInt(value);
                                 break;
                             case 'MAXLIST':
                                 value.split(',').forEach((val) => {
                                     const [val0, val1] = val.split(':');
-                                    this.supported.maxlist[val0] = parseInt(val1);
+                                    this.supportedState.maxlist[val0] = parseInt(val1);
                                 });
                                 break;
                             case 'NICKLEN':
-                                this.supported.nicklength = parseInt(value);
+                                this.supportedState.nicklength = parseInt(value);
                                 break;
                             case 'PREFIX':
                                 match = value.match(/\((.*?)\)(.*)/);
                                 if (match) {
-                                    this.supported.usermodepriority = match[1];
+                                    this.supportedState.usermodepriority = match[1];
                                     const match1 = match[1].split('');
                                     const match2 = match[2].split('');
                                     while (match1.length) {
                                         this.modeForPrefix[match2[0]] = match1[0];
-                                        this.supported.channel.modes.b += match1[0];
+                                        this.supportedState.channel.modes.b += match1[0];
                                         const idx = match1.shift();
                                         if (idx) {
                                             const result = match2.shift();
@@ -365,11 +392,13 @@ export class Client extends EventEmitter {
                                 value.split(',').forEach((val) => {
                                     let [ key, value ] = val.split(':');
                                     value = value ?? parseInt(value);
-                                    this.supported.maxtargets[key] = value;
+                                    if (typeof value === 'number') {
+                                        this.supportedState.maxtargets[key] = value;
+                                    }
                                 });
                                 break;
                             case 'TOPICLEN':
-                                this.supported.topiclength = parseInt(value);
+                                this.supportedState.topiclength = parseInt(value);
                                 break;
                         }
                     }
@@ -752,7 +781,7 @@ export class Client extends EventEmitter {
                     break;
                 }
                 this.emit('message', from, to, text, message);
-                if (this.supported.channel.types.indexOf(to.charAt(0)) !== -1) {
+                if (this.supportedState.channel.types.indexOf(to.charAt(0)) !== -1) {
                     this.emit('message#', from, to, text, message);
                     this.emit('message' + to, from, text, message);
                     if (to != to.toLowerCase()) {
@@ -1140,7 +1169,7 @@ export class Client extends EventEmitter {
         }, this.opt.retryDelay);
     }
 
-    public disconnect(messageOrCallback: string|(() => void), callback?: () => void) {
+    public disconnect(messageOrCallback?: string|(() => void), callback?: () => void) {
         if (!this.conn) {
             throw Error('Cannot send, not connected');
         }
@@ -1258,14 +1287,14 @@ export class Client extends EventEmitter {
     public isUserPrefixMorePowerfulThan(prefix: string, testPrefix: string): boolean {
         const mode = this.modeForPrefix[prefix];
         const testMode = this.modeForPrefix[testPrefix];
-        if (this.supported.usermodepriority.length === 0 || !mode || !testMode) {
+        if (this.supportedState.usermodepriority.length === 0 || !mode || !testMode) {
             return false;
         }
-        if (this.supported.usermodepriority.indexOf(mode) === -1 || this.supported.usermodepriority.indexOf(testMode) === -1) {
+        if (this.supportedState.usermodepriority.indexOf(mode) === -1 || this.supportedState.usermodepriority.indexOf(testMode) === -1) {
             return false;
         }
         // usermodepriority is a sorted string (lower index = more powerful)
-        return this.supported.usermodepriority.indexOf(mode) < this.supported.usermodepriority.indexOf(testMode);
+        return this.supportedState.usermodepriority.indexOf(mode) < this.supportedState.usermodepriority.indexOf(testMode);
     }
 
     private _splitLongLines(words: string, maxLength: number, destination: string[] = []): string[] {
@@ -1338,7 +1367,7 @@ export class Client extends EventEmitter {
         return this._splitMessage(target, text);
     }
 
-    public whois(nick: string, callback: (info: WhoisResponse) => void) {
+    public whois(nick: string, callback?: (info: WhoisResponse) => void) {
         if (typeof callback === 'function') {
             const callbackWrapper = (info: WhoisResponse) => {
                 if (info.nick.toLowerCase() == nick.toLowerCase()) {
@@ -1357,11 +1386,11 @@ export class Client extends EventEmitter {
     //  accept channelName as the first argument. An object with each key a
     //  user nick and each value '@' if they are a channel operator is passed
     //  as the second argument to the callback.
-    public names(channel: string, callback: (callbackChannel: string, ...args: unknown[]) => void) {
+    public names(channel: string, callback?: (callbackChannel: string, names: {[nick: string]: string}) => void) {
         if (typeof callback === 'function') {
-            const callbackWrapper = (callbackChannel: string, ...args: unknown[]) => {
+            const callbackWrapper = (callbackChannel: string, names: {[nick: string]: string}) => {
                 if (callbackChannel === channel) {
-                    return callback(callbackChannel, ...args);
+                    return callback(callbackChannel, names);
                 }
             }
             this.addListener('names', callbackWrapper);
@@ -1370,7 +1399,7 @@ export class Client extends EventEmitter {
     }
 
     // Send a MODE command
-    public mode(channel: string, callback: (callbackChannel: string, ...args: unknown[]) => void) {
+    public mode(channel: string, callback?: (callbackChannel: string, ...args: unknown[]) => void) {
         if (typeof callback === 'function') {
             const callbackWrapper = (callbackChannel: string, ...args: unknown[]) => {
                 if (callbackChannel === channel) {
@@ -1384,8 +1413,7 @@ export class Client extends EventEmitter {
 
     // Set user modes. If nick is falsey, your own user modes will be changed.
     // E.g. to set "+RiG" on yourself: setUserMode("+RiG")
-    public setUserMode(mode: string, nick: string): Promise<void> {
-        nick = nick || this.nick;
+    public setUserMode(mode: string, nick: string = this.currentNick): Promise<void> {
         return this.send('MODE', nick, mode);
     }
 
@@ -1476,21 +1504,21 @@ export class Client extends EventEmitter {
         msg.args[index] = this._toLowerCase(msg.args[index]);
     }
 
-    private _toLowerCase(str: string): string {
+    public toLowerCase(str: string): string {
         // http://www.irc.org/tech_docs/005.html
         const knownCaseMappings = ['ascii', 'rfc1459', 'strict-rfc1459'];
-        if (knownCaseMappings.indexOf(this.supported.casemapping) === -1) {
+        if (knownCaseMappings.indexOf(this.supportedState.casemapping) === -1) {
             return str;
         }
         let lower = str.toLowerCase();
-        if (this.supported.casemapping === 'rfc1459') {
+        if (this.supportedState.casemapping === 'rfc1459') {
             lower = lower.
             replace(/\[/g, '{').
             replace(/\]/g, '}').
             replace(/\\/g, '|').
             replace(/\^/g, '~');
         }
-        else if (this.supported.casemapping === 'strict-rfc1459') {
+        else if (this.supportedState.casemapping === 'strict-rfc1459') {
             lower = lower.
             replace(/\[/g, '{').
             replace(/\]/g, '}').
