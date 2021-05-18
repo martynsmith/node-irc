@@ -1,7 +1,8 @@
 /*
     irc.js - Node JS IRC client library
 
-    (C) Copyright Martyn Smith 2010
+    Copyright 2010 Martyn Smith
+    Copyright 2020-2021 The Matrix.org Foundation C.I.C
 
     This library is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
