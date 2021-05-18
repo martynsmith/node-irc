@@ -1108,18 +1108,6 @@ export class Client extends EventEmitter {
         });
     }
 
-    private async writeAsync(buffer: Buffer, cb?: ((err?: Error | undefined) => void) | undefined) {
-        if (!this.conn) {
-            throw Error('Conn is not defined');
-        }
-        return new Promise<void>((res, rej) => this.conn?.write(buffer, (err) => {
-            if (err) {
-                rej(err);
-            }
-            res();
-        }));
-    }
-
     private reconnect(retryCount: number) {
         if (this.requestedDisconnect)
             return;
