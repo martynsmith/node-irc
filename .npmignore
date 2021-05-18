@@ -1,0 +1,1 @@
+# Because yarn is [hot garbage](https://github.com/yarnpkg/yarn/issues/5235#issuecomment-571206092), we need an empty .npmignore file
