@@ -11,7 +11,7 @@ export interface Message {
     command?: string;
     rawCommand?: string;
     commandType: CommandType;
-};
+}
 
 /**
  * parseMessage(line, stripColors)
@@ -54,14 +54,14 @@ export function parseMessage(line: string, stripColors: boolean): Message {
     message.rawCommand = match?.[1];
     line = line.replace(/^[^ ]+ +/, '');
     if (message.rawCommand && replyCodes[message.rawCommand]) {
-        message.command     = replyCodes[message.rawCommand].name;
+        message.command = replyCodes[message.rawCommand].name;
         message.commandType = replyCodes[message.rawCommand].type;
     }
 
     let middle, trailing;
 
     // Parse parameters
-    if (line.search(/^:|\s+:/) != -1) {
+    if (line.search(/^:|\s+:/) !== -1) {
         match = line.match(/(.*?)(?:^:|\s+:)(.*)/);
         if (!match) {
             throw Error('Invalid format, could not parse parameters');
@@ -73,11 +73,9 @@ export function parseMessage(line: string, stripColors: boolean): Message {
         middle = line;
     }
 
-    if (middle.length)
-        message.args = middle.split(/ +/);
+    if (middle.length) {message.args = middle.split(/ +/);}
 
-    if (typeof (trailing) != 'undefined' && trailing.length)
-        message.args.push(trailing);
+    if (typeof (trailing) !== 'undefined' && trailing.length) {message.args.push(trailing);}
 
     return message;
 }

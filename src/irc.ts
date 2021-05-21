@@ -77,13 +77,13 @@ export interface IrcClientOpts {
     channels?: string[];
     retryCount?: number|null;
     retryDelay?: number;
-    secure?: boolean|object;
+    secure?: boolean|tls.ConnectionOptions;
     selfSigned?: boolean;
     certExpired?: boolean;
     floodProtection?: boolean;
     floodProtectionDelay?: number;
     sasl?: boolean;
-    saslType?: string;
+    saslType?: 'PLAIN'|'EXTERNAL';
     stripColors?: boolean;
     channelPrefixes?: string;
     messageSplit?: number;
@@ -119,13 +119,13 @@ interface IrcClientOptInternal extends IrcClientOpts {
     channels: string[];
     retryCount: number|null;
     retryDelay: number;
-    secure: boolean|object;
+    secure: boolean|tls.ConnectionOptions;
     selfSigned: boolean;
     certExpired: boolean;
     floodProtection: boolean;
     floodProtectionDelay: number;
     sasl: boolean;
-    saslType: string;
+    saslType: 'PLAIN'|'EXTERNAL';
     stripColors: boolean;
     channelPrefixes: string;
     messageSplit: number;
@@ -157,7 +157,8 @@ interface IrcSupported {
     usermodepriority: string; // E.g "ov"
     // http://www.irc.org/tech_docs/005.html
     casemapping: 'ascii'|'rfc1459'|'strict-rfc1459';
-    
+    extra: string[];
+
 }
 
 
@@ -168,7 +169,7 @@ export class Client extends EventEmitter {
     private opt: IrcClientOptInternal;
     private hostMask = '';
     private prevClashNick = '';
-    private maxLineLength: number = 0;
+    private maxLineLength = 0;
     public conn?: Socket|tls.TLSSocket;
     private requestedDisconnect = false;
     private supportedState: IrcSupported;
@@ -201,7 +202,7 @@ export class Client extends EventEmitter {
             ...this.supportedState,
         };
     }
-    
+
     constructor (private server: string, requestedNick: string, opt: IrcClientOpts) {
         super();
         this.currentNick = requestedNick;
@@ -238,15 +239,15 @@ export class Client extends EventEmitter {
             encoding: false,
             onNickConflict: this.onNickConflict.bind(this),
             webirc: {
-              pass: '',
-              ip: '',
-              user: ''
+                pass: '',
+                ip: '',
+                user: ''
             },
             ...opt,
             family: opt.family ? opt.family : 4,
         };
         this.nickMod = opt.nickMod ?? 0;
-    
+
         // Features supported by the server
         // (initial values are RFC 1459 defaults. Zeros signify
         // no default or unlimited value)
@@ -266,22 +267,22 @@ export class Client extends EventEmitter {
             topiclength: 0,
             usermodes: '',
             usermodepriority: '', // E.g "ov"
-            casemapping: 'ascii'
+            casemapping: 'ascii',
+            extra: [],
         };
 
         super.on('raw', this.onRaw.bind(this));
 
-        super.on('kick', (channel: string, who: string, by: string) => {
-            if (this.opt.autoRejoin)
-                this.send('join', ...channel.split(' '));
-            }
+        super.on('kick', (channel: string) => {
+            if (this.opt.autoRejoin) {this.send('join', ...channel.split(' '));}
+        }
         );
-        super.on('motd', (motd: string) => {
+        super.on('motd', () => {
             this.opt.channels?.forEach((channel) => {
                 this.send('join', ...channel.split(' '));
             });
         });
-    
+
         // TODO - fail if nick or server missing
         // TODO - fail if username has a space in it
         if (this.opt.autoConnect === true) {
@@ -294,7 +295,7 @@ export class Client extends EventEmitter {
         let channel: ChanData;
         let from, to: string;
         switch (message.command) {
-            case 'rpl_welcome':
+            case 'rpl_welcome': {
                 // Set nick to whatever the server decided it really is
                 // (normally this is because you chose something too long and
                 // the server has shortened it
@@ -305,7 +306,7 @@ export class Client extends EventEmitter {
                 // include it in messages and will truncate what we send if
                 // the string is too long. Therefore, we need to be considerate
                 // neighbors and truncate our messages accordingly.
-                var welcomeStringWords = message.args[1].split(/\s+/);
+                const welcomeStringWords = message.args[1].split(/\s+/);
                 this.hostMask = welcomeStringWords[welcomeStringWords.length - 1];
                 this._updateMaxLineLength();
                 this.emit('registered', message);
@@ -315,19 +316,22 @@ export class Client extends EventEmitter {
                     this._updateMaxLineLength();
                 });
                 break;
-            case 'rpl_myinfo':
+            }
+            case 'rpl_myinfo': {
                 this.supportedState.usermodes = message.args[3];
                 break;
-            case 'rpl_isupport':
+            }
+            case 'rpl_isupport': {
                 message.args.forEach((arg) => {
-                    var match;
+                    let match;
                     match = arg.match(/([A-Z]+)=(.*)/);
                     if (match) {
-                        var param = match[1];
-                        var value = match[2];
+                        const param = match[1];
+                        const value = match[2];
                         switch (param) {
                             case 'CASEMAPPING':
                                 // We assume this is fine.
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 this.supportedState.casemapping = value as any;
                                 break;
                             case 'CHANLIMIT':
@@ -336,13 +340,14 @@ export class Client extends EventEmitter {
                                     this.supportedState.channel.limit[val0] = parseInt(val1);
                                 });
                                 break;
-                            case 'CHANMODES':
+                            case 'CHANMODES': {
                                 const values = value.split(',');
-                                const type: ['a','b','c','d'] = ['a', 'b', 'c', 'd'];
-                                for (var i = 0; i < type.length; i++) {
+                                const type: ['a', 'b', 'c', 'd'] = ['a', 'b', 'c', 'd'];
+                                for (let i = 0; i < type.length; i++) {
                                     this.supportedState.channel.modes[type[i]] += values[i];
                                 }
                                 break;
+                            }
                             case 'CHANTYPES':
                                 this.supportedState.channel.types = value;
                                 break;
@@ -367,7 +372,7 @@ export class Client extends EventEmitter {
                             case 'NICKLEN':
                                 this.supportedState.nicklength = parseInt(value);
                                 break;
-                            case 'PREFIX':
+                            case 'PREFIX': {
                                 match = value.match(/\((.*?)\)(.*)/);
                                 if (match) {
                                     this.supportedState.usermodepriority = match[1];
@@ -386,24 +391,30 @@ export class Client extends EventEmitter {
                                     }
                                 }
                                 break;
+                            }
                             case 'STATUSMSG':
                                 break;
-                            case 'TARGMAX':
+                            case 'TARGMAX': {
                                 value.split(',').forEach((val) => {
-                                    let [ key, value ] = val.split(':');
-                                    value = value ?? parseInt(value);
-                                    if (typeof value === 'number') {
-                                        this.supportedState.maxtargets[key] = value;
+                                    const [key, v] = val.split(':');
+                                    const targValue = v ?? parseInt(v);
+                                    if (typeof targValue === 'number') {
+                                        this.supportedState.maxtargets[key] = targValue;
                                     }
                                 });
                                 break;
+                            }
                             case 'TOPICLEN':
                                 this.supportedState.topiclength = parseInt(value);
+                                break;
+                            default:
+                                this.supportedState.extra.push(value);
                                 break;
                         }
                     }
                 });
                 break;
+            }
             case 'rpl_yourhost':
             case 'rpl_created':
             case 'rpl_luserclient':
@@ -416,8 +427,8 @@ export class Client extends EventEmitter {
             case 'rpl_luserunknown':
                 // Random welcome crap, ignoring
                 break;
-            case 'err_nicknameinuse':
-                var nextNick = this.opt.onNickConflict();
+            case 'err_nicknameinuse': {
+                let nextNick = this.opt.onNickConflict();
                 if (this.nickMod > 1) {
                     // We've already tried to resolve this nick before and have failed to do so.
                     // This could just be because there are genuinely 2 clients with the
@@ -434,7 +445,7 @@ export class Client extends EventEmitter {
                     if (this.prevClashNick !== '') {
                         // we tried to fix things and it still failed, check to make sure
                         // that the server isn't truncating our nick.
-                        var errNick = message.args[1];
+                        const errNick = message.args[1];
                         if (errNick !== this.prevClashNick) {
                             nextNick = this.opt.onNickConflict(errNick.length);
                         }
@@ -447,6 +458,7 @@ export class Client extends EventEmitter {
                 this.currentNick = nextNick;
                 this._updateMaxLineLength();
                 break;
+            }
             case 'PING':
                 this.send('PONG', message.args[0]);
                 this.emit('ping', message.args[0]);
@@ -454,11 +466,11 @@ export class Client extends EventEmitter {
             case 'PONG':
                 this.emit('pong', message.args[0]);
                 break;
-            case 'NOTICE':
+            case 'NOTICE': {
                 this._casemap(message, 0);
                 from = message.nick;
                 to = message.args[0];
-                let noticeText = message.args[1] || '';
+                const noticeText = message.args[1] || '';
                 if (noticeText[0] === '\u0001' && noticeText.lastIndexOf('\u0001') > 0) {
                     if (from && to && noticeText) {
                         this._handleCTCP(from, to, noticeText, 'notice', message);
@@ -467,33 +479,35 @@ export class Client extends EventEmitter {
                 }
                 this.emit('notice', from, to, noticeText, message);
 
-                if (this.opt.debug && to == this.nick)
+                if (this.opt.debug && to === this.nick) {
                     util.log('GOT NOTICE from ' + (from ? '"' + from + '"' : 'the server') + ': "' + noticeText + '"');
+                }
                 break;
-            case 'MODE':
+            }
+            case 'MODE': {
                 this._casemap(message, 0);
-                if (this.opt.debug)
-                    util.log('MODE: ' + message.args[0] + ' sets mode: ' + message.args[1]);
+                if (this.opt.debug) {util.log('MODE: ' + message.args[0] + ' sets mode: ' + message.args[1]);}
 
                 channel = this.chanData(message.args[0]);
-                if (!channel) break;
+                if (!channel) {break;}
                 const modeList = message.args[1].split('');
                 let adding = true;
                 const modeArgs = message.args.slice(2);
                 modeList.forEach((mode) => {
-                    if (mode == '+') {
+                    if (mode === '+') {
                         adding = true;
                         return;
                     }
-                    if (mode == '-') {
+                    if (mode === '-') {
                         adding = false;
                         return;
                     }
                     if (mode in this.prefixForMode) {
                         // channel user modes
-                        var user = modeArgs.shift();
+                        const user = modeArgs.shift();
                         if (adding) {
-                            if (user && channel.users[user] != null && channel.users[user].indexOf(this.prefixForMode[mode]) === -1) {
+                            if (user && channel.users[user] &&
+                                channel.users[user].indexOf(this.prefixForMode[mode]) === -1) {
                                 channel.users[user] += this.prefixForMode[mode];
                             }
 
@@ -507,17 +521,15 @@ export class Client extends EventEmitter {
                         }
                     }
                     else {
-                        var modeArg;
+                        let modeArg;
                         // channel modes
                         if (mode.match(/^[bkl]$/)) {
                             modeArg = modeArgs.shift();
-                            if (!modeArg || modeArg.length === 0)
-                                modeArg = undefined;
+                            if (!modeArg || modeArg.length === 0) {modeArg = undefined;}
                         }
                         // TODO - deal nicely with channel modes that take args
                         if (adding) {
-                            if (channel.mode.indexOf(mode) === -1)
-                                channel.mode += mode;
+                            if (channel.mode.indexOf(mode) === -1) {channel.mode += mode;}
 
                             this.emit('+mode', message.args[0], message.nick, mode, modeArg, message);
                         }
@@ -528,24 +540,25 @@ export class Client extends EventEmitter {
                     }
                 });
                 break;
-            case 'NICK':
-                if (message.nick == this.nick) {
+            }
+            case 'NICK': {
+                if (message.nick === this.nick) {
                     // the user just changed their own nick
                     this.currentNick = message.args[0];
                     this._updateMaxLineLength();
                 }
 
-                if (this.opt.debug)
+                if (this.opt.debug) {
                     util.log('NICK: ' + message.nick + ' changes nick to ' + message.args[0]);
+                }
 
                 const channelsForNick: string[] = [];
 
                 // finding what channels a user is in
-                Object.keys(this.chans).forEach((channame) => {
-                    var channel = this.chans[channame];
-                    if (message.nick && message.nick in channel.users) {
-                        channel.users[message.args[0]] = channel.users[message.nick];
-                        delete channel.users[message.nick];
+                Object.entries(this.chans).forEach(([channame, nickChannel]) => {
+                    if (message.nick && message.nick in nickChannel.users) {
+                        nickChannel.users[message.args[0]] = nickChannel.users[message.nick];
+                        delete nickChannel.users[message.nick];
                         channelsForNick.push(channame);
                     }
                 });
@@ -553,6 +566,7 @@ export class Client extends EventEmitter {
                 // old nick, new nick, channels
                 this.emit('nick', message.nick, message.args[0], channelsForNick, message);
                 break;
+            }
             case 'rpl_motdstart':
                 this.motd = message.args[1] + '\n';
                 break;
@@ -564,7 +578,7 @@ export class Client extends EventEmitter {
                 this.motd += message.args[1] + '\n';
                 this.emit('motd', this.motd);
                 break;
-            case 'rpl_namreply':
+            case 'rpl_namreply': {
                 this._casemap(message, 2);
                 channel = this.chanData(message.args[2]);
                 if (!message.args[3]) {
@@ -600,6 +614,7 @@ export class Client extends EventEmitter {
                     });
                 }
                 break;
+            }
             case 'rpl_endofnames':
                 this._casemap(message, 1);
                 channel = this.chanData(message.args[1]);
@@ -628,9 +643,10 @@ export class Client extends EventEmitter {
                 this._addWhoisData(message.args[1], 'idle', message.args[2]);
                 break;
             case 'rpl_whoischannels':
-               // TODO - clean this up?
-                if (message.args.length >= 3)
+                // TODO - clean this up?
+                if (message.args.length >= 3) {
                     this._addWhoisData(message.args[1], 'channels', message.args[2].trim().split(/\s+/));
+                }
                 break;
             case 'rpl_whoisserver':
                 this._addWhoisData(message.args[1], 'server', message.args[2]);
@@ -650,7 +666,7 @@ export class Client extends EventEmitter {
                 this.channelListState = [];
                 this.emit('channellist_start');
                 break;
-            case 'rpl_list':
+            case 'rpl_list': {
                 const chanListEntry = {
                     name: message.args[1],
                     users: message.args[2],
@@ -661,6 +677,7 @@ export class Client extends EventEmitter {
                     this.channelListState.push(chanListEntry);
                 }
                 break;
+            }
             case 'rpl_listend':
                 this.emit('channellist', this.channelListState);
                 // Clear after use.
@@ -707,7 +724,7 @@ export class Client extends EventEmitter {
             case 'JOIN':
                 this._casemap(message, 0);
                 // channel, who
-                if (this.nick == message.nick) {
+                if (this.nick === message.nick) {
                     this.chanData(message.args[0], true);
                 }
                 else {
@@ -718,7 +735,7 @@ export class Client extends EventEmitter {
                 }
                 this.emit('join', message.args[0], message.nick, message);
                 this.emit('join' + message.args[0], message.nick, message);
-                if (message.args[0] != message.args[0].toLowerCase()) {
+                if (message.args[0] !== message.args[0].toLowerCase()) {
                     this.emit('join' + message.args[0].toLowerCase(), message.nick, message);
                 }
                 break;
@@ -727,10 +744,10 @@ export class Client extends EventEmitter {
                 // channel, who, reason
                 this.emit('part', message.args[0], message.nick, message.args[1], message);
                 this.emit('part' + message.args[0], message.nick, message.args[1], message);
-                if (message.args[0] != message.args[0].toLowerCase()) {
+                if (message.args[0] !== message.args[0].toLowerCase()) {
                     this.emit('part' + message.args[0].toLowerCase(), message.nick, message.args[1], message);
                 }
-                if (this.nick == message.nick) {
+                if (this.nick === message.nick) {
                     this.removeChanData(message.args[0]);
                 }
                 else {
@@ -745,12 +762,12 @@ export class Client extends EventEmitter {
                 // channel, who, by, reason
                 this.emit('kick', message.args[0], message.args[1], message.nick, message.args[2], message);
                 this.emit('kick' + message.args[0], message.args[1], message.nick, message.args[2], message);
-                if (message.args[0] != message.args[0].toLowerCase()) {
+                if (message.args[0] !== message.args[0].toLowerCase()) {
                     this.emit('kick' + message.args[0].toLowerCase(),
-                              message.args[1], message.nick, message.args[2], message);
+                        message.args[1], message.nick, message.args[2], message);
                 }
 
-                if (this.nick == message.args[1]) {
+                if (this.nick === message.args[1]) {
                     this.removeChanData(message.args[0]);
                 }
                 else {
@@ -760,22 +777,23 @@ export class Client extends EventEmitter {
                     }
                 }
                 break;
-            case 'KILL':
+            case 'KILL': {
                 const nick = message.args[0];
                 const killChannels = [];
-                for (const [channame, channel] of Object.entries(this.chans)) {
-                    if (message.nick && message.nick in channel.users) {
-                        delete channel.users[message.nick];
+                for (const [channame, killChannel] of Object.entries(this.chans)) {
+                    if (message.nick && message.nick in killChannel.users) {
+                        delete killChannel.users[message.nick];
                         killChannels.push(channame);
                     }
                 }
                 this.emit('kill', nick, message.args[1], killChannels, message);
                 break;
-            case 'PRIVMSG':
+            }
+            case 'PRIVMSG': {
                 this._casemap(message, 0);
                 from = message.nick;
                 to = message.args[0];
-                let msgText = message.args[1] || '';
+                const msgText = message.args[1] || '';
                 if (from && msgText[0] === '\u0001' && msgText.lastIndexOf('\u0001') > 0) {
                     this._handleCTCP(from, to, msgText, 'privmsg', message);
                     break;
@@ -784,25 +802,24 @@ export class Client extends EventEmitter {
                 if (this.supportedState.channel.types.indexOf(to.charAt(0)) !== -1) {
                     this.emit('message#', from, to, msgText, message);
                     this.emit('message' + to, from, msgText, message);
-                    if (to != to.toLowerCase()) {
+                    if (to !== to.toLowerCase()) {
                         this.emit('message' + to.toLowerCase(), from, msgText, message);
                     }
                 }
-                if (to.toUpperCase() === this.nick.toUpperCase()) this.emit('pm', from, msgText, message);
+                if (to.toUpperCase() === this.nick.toUpperCase()) {this.emit('pm', from, msgText, message);}
 
-                if (this.opt.debug && to == this.nick)
-                    util.log('GOT MESSAGE from ' + from + ': ' + msgText);
+                if (this.opt.debug && to === this.nick) {util.log('GOT MESSAGE from ' + from + ': ' + msgText);}
                 break;
+            }
             case 'INVITE':
                 this._casemap(message, 1);
                 from = message.nick;
                 to = message.args[0];
                 this.emit('invite', message.args[1], from, message);
                 break;
-            case 'QUIT':
-                if (this.opt.debug)
-                    util.log('QUIT: ' + message.prefix + ' ' + message.args.join(' '));
-                if (this.nick == message.nick) {
+            case 'QUIT': {
+                if (this.opt.debug) {util.log('QUIT: ' + message.prefix + ' ' + message.args.join(' '));}
+                if (this.nick === message.nick) {
                     // TODO handle?
                     break;
                 }
@@ -811,9 +828,9 @@ export class Client extends EventEmitter {
                 const quitChannels: string[] = [];
 
                 // finding what channels a user is in?
-                for (const [channame, channel] of Object.entries(this.chans)) {
-                    if (message.nick && message.nick in channel.users) {
-                        delete channel.users[message.nick];
+                for (const [channame, quitChannel] of Object.entries(this.chans)) {
+                    if (message.nick && message.nick in quitChannel.users) {
+                        delete quitChannel.users[message.nick];
                         quitChannels.push(channame);
                     }
                 }
@@ -821,29 +838,32 @@ export class Client extends EventEmitter {
                 // who, reason, channels
                 this.emit('quit', message.nick, message.args[0], quitChannels, message);
                 break;
-
+            }
             // for sasl
             case 'CAP':
                 if (message.args[0] === '*' &&
                     message.args[1] === 'ACK' &&
-                    message.args[2].split(' ').includes('sasl'))
+                    message.args[2].split(' ').includes('sasl')) {
                     this._send('AUTHENTICATE', this.opt.saslType);
+                }
                 break;
             case 'AUTHENTICATE':
                 if (message.args[0] === '+') {
-                  switch (this.opt.saslType) {
-                    case 'PLAIN':
-                      this._send('AUTHENTICATE',
-                        Buffer.from(
-                            this.nick + '\x00' +
+                    switch (this.opt.saslType) {
+                        case 'PLAIN':
+                            this._send('AUTHENTICATE',
+                                Buffer.from(
+                                    this.nick + '\x00' +
                             this.opt.userName + '\x00' +
                             this.opt.password
-                        ).toString('base64'));
-                        break;
-                    case 'EXTERNAL':
-                      this._send('AUTHENTICATE', '+');
-                      break;
-                  }
+                                ).toString('base64'));
+                            break;
+                        case 'EXTERNAL':
+                            this._send('AUTHENTICATE', '+');
+                            break;
+                        default:
+                            throw Error('Unexpected SASL type');
+                    }
                 }
                 break;
             case '903':
@@ -854,9 +874,8 @@ export class Client extends EventEmitter {
             // connect with the nick 'boot'. I'm guessing they have reserved that nick so
             // no one can claim it. The error handling though is identical to offensive word
             // nicks hence the fall through here.
-            case 'err_erroneusnickname':
-                if (this.opt.showErrors)
-                    util.log('\x1B[01;31mERROR: ' + util.inspect(message) + '\x1B[0m');
+            case 'err_erroneusnickname': {
+                if (this.opt.showErrors) {util.log('\x1B[01;31mERROR: ' + util.inspect(message) + '\x1B[0m');}
 
                 // The Scunthorpe Problem
                 // ----------------------
@@ -881,43 +900,43 @@ export class Client extends EventEmitter {
                 // the BNF for nicks (first char must be A-Z, length limits, etc). We also
                 // want to be able to debug any issues if people say that they didn't get
                 // the nick they wanted.
-                var rndNick = "enick_" + Math.floor(Math.random() * 1000) // random 3 digits
+                const rndNick = "enick_" + Math.floor(Math.random() * 1000) // random 3 digits
                 this._send('NICK', rndNick);
                 this.currentNick = rndNick;
                 this._updateMaxLineLength();
                 break;
-
+            }
             default:
-                if (message.commandType == 'error') {
+                if (message.commandType === 'error') {
                     this.emit('error', message);
-                    if (this.opt.showErrors)
-                        util.log('\u001b[01;31mERROR: ' + util.inspect(message) + '\u001b[0m');
+                    if (this.opt.showErrors) {util.log('\u001b[01;31mERROR: ' + util.inspect(message) + '\u001b[0m');}
                 }
                 else {
-                    if (this.opt.debug)
+                    if (this.opt.debug) {
                         util.log('\u001b[01;31mUnhandled message: ' + util.inspect(message) + '\u001b[0m');
+                    }
                     break;
                 }
         }
     }
 
     private onNickConflict(maxLen?: number): string {
-        if (typeof (this.nickMod) == 'undefined') {
+        if (typeof (this.nickMod) === 'undefined') {
             this.nickMod = 0;
         }
         this.nickMod++;
         let n = this.nick + this.nickMod;
         if (maxLen && n.length > maxLen) {
             // truncate the end of the nick and then suffix a numeric
-            var digitStr = "" + this.nickMod;
-            var maxNickSegmentLen = maxLen - digitStr.length;
+            const digitStr = "" + this.nickMod;
+            const maxNickSegmentLen = maxLen - digitStr.length;
             n = this.nick.substr(0, maxNickSegmentLen) + digitStr;
         }
         return n;
     }
 
     public chanData(name: string, create = false) {
-        var key = name.toLowerCase();
+        const key = name.toLowerCase();
         if (create) {
             this.chans[key] = this.chans[key] || {
                 key: key,
@@ -926,7 +945,7 @@ export class Client extends EventEmitter {
                 mode: ''
             };
         }
-    
+
         return this.chans[key];
     }
 
@@ -947,11 +966,11 @@ export class Client extends EventEmitter {
         if (this.opt.sasl) {
             // see http://ircv3.atheme.org/extensions/sasl-3.1
             this._send('CAP REQ', 'sasl');
-        } else if (this.opt.password) {
+        }
+        else if (this.opt.password) {
             this._send('PASS', this.opt.password);
         }
-        if (this.opt.debug)
-            util.log('Sending irc NICK/USER');
+        if (this.opt.debug) {util.log('Sending irc NICK/USER');}
         this._send('NICK', this.nick);
         this.currentNick = this.nick;
         this._updateMaxLineLength();
@@ -964,7 +983,8 @@ export class Client extends EventEmitter {
         if (typeof retryCountOrCallBack === 'function') {
             callback = retryCountOrCallBack;
             retryCount = this.opt.retryCount ?? 0;
-        } else {
+        }
+        else {
             retryCount = retryCountOrCallBack ?? this.opt.retryCount ?? 0;
         }
         if (typeof callback === 'function') {
@@ -980,10 +1000,8 @@ export class Client extends EventEmitter {
         };
 
         // local address to bind to
-        if (this.opt.localAddress)
-            connectionOpts.localAddress = this.opt.localAddress;
-        if (this.opt.localPort)
-            connectionOpts.localPort = this.opt.localPort;
+        if (this.opt.localAddress) {connectionOpts.localAddress = this.opt.localAddress;}
+        if (this.opt.localPort) {connectionOpts.localPort = this.opt.localPort;}
 
         if (this.opt.bustRfc3484) {
             // RFC 3484 attempts to sort address results by "locallity", taking
@@ -993,45 +1011,38 @@ export class Client extends EventEmitter {
             //   isn't what we want for proper load balancing. With this option set
             //   we'll randomise the list of all results so that we can spread load
             //   between all the servers.
-            connectionOpts.lookup = (hostname, options, callback) => {
+            connectionOpts.lookup = (hostname, options, lookupCb) => {
                 dns.lookup(hostname, {all: true, ...options}, (err, addresses) => {
+                    // @types/node doesn't provision for an all callback response, so we have to
+                    // do some unsafe typing here.
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const typelessCb = (lookupCb as any);
                     if (err) {
                         if (options.all) {
-                            // @types/node doesn't provision for an all callback response, so we have to
-                            // do some unsafe typing here.
-                            return (callback as any)(err, addresses);
+                            //
+                            return typelessCb(err, addresses);
                         }
-                        else {
-                            return (callback as any)(err, null, null);
-                        }
+                        return typelessCb(err, null, null);
                     }
 
                     if (options.all) {
                         const shuffled: dns.LookupAddress[] = [];
                         while (Array.isArray(addresses) && addresses.length) {
-                            var i = randomInt(addresses.length);
+                            const i = randomInt(addresses.length);
                             shuffled.push(addresses.splice(i, 1)[0]);
                         }
-                        // @types/node doesn't provision for an all callback response, so we have to
-                        // do some unsafe typing here.
-                        (callback as any)(err, shuffled);
+                        typelessCb(err, shuffled);
                     }
                     else {
                         const chosen = addresses[randomInt(addresses.length)] as dns.LookupAddress;
-                        if (typeof chosen === 'object') {
-
-                        }
-                        // @types/node doesn't provision for an all callback response, so we have to
-                        // do some unsafe typing here.
-                        (callback as any)(err, chosen.address, chosen.family);
+                        typelessCb(err, chosen.address, chosen.family);
                     }
                 });
             };
         }
 
         // destroy old socket before allocating a new one
-        if (this.conn)
-            this.conn.destroy();
+        if (this.conn) {this.conn.destroy();}
 
         // try to connect to the server
         if (this.opt.secure) {
@@ -1041,7 +1052,7 @@ export class Client extends EventEmitter {
                 rejectUnauthorized: !this.opt.selfSigned,
             }
 
-            if (typeof this.opt.secure == 'object') {
+            if (typeof this.opt.secure === 'object') {
                 // copy "secure" opts to options passed to connect()
                 secureOpts = {
                     ...secureOpts,
@@ -1084,10 +1095,11 @@ export class Client extends EventEmitter {
                 }
                 this._connectionHandler();
             });
-        } else {
+        }
+        else {
             this.conn = createConnection(connectionOpts, this._connectionHandler.bind(this));
         }
-        
+
         this.requestedDisconnect = false;
         this.conn.setTimeout(1000 * 180);
 
@@ -1104,10 +1116,10 @@ export class Client extends EventEmitter {
             if (lines.pop()) {
                 // if buffer is not ended with \r\n, there's more chunks.
                 return;
-            } else {
-                // else, initialize the buffer.
-                buffer = Buffer.alloc(0);
             }
+            // else, initialize the buffer.
+            buffer = Buffer.alloc(0);
+
 
             lines.forEach((line) => {
                 if (!line.length) {
@@ -1116,7 +1128,8 @@ export class Client extends EventEmitter {
                 const message = parseMessage(line, this.opt.stripColors);
                 try {
                     this.emit('raw', message);
-                } catch (err) {
+                }
+                catch (err) {
                     if (!this.requestedDisconnect) {
                         throw err;
                     }
@@ -1149,10 +1162,8 @@ export class Client extends EventEmitter {
     }
 
     private reconnect(retryCount: number) {
-        if (this.requestedDisconnect)
-            return;
-        if (this.opt.debug)
-            util.log('Disconnected: reconnecting');
+        if (this.requestedDisconnect) {return;}
+        if (this.opt.debug) {util.log('Disconnected: reconnecting');}
         if (this.opt.retryCount !== null && retryCount >= this.opt.retryCount) {
             if (this.opt.debug) {
                 util.log('Maximum retry count (' + this.opt.retryCount + ') reached. Aborting');
@@ -1225,8 +1236,7 @@ export class Client extends EventEmitter {
             args[args.length - 1] = ':' + args[args.length - 1];
         }
 
-        if (this.opt.debug)
-            util.log('SEND: ' + args.join(' '));
+        if (this.opt.debug) {util.log('SEND: ' + args.join(' '));}
 
         if (this.requestedDisconnect) {
             return;
@@ -1236,16 +1246,16 @@ export class Client extends EventEmitter {
     }
 
     public join(channel: string, callback?: (...args: unknown[]) => void) {
-        var channelName =  channel.split(' ')[0];
+        const channelName = channel.split(' ')[0];
         this.once('join' + channelName, (...args) => {
             // if join is successful, add this channel to opts.channels
             // so that it will be re-joined upon reconnect (as channels
             // specified in options are)
-            if (this.opt.channels.indexOf(channel) == -1) {
+            if (this.opt.channels.indexOf(channel) === -1) {
                 this.opt.channels.push(channel);
             }
 
-            if (typeof callback == 'function') {
+            if (typeof callback === 'function') {
                 return callback(...args);
             }
         });
@@ -1258,13 +1268,13 @@ export class Client extends EventEmitter {
             callback = messageOrCallback;
             message = undefined;
         }
-        if (typeof (callback) == 'function') {
+        if (typeof (callback) === 'function') {
             this.once('part' + channel, callback);
         }
 
         // remove this channel from this.opt.channels so we won't rejoin
         // upon reconnect
-        if (this.opt.channels.indexOf(channel) != -1) {
+        if (this.opt.channels.indexOf(channel) !== -1) {
             this.opt.channels.splice(this.opt.channels.indexOf(channel), 1);
         }
 
@@ -1290,15 +1300,17 @@ export class Client extends EventEmitter {
         if (this.supportedState.usermodepriority.length === 0 || !mode || !testMode) {
             return false;
         }
-        if (this.supportedState.usermodepriority.indexOf(mode) === -1 || this.supportedState.usermodepriority.indexOf(testMode) === -1) {
+        if (this.supportedState.usermodepriority.indexOf(mode) === -1 ||
+            this.supportedState.usermodepriority.indexOf(testMode) === -1) {
             return false;
         }
         // usermodepriority is a sorted string (lower index = more powerful)
-        return this.supportedState.usermodepriority.indexOf(mode) < this.supportedState.usermodepriority.indexOf(testMode);
+        return this.supportedState.usermodepriority.indexOf(mode) <
+            this.supportedState.usermodepriority.indexOf(testMode);
     }
 
     private _splitLongLines(words: string, maxLength: number, destination: string[] = []): string[] {
-        if (words.length == 0) {
+        if (words.length === 0) {
             return destination;
         }
         if (words.length <= maxLength) {
@@ -1310,7 +1322,8 @@ export class Client extends EventEmitter {
         let wsLength = 1;
         if (c.match(/\s/)) {
             cutPos = maxLength;
-        } else {
+        }
+        else {
             let offset = 1;
             while ((maxLength - offset) > 0) {
                 c = words[maxLength - offset];
@@ -1344,8 +1357,8 @@ export class Client extends EventEmitter {
             return [];
         }
         return text.toString().split(/\r?\n/).filter((line) => line.length > 0)
-        .map((line) => this._splitLongLines(line, maxLength, []))
-        .reduce((a, b) => a.concat(b), []);
+            .map((line) => this._splitLongLines(line, maxLength, []))
+            .reduce((a, b) => a.concat(b), []);
     }
 
     private async _speak(kind: string, target: string, text: string): Promise<void> {
@@ -1353,7 +1366,7 @@ export class Client extends EventEmitter {
         await Promise.all(linesToSend.map((toSend) => {
             const p = this.send(kind, target, toSend);
             p.finally(() => {
-                if (kind == 'PRIVMSG') {
+                if (kind === 'PRIVMSG') {
                     this.emit('selfMessage', target, toSend);
                 }
             });
@@ -1370,7 +1383,7 @@ export class Client extends EventEmitter {
     public whois(nick: string, callback?: (info: WhoisResponse) => void) {
         if (typeof callback === 'function') {
             const callbackWrapper = (info: WhoisResponse) => {
-                if (info.nick.toLowerCase() == nick.toLowerCase()) {
+                if (info.nick.toLowerCase() === nick.toLowerCase()) {
                     this.removeListener('whois', callbackWrapper);
                     return callback(info);
                 }
@@ -1417,14 +1430,12 @@ export class Client extends EventEmitter {
         return this.send('MODE', nick, mode);
     }
 
-    public list(): Promise<void> {
-        var args = Array.prototype.slice.call(arguments, 0);
-        args.unshift('LIST');
-        return this.send(...args);
+    public list(...args: string[]): Promise<void> {
+        return this.send('LIST', ...args);
     }
 
-    private _addWhoisData(nick: string, key: keyof(WhoisResponse), value: any, onlyIfExists = false) {
-        if (onlyIfExists && !this.whoisData.has(nick)) return;
+    private _addWhoisData(nick: string, key: keyof(WhoisResponse), value: string|string[], onlyIfExists = false) {
+        if (onlyIfExists && !this.whoisData.has(nick)) {return;}
         const data: WhoisResponse = {
             ...this.whoisData.get(nick),
             nick,
@@ -1442,15 +1453,18 @@ export class Client extends EventEmitter {
     private _handleCTCP(from: string, to: string, text: string, type: string, message: Message) {
         text = text.slice(1);
         text = text.slice(0, text.indexOf('\u0001'));
-        var parts = text.split(' ');
+        const parts = text.split(' ');
         this.emit('ctcp', from, to, text, type, message);
         this.emit('ctcp-' + type, from, to, text, message);
-        if (type === 'privmsg' && text === 'VERSION')
+        if (type === 'privmsg' && text === 'VERSION') {
             this.emit('ctcp-version', from, to, message);
-        if (parts[0] === 'ACTION' && parts.length > 1)
+        }
+        if (parts[0] === 'ACTION' && parts.length > 1) {
             this.emit('action', from, to, parts.slice(1).join(' '), message);
-        if (parts[0] === 'PING' && type === 'privmsg' && parts.length > 1)
+        }
+        if (parts[0] === 'PING' && type === 'privmsg' && parts.length > 1) {
             this.ctcp(from, 'notice', text);
+        }
     }
 
     public ctcp(to: string, type: string, text: string) {
@@ -1466,18 +1480,21 @@ export class Client extends EventEmitter {
                     throw Error("No charset detected");
                 }
                 return Iconv.encode(Iconv.decode(buffer, charset), this.opt.encoding).toString();
-            } catch (err) {
+            }
+            catch (err) {
                 if (this.opt.debug) {
                     util.log('\u001b[01;31mERROR: ' + err + '\u001b[0m');
                     util.inspect({ str });
                 }
             }
-        } else if (this.opt.encodingFallback) {
+        }
+        else if (this.opt.encodingFallback) {
             try {
                 if (!isValidUTF8(str)) {
                     return Iconv.decode(buffer, this.opt.encodingFallback).toString();
                 }
-            } catch (err) {
+            }
+            catch (err) {
                 if (this.opt.debug) {
                     util.log('\u001b[01;31mERROR: ' + err + '\u001b[0m');
                     util.inspect({ str, encodingFallback: this.opt.encodingFallback });
@@ -1513,16 +1530,16 @@ export class Client extends EventEmitter {
         let lower = str.toLowerCase();
         if (this.supportedState.casemapping === 'rfc1459') {
             lower = lower.
-            replace(/\[/g, '{').
-            replace(/\]/g, '}').
-            replace(/\\/g, '|').
-            replace(/\^/g, '~');
+                replace(/\[/g, '{').
+                replace(/\]/g, '}').
+                replace(/\\/g, '|').
+                replace(/\^/g, '~');
         }
         else if (this.supportedState.casemapping === 'strict-rfc1459') {
             lower = lower.
-            replace(/\[/g, '{').
-            replace(/\]/g, '}').
-            replace(/\\/g, '|');
+                replace(/\[/g, '{').
+                replace(/\]/g, '}').
+                replace(/\\/g, '|');
         }
         return lower;
     }
@@ -1535,7 +1552,7 @@ export class Client extends EventEmitter {
 
 // https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions
 function escapeRegExp(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
 
 function randomInt(length: number): number {
