@@ -1,7 +1,7 @@
 {
-  "name": "irc",
-  "description": "An IRC client library for node",
-  "version": "0.3.12",
+  "name": "matrix-org-irc",
+  "description": "An IRC client library for node, written in Typescript.",
+  "version": "1.0.0-alpha1",
   "author": "Matrix.org (original fork from Martyn Smith <martyn@dollyfish.net.nz>)",
   "scripts": {
     "prepare": "npm run build",
