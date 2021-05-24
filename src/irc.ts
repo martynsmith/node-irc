@@ -288,133 +288,581 @@ export class Client extends EventEmitter {
         if (this.opt.autoConnect === true) {
             this.connect();
         }
-
     }
 
-    private onRaw(message: Message) {
-        let channel: ChanData;
-        let from, to: string;
-        switch (message.command) {
-            case 'rpl_welcome': {
-                // Set nick to whatever the server decided it really is
-                // (normally this is because you chose something too long and
-                // the server has shortened it
-                this.currentNick = message.args[0];
-                // Note our hostmask to use it in splitting long messages.
-                // We don't send our hostmask when issuing PRIVMSGs or NOTICEs,
-                // of course, but rather the servers on the other side will
-                // include it in messages and will truncate what we send if
-                // the string is too long. Therefore, we need to be considerate
-                // neighbors and truncate our messages accordingly.
-                const welcomeStringWords = message.args[1].split(/\s+/);
-                this.hostMask = welcomeStringWords[welcomeStringWords.length - 1];
-                this._updateMaxLineLength();
-                this.emit('registered', message);
-                this.whois(this.nick, (args) => {
-                    this.currentNick = args.nick;
-                    this.hostMask = args.user + "@" + args.host;
-                    this._updateMaxLineLength();
-                });
-                break;
+    private onReplyWelcome(message: Message) {
+        // Set nick to whatever the server decided it really is
+        // (normally this is because you chose something too long and
+        // the server has shortened it
+        this.currentNick = message.args[0];
+        // Note our hostmask to use it in splitting long messages.
+        // We don't send our hostmask when issuing PRIVMSGs or NOTICEs,
+        // of course, but rather the servers on the other side will
+        // include it in messages and will truncate what we send if
+        // the string is too long. Therefore, we need to be considerate
+        // neighbors and truncate our messages accordingly.
+        const welcomeStringWords = message.args[1].split(/\s+/);
+        this.hostMask = welcomeStringWords[welcomeStringWords.length - 1];
+        this._updateMaxLineLength();
+        this.emit('registered', message);
+        this.whois(this.nick, (args) => {
+            this.currentNick = args.nick;
+            this.hostMask = args.user + "@" + args.host;
+            this._updateMaxLineLength();
+        });
+    }
+
+    private onReplyMyInfo(message: Message) {
+        this.supportedState.usermodes = message.args[3];
+    }
+
+    private onReplyISupport(message: Message) {
+        message.args.forEach((arg) => {
+            let match;
+            match = arg.match(/([A-Z]+)=(.*)/);
+            if (!match) {
+                return;
             }
-            case 'rpl_myinfo': {
-                this.supportedState.usermodes = message.args[3];
-                break;
-            }
-            case 'rpl_isupport': {
-                message.args.forEach((arg) => {
-                    let match;
-                    match = arg.match(/([A-Z]+)=(.*)/);
+            const param = match[1];
+            const value = match[2];
+            switch (param) {
+                case 'CASEMAPPING':
+                    // We assume this is fine.
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    this.supportedState.casemapping = value as any;
+                    break;
+                case 'CHANLIMIT':
+                    value.split(',').forEach((val) => {
+                        const [val0, val1] = val.split(':');
+                        this.supportedState.channel.limit[val0] = parseInt(val1);
+                    });
+                    break;
+                case 'CHANMODES': {
+                    const values = value.split(',');
+                    const type: ['a', 'b', 'c', 'd'] = ['a', 'b', 'c', 'd'];
+                    for (let i = 0; i < type.length; i++) {
+                        this.supportedState.channel.modes[type[i]] += values[i];
+                    }
+                    break;
+                }
+                case 'CHANTYPES':
+                    this.supportedState.channel.types = value;
+                    break;
+                case 'CHANNELLEN':
+                    this.supportedState.channel.length = parseInt(value);
+                    break;
+                case 'IDCHAN':
+                    value.split(',').forEach((val) => {
+                        const [val0, val1] = val.split(':');
+                        this.supportedState.channel.idlength[val0] = val1;
+                    });
+                    break;
+                case 'KICKLEN':
+                    this.supportedState.kicklength = parseInt(value);
+                    break;
+                case 'MAXLIST':
+                    value.split(',').forEach((val) => {
+                        const [val0, val1] = val.split(':');
+                        this.supportedState.maxlist[val0] = parseInt(val1);
+                    });
+                    break;
+                case 'NICKLEN':
+                    this.supportedState.nicklength = parseInt(value);
+                    break;
+                case 'PREFIX': {
+                    match = value.match(/\((.*?)\)(.*)/);
                     if (match) {
-                        const param = match[1];
-                        const value = match[2];
-                        switch (param) {
-                            case 'CASEMAPPING':
-                                // We assume this is fine.
-                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                this.supportedState.casemapping = value as any;
-                                break;
-                            case 'CHANLIMIT':
-                                value.split(',').forEach((val) => {
-                                    const [val0, val1] = val.split(':');
-                                    this.supportedState.channel.limit[val0] = parseInt(val1);
-                                });
-                                break;
-                            case 'CHANMODES': {
-                                const values = value.split(',');
-                                const type: ['a', 'b', 'c', 'd'] = ['a', 'b', 'c', 'd'];
-                                for (let i = 0; i < type.length; i++) {
-                                    this.supportedState.channel.modes[type[i]] += values[i];
+                        this.supportedState.usermodepriority = match[1];
+                        const match1 = match[1].split('');
+                        const match2 = match[2].split('');
+                        while (match1.length) {
+                            this.modeForPrefix[match2[0]] = match1[0];
+                            this.supportedState.channel.modes.b += match1[0];
+                            const idx = match1.shift();
+                            if (idx) {
+                                const result = match2.shift();
+                                if (result) {
+                                    this.prefixForMode[idx] = result;
                                 }
-                                break;
                             }
-                            case 'CHANTYPES':
-                                this.supportedState.channel.types = value;
-                                break;
-                            case 'CHANNELLEN':
-                                this.supportedState.channel.length = parseInt(value);
-                                break;
-                            case 'IDCHAN':
-                                value.split(',').forEach((val) => {
-                                    const [val0, val1] = val.split(':');
-                                    this.supportedState.channel.idlength[val0] = val1;
-                                });
-                                break;
-                            case 'KICKLEN':
-                                this.supportedState.kicklength = parseInt(value);
-                                break;
-                            case 'MAXLIST':
-                                value.split(',').forEach((val) => {
-                                    const [val0, val1] = val.split(':');
-                                    this.supportedState.maxlist[val0] = parseInt(val1);
-                                });
-                                break;
-                            case 'NICKLEN':
-                                this.supportedState.nicklength = parseInt(value);
-                                break;
-                            case 'PREFIX': {
-                                match = value.match(/\((.*?)\)(.*)/);
-                                if (match) {
-                                    this.supportedState.usermodepriority = match[1];
-                                    const match1 = match[1].split('');
-                                    const match2 = match[2].split('');
-                                    while (match1.length) {
-                                        this.modeForPrefix[match2[0]] = match1[0];
-                                        this.supportedState.channel.modes.b += match1[0];
-                                        const idx = match1.shift();
-                                        if (idx) {
-                                            const result = match2.shift();
-                                            if (result) {
-                                                this.prefixForMode[idx] = result;
-                                            }
-                                        }
-                                    }
-                                }
-                                break;
-                            }
-                            case 'STATUSMSG':
-                                break;
-                            case 'TARGMAX': {
-                                value.split(',').forEach((val) => {
-                                    const [key, v] = val.split(':');
-                                    const targValue = v ?? parseInt(v);
-                                    if (typeof targValue === 'number') {
-                                        this.supportedState.maxtargets[key] = targValue;
-                                    }
-                                });
-                                break;
-                            }
-                            case 'TOPICLEN':
-                                this.supportedState.topiclength = parseInt(value);
-                                break;
-                            default:
-                                this.supportedState.extra.push(value);
-                                break;
                         }
                     }
-                });
-                break;
+                    break;
+                }
+                case 'STATUSMSG':
+                    break;
+                case 'TARGMAX': {
+                    value.split(',').forEach((val) => {
+                        const [key, v] = val.split(':');
+                        const targValue = v ?? parseInt(v);
+                        if (typeof targValue === 'number') {
+                            this.supportedState.maxtargets[key] = targValue;
+                        }
+                    });
+                    break;
+                }
+                case 'TOPICLEN':
+                    this.supportedState.topiclength = parseInt(value);
+                    break;
+                default:
+                    this.supportedState.extra.push(value);
+                    break;
             }
+        });
+    }
+
+    private onErrNicknameInUse(message: Message) {
+        let nextNick = this.opt.onNickConflict();
+        if (this.nickMod > 1) {
+            // We've already tried to resolve this nick before and have failed to do so.
+            // This could just be because there are genuinely 2 clients with the
+            // same nick and the same nick with a numeric suffix or it could be much
+            // much more gnarly. If there is a conflict and the original nick is equal
+            // to the NICKLEN, then we'll never be able to connect because the numeric
+            // suffix will always be truncated!
+            //
+            // To work around this, we'll persist what nick we send up, and compare it
+            // to the nick which is returned in this error response. If there is
+            // truncation going on, the two nicks won't match, and then we can do
+            // something about it.
+
+            if (this.prevClashNick !== '') {
+                // we tried to fix things and it still failed, check to make sure
+                // that the server isn't truncating our nick.
+                const errNick = message.args[1];
+                if (errNick !== this.prevClashNick) {
+                    nextNick = this.opt.onNickConflict(errNick.length);
+                }
+            }
+
+            this.prevClashNick = nextNick;
+        }
+
+        this._send('NICK', nextNick);
+        this.currentNick = nextNick;
+        this._updateMaxLineLength();
+    }
+
+    private onNotice(message: Message) {
+        this._casemap(message, 0);
+        const from = message.nick;
+        const to = message.args[0];
+        const noticeText = message.args[1] || '';
+        if (noticeText[0] === '\u0001' && noticeText.lastIndexOf('\u0001') > 0) {
+            if (from && to && noticeText) {
+                this._handleCTCP(from, to, noticeText, 'notice', message);
+            }
+            return;
+        }
+        this.emit('notice', from, to, noticeText, message);
+
+        if (this.opt.debug && to === this.nick) {
+            util.log('GOT NOTICE from ' + (from ? '"' + from + '"' : 'the server') + ': "' + noticeText + '"');
+        }
+    }
+
+    private onMode(message: Message) {
+        this._casemap(message, 0);
+        if (this.opt.debug) {util.log('MODE: ' + message.args[0] + ' sets mode: ' + message.args[1]);}
+
+        const channel = this.chanData(message.args[0]);
+        if (!channel) {
+            return ;
+        }
+        const modeList = message.args[1].split('');
+        let adding = true;
+        const modeArgs = message.args.slice(2);
+        modeList.forEach((mode) => {
+            if (mode === '+') {
+                adding = true;
+                return;
+            }
+            if (mode === '-') {
+                adding = false;
+                return;
+            }
+            if (mode in this.prefixForMode) {
+                // channel user modes
+                const user = modeArgs.shift();
+                if (adding) {
+                    if (user && channel.users[user] &&
+                        channel.users[user].indexOf(this.prefixForMode[mode]) === -1) {
+                        channel.users[user] += this.prefixForMode[mode];
+                    }
+
+                    this.emit('+mode', message.args[0], message.nick, mode, user, message);
+                }
+                else {
+                    if (user && channel.users[user]) {
+                        channel.users[user] = channel.users[user].replace(this.prefixForMode[mode], '');
+                    }
+                    this.emit('-mode', message.args[0], message.nick, mode, user, message);
+                }
+            }
+            else {
+                let modeArg;
+                // channel modes
+                if (mode.match(/^[bkl]$/)) {
+                    modeArg = modeArgs.shift();
+                    if (!modeArg || modeArg.length === 0) {modeArg = undefined;}
+                }
+                // TODO - deal nicely with channel modes that take args
+                if (adding) {
+                    if (channel.mode.indexOf(mode) === -1) {channel.mode += mode;}
+
+                    this.emit('+mode', message.args[0], message.nick, mode, modeArg, message);
+                }
+                else {
+                    channel.mode = channel.mode.replace(mode, '');
+                    this.emit('-mode', message.args[0], message.nick, mode, modeArg, message);
+                }
+            }
+        });
+    }
+
+    private onNick(message: Message) {
+        if (message.nick === this.nick) {
+            // the user just changed their own nick
+            this.currentNick = message.args[0];
+            this._updateMaxLineLength();
+        }
+
+        if (this.opt.debug) {
+            util.log('NICK: ' + message.nick + ' changes nick to ' + message.args[0]);
+        }
+
+        const channelsForNick: string[] = [];
+
+        // finding what channels a user is in
+        Object.entries(this.chans).forEach(([channame, nickChannel]) => {
+            if (message.nick && message.nick in nickChannel.users) {
+                nickChannel.users[message.args[0]] = nickChannel.users[message.nick];
+                delete nickChannel.users[message.nick];
+                channelsForNick.push(channame);
+            }
+        });
+
+        // old nick, new nick, channels
+        this.emit('nick', message.nick, message.args[0], channelsForNick, message);
+    }
+
+    private onMotdData(data: string, state?: "start"|"end") {
+        if (state === "start") {
+            this.motd = `${data}\n`;
+            return;
+        }
+        this.motd += `${data}\n`;
+        if (state === "end") {
+            this.emit('motd', this.motd);
+        }
+    }
+
+    private onReplyName(message: Message) {
+        this._casemap(message, 2);
+        const channel = this.chanData(message.args[2]);
+        if (!channel) {
+            return;
+        }
+        if (!message.args[3]) {
+            // No users
+            return;
+        }
+        const users = message.args[3].trim().split(/ +/);
+        users.forEach(user => {
+            // user = "@foo", "+foo", "&@foo", etc...
+            // The symbols are the prefix set.
+            const allowedSymbols = Object.keys(this.modeForPrefix).join("");
+            // Split out the prefix from the nick e.g "@&foo" => ["@&foo", "@&", "foo"]
+            const prefixRegex = new RegExp("^([" + escapeRegExp(allowedSymbols) + "]*)(.*)$");
+            const match = user.match(prefixRegex);
+            if (match) {
+                const userPrefixes = match[1];
+                let knownPrefixes = '';
+                for (let i = 0; i < userPrefixes.length; i++) {
+                    if (userPrefixes[i] in this.modeForPrefix) {
+                        knownPrefixes += userPrefixes[i];
+                    }
+                }
+                if (knownPrefixes.length > 0) {
+                    channel.users[match[2]] = knownPrefixes;
+                }
+                else {
+                    // recombine just in case this server allows weird chars in the nick.
+                    // We know it isn't a mode char.
+                    channel.users[match[1] + match[2]] = '';
+                }
+            }
+        });
+    }
+
+    private onReplyNameEnd(message: Message) {
+        this._casemap(message, 1);
+        const channel = this.chanData(message.args[1]);
+        if (channel) {
+            this.emit('names', message.args[1], channel.users);
+            this.emit('names' + message.args[1], channel.users);
+            this._send('MODE', message.args[1]);
+        }
+    }
+
+    private onReplyTopic(message: Message) {
+        this._casemap(message, 1);
+        const channel = this.chanData(message.args[1]);
+        if (channel) {
+            channel.topic = message.args[2];
+        }
+    }
+
+    private onTopic(message: Message) {
+        // channel, topic, nick
+        this._casemap(message, 0);
+        this.emit('topic', message.args[0], message.args[1], message.nick, message);
+
+        const channel = this.chanData(message.args[0]);
+        if (channel) {
+            channel.topic = message.args[1];
+            if (message.nick) {
+                channel.topicBy = message.nick;
+            }
+        }
+    }
+
+    private onReplyChannelList(message: Message) {
+        const chanListEntry = {
+            name: message.args[1],
+            users: message.args[2],
+            topic: message.args[3]
+        };
+        this.emit('channellist_item', chanListEntry);
+        if (this.channelListState) {
+            this.channelListState.push(chanListEntry);
+        }
+    }
+
+    private onReplyTopicWho(message: Message) {
+        this._casemap(message, 1);
+        const channel = this.chanData(message.args[1]);
+        if (channel) {
+            channel.topicBy = message.args[2];
+            // channel, topic, nick
+            this.emit('topic', message.args[1], channel.topic, channel.topicBy, message);
+        }
+    }
+
+    private onReplyChannelMode(message: Message) {
+        this._casemap(message, 1);
+        const channel = this.chanData(message.args[1]);
+        if (channel) {
+            channel.mode = message.args[2];
+        }
+
+        this.emit('mode_is', message.args[1], message.args[2]);
+    }
+
+    private onReplyCreationTime(message: Message) {
+        this._casemap(message, 1);
+        const channel = this.chanData(message.args[1]);
+        if (channel) {
+            channel.created = message.args[2];
+        }
+    }
+
+    private onJoin(message: Message) {
+        this._casemap(message, 0);
+        // channel, who
+        if (this.nick === message.nick) {
+            this.chanData(message.args[0], true);
+        }
+        else {
+            const channel = this.chanData(message.args[0]);
+            if (message.nick && channel && channel.users) {
+                channel.users[message.nick] = '';
+            }
+        }
+        this.emit('join', message.args[0], message.nick, message);
+        this.emit('join' + message.args[0], message.nick, message);
+        if (message.args[0] !== message.args[0].toLowerCase()) {
+            this.emit('join' + message.args[0].toLowerCase(), message.nick, message);
+        }
+    }
+
+    private onPart(message: Message) {
+        this._casemap(message, 0);
+        // channel, who, reason
+        this.emit('part', message.args[0], message.nick, message.args[1], message);
+        this.emit('part' + message.args[0], message.nick, message.args[1], message);
+        if (message.args[0] !== message.args[0].toLowerCase()) {
+            this.emit('part' + message.args[0].toLowerCase(), message.nick, message.args[1], message);
+        }
+        if (this.nick === message.nick) {
+            this.removeChanData(message.args[0]);
+        }
+        else {
+            const channel = this.chanData(message.args[0]);
+            if (channel && channel.users && message.nick) {
+                delete channel.users[message.nick];
+            }
+        }
+    }
+
+    private onKick(message: Message) {
+        this._casemap(message, 0);
+        // channel, who, by, reason
+        this.emit('kick', message.args[0], message.args[1], message.nick, message.args[2], message);
+        this.emit('kick' + message.args[0], message.args[1], message.nick, message.args[2], message);
+        if (message.args[0] !== message.args[0].toLowerCase()) {
+            this.emit('kick' + message.args[0].toLowerCase(),
+                message.args[1], message.nick, message.args[2], message);
+        }
+
+        if (this.nick === message.args[1]) {
+            this.removeChanData(message.args[0]);
+        }
+        else {
+            const channel = this.chanData(message.args[0]);
+            if (channel && channel.users) {
+                delete channel.users[message.args[1]];
+            }
+        }
+    }
+
+    private onKill(message: Message) {
+        const nick = message.args[0];
+        const killChannels = [];
+        for (const [channame, killChannel] of Object.entries(this.chans)) {
+            if (message.nick && message.nick in killChannel.users) {
+                delete killChannel.users[message.nick];
+                killChannels.push(channame);
+            }
+        }
+        this.emit('kill', nick, message.args[1], killChannels, message);
+    }
+
+    private onPrivateMessage(message: Message) {
+        this._casemap(message, 0);
+        const from = message.nick;
+        const to = message.args[0];
+        const msgText = message.args[1] || '';
+        if (from && msgText[0] === '\u0001' && msgText.lastIndexOf('\u0001') > 0) {
+            this._handleCTCP(from, to, msgText, 'privmsg', message);
+            return;
+        }
+        this.emit('message', from, to, msgText, message);
+        if (this.supportedState.channel.types.indexOf(to.charAt(0)) !== -1) {
+            this.emit('message#', from, to, msgText, message);
+            this.emit('message' + to, from, msgText, message);
+            if (to !== to.toLowerCase()) {
+                this.emit('message' + to.toLowerCase(), from, msgText, message);
+            }
+        }
+        if (to.toUpperCase() === this.nick.toUpperCase()) {this.emit('pm', from, msgText, message);}
+        if (this.opt.debug && to === this.nick) {util.log('GOT MESSAGE from ' + from + ': ' + msgText);}
+    }
+
+    private onInvite(message: Message) {
+        this._casemap(message, 1);
+        const from = message.nick;
+        this.emit('invite', message.args[1], from, message);
+    }
+
+    private onQuit(message: Message) {
+        if (this.opt.debug) {util.log('QUIT: ' + message.prefix + ' ' + message.args.join(' '));}
+        if (this.nick === message.nick) {
+            // TODO handle?
+            return;
+        }
+        // handle other people quitting
+
+        const quitChannels: string[] = [];
+
+        // finding what channels a user is in?
+        for (const [channame, quitChannel] of Object.entries(this.chans)) {
+            if (message.nick && message.nick in quitChannel.users) {
+                delete quitChannel.users[message.nick];
+                quitChannels.push(channame);
+            }
+        }
+
+        // who, reason, channels
+        this.emit('quit', message.nick, message.args[0], quitChannels, message);
+    }
+
+    private onCap(message: Message) {
+        if (message.args[0] === '*' &&
+            message.args[1] === 'ACK' &&
+            message.args[2].split(' ').includes('sasl')) {
+            this._send('AUTHENTICATE', this.opt.saslType);
+        }
+    }
+
+    private onAuthenticate(message: Message) {
+        if (message.args[0] !== '+') {
+            return;
+        }
+        switch (this.opt.saslType) {
+            case 'PLAIN':
+                this._send('AUTHENTICATE',
+                    Buffer.from(
+                        this.nick + '\x00' +
+                this.opt.userName + '\x00' +
+                this.opt.password
+                    ).toString('base64'));
+                break;
+            case 'EXTERNAL':
+                this._send('AUTHENTICATE', '+');
+                break;
+            default:
+                throw Error('Unexpected SASL type');
+        }
+    }
+
+    private onBadNickname(message: Message) {
+        if (this.opt.showErrors) {util.log('\x1B[01;31mERROR: ' + util.inspect(message) + '\x1B[0m');}
+
+        // The Scunthorpe Problem
+        // ----------------------
+        //
+        // Some IRC servers have offensive word filters on nicks. Trying to change your
+        // nick to something with an offensive word in it will return this error.
+        //
+        // If we are already logged in, this is fine, we can just emit an error and
+        // let the client deal with it.
+        // If we are NOT logged in however, we need to propose a new nick else we
+        // will never be able to connect successfully and the connection will
+        // eventually time out, most likely resulting in infinite-reconnects.
+        //
+        // Check to see if we are NOT logged in, and if so, use a "random" string
+        // as the next nick.
+        if (this.hostMask !== '') { // hostMask set on rpl_welcome
+            this.emit('error', message);
+            return;
+        }
+        // rpl_welcome has not been sent
+        // We can't use a truly random string because we still need to abide by
+        // the BNF for nicks (first char must be A-Z, length limits, etc). We also
+        // want to be able to debug any issues if people say that they didn't get
+        // the nick they wanted.
+        const rndNick = "enick_" + Math.floor(Math.random() * 1000) // random 3 digits
+        this._send('NICK', rndNick);
+        this.currentNick = rndNick;
+        this._updateMaxLineLength();
+    }
+
+    private onRaw(message: Message): void {
+        switch (message.command) {
+            case 'PING':
+                this.send('PONG', message.args[0]);
+                this.emit('ping', message.args[0]);
+                break;
+            case 'PONG':
+                this.emit('pong', message.args[0]);
+                break;
+            case 'rpl_welcome':
+                return this.onReplyWelcome(message);
+            case 'rpl_myinfo':
+                return this.onReplyMyInfo(message);
+            case 'rpl_isupport':
+                return this.onReplyISupport(message);
             case 'rpl_yourhost':
             case 'rpl_created':
             case 'rpl_luserclient':
@@ -427,221 +875,35 @@ export class Client extends EventEmitter {
             case 'rpl_luserunknown':
                 // Random welcome crap, ignoring
                 break;
-            case 'err_nicknameinuse': {
-                let nextNick = this.opt.onNickConflict();
-                if (this.nickMod > 1) {
-                    // We've already tried to resolve this nick before and have failed to do so.
-                    // This could just be because there are genuinely 2 clients with the
-                    // same nick and the same nick with a numeric suffix or it could be much
-                    // much more gnarly. If there is a conflict and the original nick is equal
-                    // to the NICKLEN, then we'll never be able to connect because the numeric
-                    // suffix will always be truncated!
-                    //
-                    // To work around this, we'll persist what nick we send up, and compare it
-                    // to the nick which is returned in this error response. If there is
-                    // truncation going on, the two nicks won't match, and then we can do
-                    // something about it.
-
-                    if (this.prevClashNick !== '') {
-                        // we tried to fix things and it still failed, check to make sure
-                        // that the server isn't truncating our nick.
-                        const errNick = message.args[1];
-                        if (errNick !== this.prevClashNick) {
-                            nextNick = this.opt.onNickConflict(errNick.length);
-                        }
-                    }
-
-                    this.prevClashNick = nextNick;
-                }
-
-                this._send('NICK', nextNick);
-                this.currentNick = nextNick;
-                this._updateMaxLineLength();
-                break;
-            }
-            case 'PING':
-                this.send('PONG', message.args[0]);
-                this.emit('ping', message.args[0]);
-                break;
-            case 'PONG':
-                this.emit('pong', message.args[0]);
-                break;
-            case 'NOTICE': {
-                this._casemap(message, 0);
-                from = message.nick;
-                to = message.args[0];
-                const noticeText = message.args[1] || '';
-                if (noticeText[0] === '\u0001' && noticeText.lastIndexOf('\u0001') > 0) {
-                    if (from && to && noticeText) {
-                        this._handleCTCP(from, to, noticeText, 'notice', message);
-                    }
-                    break;
-                }
-                this.emit('notice', from, to, noticeText, message);
-
-                if (this.opt.debug && to === this.nick) {
-                    util.log('GOT NOTICE from ' + (from ? '"' + from + '"' : 'the server') + ': "' + noticeText + '"');
-                }
-                break;
-            }
-            case 'MODE': {
-                this._casemap(message, 0);
-                if (this.opt.debug) {util.log('MODE: ' + message.args[0] + ' sets mode: ' + message.args[1]);}
-
-                channel = this.chanData(message.args[0]);
-                if (!channel) {break;}
-                const modeList = message.args[1].split('');
-                let adding = true;
-                const modeArgs = message.args.slice(2);
-                modeList.forEach((mode) => {
-                    if (mode === '+') {
-                        adding = true;
-                        return;
-                    }
-                    if (mode === '-') {
-                        adding = false;
-                        return;
-                    }
-                    if (mode in this.prefixForMode) {
-                        // channel user modes
-                        const user = modeArgs.shift();
-                        if (adding) {
-                            if (user && channel.users[user] &&
-                                channel.users[user].indexOf(this.prefixForMode[mode]) === -1) {
-                                channel.users[user] += this.prefixForMode[mode];
-                            }
-
-                            this.emit('+mode', message.args[0], message.nick, mode, user, message);
-                        }
-                        else {
-                            if (user && channel.users[user]) {
-                                channel.users[user] = channel.users[user].replace(this.prefixForMode[mode], '');
-                            }
-                            this.emit('-mode', message.args[0], message.nick, mode, user, message);
-                        }
-                    }
-                    else {
-                        let modeArg;
-                        // channel modes
-                        if (mode.match(/^[bkl]$/)) {
-                            modeArg = modeArgs.shift();
-                            if (!modeArg || modeArg.length === 0) {modeArg = undefined;}
-                        }
-                        // TODO - deal nicely with channel modes that take args
-                        if (adding) {
-                            if (channel.mode.indexOf(mode) === -1) {channel.mode += mode;}
-
-                            this.emit('+mode', message.args[0], message.nick, mode, modeArg, message);
-                        }
-                        else {
-                            channel.mode = channel.mode.replace(mode, '');
-                            this.emit('-mode', message.args[0], message.nick, mode, modeArg, message);
-                        }
-                    }
-                });
-                break;
-            }
-            case 'NICK': {
-                if (message.nick === this.nick) {
-                    // the user just changed their own nick
-                    this.currentNick = message.args[0];
-                    this._updateMaxLineLength();
-                }
-
-                if (this.opt.debug) {
-                    util.log('NICK: ' + message.nick + ' changes nick to ' + message.args[0]);
-                }
-
-                const channelsForNick: string[] = [];
-
-                // finding what channels a user is in
-                Object.entries(this.chans).forEach(([channame, nickChannel]) => {
-                    if (message.nick && message.nick in nickChannel.users) {
-                        nickChannel.users[message.args[0]] = nickChannel.users[message.nick];
-                        delete nickChannel.users[message.nick];
-                        channelsForNick.push(channame);
-                    }
-                });
-
-                // old nick, new nick, channels
-                this.emit('nick', message.nick, message.args[0], channelsForNick, message);
-                break;
-            }
+            case 'err_nicknameinuse':
+                return this.onErrNicknameInUse(message);
+            case 'NOTICE':
+                return this.onNotice(message);
+            case 'MODE':
+                return this.onMode(message);
+            case 'NICK':
+                return this.onNick(message);
             case 'rpl_motdstart':
-                this.motd = message.args[1] + '\n';
-                break;
+                return this.onMotdData(message.args[1], "start");
             case 'rpl_motd':
-                this.motd += message.args[1] + '\n';
-                break;
+                return this.onMotdData(message.args[1]);
             case 'rpl_endofmotd':
             case 'err_nomotd':
-                this.motd += message.args[1] + '\n';
-                this.emit('motd', this.motd);
-                break;
-            case 'rpl_namreply': {
-                this._casemap(message, 2);
-                channel = this.chanData(message.args[2]);
-                if (!message.args[3]) {
-                    // No users
-                    break;
-                }
-                const users = message.args[3].trim().split(/ +/);
-                if (channel) {
-                    users.forEach(user => {
-                        // user = "@foo", "+foo", "&@foo", etc...
-                        // The symbols are the prefix set.
-                        const allowedSymbols = Object.keys(this.modeForPrefix).join("");
-                        // Split out the prefix from the nick e.g "@&foo" => ["@&foo", "@&", "foo"]
-                        const prefixRegex = new RegExp("^([" + escapeRegExp(allowedSymbols) + "]*)(.*)$");
-                        const match = user.match(prefixRegex);
-                        if (match) {
-                            const userPrefixes = match[1];
-                            let knownPrefixes = '';
-                            for (let i = 0; i < userPrefixes.length; i++) {
-                                if (userPrefixes[i] in this.modeForPrefix) {
-                                    knownPrefixes += userPrefixes[i];
-                                }
-                            }
-                            if (knownPrefixes.length > 0) {
-                                channel.users[match[2]] = knownPrefixes;
-                            }
-                            else {
-                                // recombine just in case this server allows weird chars in the nick.
-                                // We know it isn't a mode char.
-                                channel.users[match[1] + match[2]] = '';
-                            }
-                        }
-                    });
-                }
-                break;
-            }
+                return this.onMotdData(message.args[1], "end");
+            case 'rpl_namreply':
+                return this.onReplyName(message);
             case 'rpl_endofnames':
-                this._casemap(message, 1);
-                channel = this.chanData(message.args[1]);
-                if (channel) {
-                    this.emit('names', message.args[1], channel.users);
-                    this.emit('names' + message.args[1], channel.users);
-                    this._send('MODE', message.args[1]);
-                }
-                break;
+                return this.onReplyNameEnd(message);
             case 'rpl_topic':
-                this._casemap(message, 1);
-                channel = this.chanData(message.args[1]);
-                if (channel) {
-                    channel.topic = message.args[2];
-                }
-                break;
+                return this.onReplyTopic(message);
             case 'rpl_away':
-                this._addWhoisData(message.args[1], 'away', message.args[2], true);
-                break;
+                return this._addWhoisData(message.args[1], 'away', message.args[2], true);
             case 'rpl_whoisuser':
                 this._addWhoisData(message.args[1], 'user', message.args[2]);
                 this._addWhoisData(message.args[1], 'host', message.args[3]);
-                this._addWhoisData(message.args[1], 'realname', message.args[5]);
-                break;
+                return this._addWhoisData(message.args[1], 'realname', message.args[5]);
             case 'rpl_whoisidle':
-                this._addWhoisData(message.args[1], 'idle', message.args[2]);
-                break;
+                return this._addWhoisData(message.args[1], 'idle', message.args[2]);
             case 'rpl_whoischannels':
                 // TODO - clean this up?
                 if (message.args.length >= 3) {
@@ -650,262 +912,59 @@ export class Client extends EventEmitter {
                 break;
             case 'rpl_whoisserver':
                 this._addWhoisData(message.args[1], 'server', message.args[2]);
-                this._addWhoisData(message.args[1], 'serverinfo', message.args[3]);
-                break;
+                return this._addWhoisData(message.args[1], 'serverinfo', message.args[3]);
             case 'rpl_whoisoperator':
-                this._addWhoisData(message.args[1], 'operator', message.args[2]);
-                break;
+                return this._addWhoisData(message.args[1], 'operator', message.args[2]);
             case 'rpl_whoisaccount':
                 this._addWhoisData(message.args[1], 'account', message.args[2]);
-                this._addWhoisData(message.args[1], 'accountinfo', message.args[3]);
-                break;
+                return this._addWhoisData(message.args[1], 'accountinfo', message.args[3]);
             case 'rpl_endofwhois':
-                this.emit('whois', this._clearWhoisData(message.args[1]));
-                break;
+                return void this.emit('whois', this._clearWhoisData(message.args[1]));
             case 'rpl_liststart':
                 this.channelListState = [];
-                this.emit('channellist_start');
-                break;
-            case 'rpl_list': {
-                const chanListEntry = {
-                    name: message.args[1],
-                    users: message.args[2],
-                    topic: message.args[3]
-                };
-                this.emit('channellist_item', chanListEntry);
-                if (this.channelListState) {
-                    this.channelListState.push(chanListEntry);
-                }
-                break;
-            }
+                return void this.emit('channellist_start');
+            case 'rpl_list':
+                return this.onReplyChannelList(message);
             case 'rpl_listend':
                 this.emit('channellist', this.channelListState);
                 // Clear after use.
                 this.channelListState = undefined;
                 break;
             case 'rpl_topicwhotime':
-                this._casemap(message, 1);
-                channel = this.chanData(message.args[1]);
-                if (channel) {
-                    channel.topicBy = message.args[2];
-                    // channel, topic, nick
-                    this.emit('topic', message.args[1], channel.topic, channel.topicBy, message);
-                }
-                break;
+                return this.onReplyTopicWho(message);
             case 'TOPIC':
-                // channel, topic, nick
-                this._casemap(message, 0);
-                this.emit('topic', message.args[0], message.args[1], message.nick, message);
-
-                channel = this.chanData(message.args[0]);
-                if (channel) {
-                    channel.topic = message.args[1];
-                    if (message.nick) {
-                        channel.topicBy = message.nick;
-                    }
-                }
-                break;
+                return this.onTopic(message);
             case 'rpl_channelmodeis':
-                this._casemap(message, 1);
-                channel = this.chanData(message.args[1]);
-                if (channel) {
-                    channel.mode = message.args[2];
-                }
-
-                this.emit('mode_is', message.args[1], message.args[2]);
-                break;
+                return this.onReplyChannelMode(message);
             case 'rpl_creationtime':
-                this._casemap(message, 1);
-                channel = this.chanData(message.args[1]);
-                if (channel) {
-                    channel.created = message.args[2];
-                }
-                break;
+                return this.onReplyCreationTime(message);
             case 'JOIN':
-                this._casemap(message, 0);
-                // channel, who
-                if (this.nick === message.nick) {
-                    this.chanData(message.args[0], true);
-                }
-                else {
-                    channel = this.chanData(message.args[0]);
-                    if (message.nick && channel && channel.users) {
-                        channel.users[message.nick] = '';
-                    }
-                }
-                this.emit('join', message.args[0], message.nick, message);
-                this.emit('join' + message.args[0], message.nick, message);
-                if (message.args[0] !== message.args[0].toLowerCase()) {
-                    this.emit('join' + message.args[0].toLowerCase(), message.nick, message);
-                }
-                break;
+                return this.onJoin(message);
             case 'PART':
-                this._casemap(message, 0);
-                // channel, who, reason
-                this.emit('part', message.args[0], message.nick, message.args[1], message);
-                this.emit('part' + message.args[0], message.nick, message.args[1], message);
-                if (message.args[0] !== message.args[0].toLowerCase()) {
-                    this.emit('part' + message.args[0].toLowerCase(), message.nick, message.args[1], message);
-                }
-                if (this.nick === message.nick) {
-                    this.removeChanData(message.args[0]);
-                }
-                else {
-                    channel = this.chanData(message.args[0]);
-                    if (channel && channel.users && message.nick) {
-                        delete channel.users[message.nick];
-                    }
-                }
-                break;
+                return this.onPart(message);
             case 'KICK':
-                this._casemap(message, 0);
-                // channel, who, by, reason
-                this.emit('kick', message.args[0], message.args[1], message.nick, message.args[2], message);
-                this.emit('kick' + message.args[0], message.args[1], message.nick, message.args[2], message);
-                if (message.args[0] !== message.args[0].toLowerCase()) {
-                    this.emit('kick' + message.args[0].toLowerCase(),
-                        message.args[1], message.nick, message.args[2], message);
-                }
-
-                if (this.nick === message.args[1]) {
-                    this.removeChanData(message.args[0]);
-                }
-                else {
-                    channel = this.chanData(message.args[0]);
-                    if (channel && channel.users) {
-                        delete channel.users[message.args[1]];
-                    }
-                }
-                break;
-            case 'KILL': {
-                const nick = message.args[0];
-                const killChannels = [];
-                for (const [channame, killChannel] of Object.entries(this.chans)) {
-                    if (message.nick && message.nick in killChannel.users) {
-                        delete killChannel.users[message.nick];
-                        killChannels.push(channame);
-                    }
-                }
-                this.emit('kill', nick, message.args[1], killChannels, message);
-                break;
-            }
-            case 'PRIVMSG': {
-                this._casemap(message, 0);
-                from = message.nick;
-                to = message.args[0];
-                const msgText = message.args[1] || '';
-                if (from && msgText[0] === '\u0001' && msgText.lastIndexOf('\u0001') > 0) {
-                    this._handleCTCP(from, to, msgText, 'privmsg', message);
-                    break;
-                }
-                this.emit('message', from, to, msgText, message);
-                if (this.supportedState.channel.types.indexOf(to.charAt(0)) !== -1) {
-                    this.emit('message#', from, to, msgText, message);
-                    this.emit('message' + to, from, msgText, message);
-                    if (to !== to.toLowerCase()) {
-                        this.emit('message' + to.toLowerCase(), from, msgText, message);
-                    }
-                }
-                if (to.toUpperCase() === this.nick.toUpperCase()) {this.emit('pm', from, msgText, message);}
-
-                if (this.opt.debug && to === this.nick) {util.log('GOT MESSAGE from ' + from + ': ' + msgText);}
-                break;
-            }
+                return this.onKick(message);
+            case 'KILL':
+                return this.onKill(message);
+            case 'PRIVMSG':
+                return this.onPrivateMessage(message);
             case 'INVITE':
-                this._casemap(message, 1);
-                from = message.nick;
-                to = message.args[0];
-                this.emit('invite', message.args[1], from, message);
-                break;
-            case 'QUIT': {
-                if (this.opt.debug) {util.log('QUIT: ' + message.prefix + ' ' + message.args.join(' '));}
-                if (this.nick === message.nick) {
-                    // TODO handle?
-                    break;
-                }
-                // handle other people quitting
-
-                const quitChannels: string[] = [];
-
-                // finding what channels a user is in?
-                for (const [channame, quitChannel] of Object.entries(this.chans)) {
-                    if (message.nick && message.nick in quitChannel.users) {
-                        delete quitChannel.users[message.nick];
-                        quitChannels.push(channame);
-                    }
-                }
-
-                // who, reason, channels
-                this.emit('quit', message.nick, message.args[0], quitChannels, message);
-                break;
-            }
-            // for sasl
+                return this.onInvite(message);
+            case 'QUIT':
+                return this.onQuit(message);
             case 'CAP':
-                if (message.args[0] === '*' &&
-                    message.args[1] === 'ACK' &&
-                    message.args[2].split(' ').includes('sasl')) {
-                    this._send('AUTHENTICATE', this.opt.saslType);
-                }
-                break;
+                return this.onCap(message);
             case 'AUTHENTICATE':
-                if (message.args[0] === '+') {
-                    switch (this.opt.saslType) {
-                        case 'PLAIN':
-                            this._send('AUTHENTICATE',
-                                Buffer.from(
-                                    this.nick + '\x00' +
-                            this.opt.userName + '\x00' +
-                            this.opt.password
-                                ).toString('base64'));
-                            break;
-                        case 'EXTERNAL':
-                            this._send('AUTHENTICATE', '+');
-                            break;
-                        default:
-                            throw Error('Unexpected SASL type');
-                    }
-                }
-                break;
-            case '903':
-                this._send('CAP', 'END');
-                break;
+                return this.onAuthenticate(message);
+            case 'cap_end':
+                return this._send('CAP', 'END');
             case 'err_unavailresource':
             // err_unavailresource has been seen in the wild on Freenode when trying to
             // connect with the nick 'boot'. I'm guessing they have reserved that nick so
             // no one can claim it. The error handling though is identical to offensive word
             // nicks hence the fall through here.
-            case 'err_erroneusnickname': {
-                if (this.opt.showErrors) {util.log('\x1B[01;31mERROR: ' + util.inspect(message) + '\x1B[0m');}
-
-                // The Scunthorpe Problem
-                // ----------------------
-                //
-                // Some IRC servers have offensive word filters on nicks. Trying to change your
-                // nick to something with an offensive word in it will return this error.
-                //
-                // If we are already logged in, this is fine, we can just emit an error and
-                // let the client deal with it.
-                // If we are NOT logged in however, we need to propose a new nick else we
-                // will never be able to connect successfully and the connection will
-                // eventually time out, most likely resulting in infinite-reconnects.
-                //
-                // Check to see if we are NOT logged in, and if so, use a "random" string
-                // as the next nick.
-                if (this.hostMask !== '') { // hostMask set on rpl_welcome
-                    this.emit('error', message);
-                    break;
-                }
-                // rpl_welcome has not been sent
-                // We can't use a truly random string because we still need to abide by
-                // the BNF for nicks (first char must be A-Z, length limits, etc). We also
-                // want to be able to debug any issues if people say that they didn't get
-                // the nick they wanted.
-                const rndNick = "enick_" + Math.floor(Math.random() * 1000) // random 3 digits
-                this._send('NICK', rndNick);
-                this.currentNick = rndNick;
-                this._updateMaxLineLength();
-                break;
-            }
+            case 'err_erroneusnickname':
+                return this.onBadNickname(message);
             default:
                 if (message.commandType === 'error') {
                     this.emit('error', message);

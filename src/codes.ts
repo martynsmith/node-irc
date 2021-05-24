@@ -548,5 +548,9 @@ export const replyCodes = {
     502: {
         name: 'err_usersdontmatch',
         type: 'error'
+    },
+    903: {
+        name: 'cap_end',
+        type: 'normal',
     }
 } as {[id: string]: {name: string, type: CommandType}};
