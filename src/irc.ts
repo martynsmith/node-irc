@@ -26,6 +26,7 @@ import { EventEmitter } from 'events';
 import * as Iconv from 'iconv-lite';
 import * as detectCharset from 'chardet';
 import { Message, parseMessage } from './parse_message';
+import { IrcCapabilities } from './capabilities';
 
 const lineDelimiter = new RegExp('\r\n|\r|\n');
 const MIN_DELAY_MS = 33;
@@ -173,7 +174,7 @@ export class Client extends EventEmitter {
     public conn?: Socket|tls.TLSSocket;
     private requestedDisconnect = false;
     private supportedState: IrcSupported;
-
+    private capabilities: IrcCapabilities;
     /**
      * Cached data
      */
@@ -271,6 +272,8 @@ export class Client extends EventEmitter {
             extra: [],
         };
 
+        this.capabilities = new IrcCapabilities(this.onCapsList.bind(this), this.onCapsConfirmed.bind(this));
+
         super.on('raw', this.onRaw.bind(this));
 
         super.on('kick', (channel: string) => {
@@ -287,6 +290,25 @@ export class Client extends EventEmitter {
         // TODO - fail if username has a space in it
         if (this.opt.autoConnect === true) {
             this.connect();
+        }
+    }
+
+    private onCapsList() {
+        const requiredCapabilites = [];
+        if (this.opt.sasl) {
+            requiredCapabilites.push('sasl');
+        }
+
+        if (requiredCapabilites.length === 0) {
+            // Don't bother asking.
+            return;
+        }
+        this.send('CAP REQ :', ...requiredCapabilites);
+    }
+
+    private onCapsConfirmed() {
+        if (this.opt.sasl && this.capabilities.supportsSaslMethod(this.opt.saslType, true)) {
+            this._send('AUTHENTICATE', this.opt.saslType);
         }
     }
 
@@ -787,14 +809,6 @@ export class Client extends EventEmitter {
         this.emit('quit', message.nick, message.args[0], quitChannels, message);
     }
 
-    private onCap(message: Message) {
-        if (message.args[0] === '*' &&
-            message.args[1] === 'ACK' &&
-            message.args[2].split(' ').includes('sasl')) {
-            this._send('AUTHENTICATE', this.opt.saslType);
-        }
-    }
-
     private onAuthenticate(message: Message) {
         if (message.args[0] !== '+') {
             return;
@@ -953,7 +967,7 @@ export class Client extends EventEmitter {
             case 'QUIT':
                 return this.onQuit(message);
             case 'CAP':
-                return this.onCap(message);
+                return this.capabilities.onCap(message);
             case 'AUTHENTICATE':
                 return this.onAuthenticate(message);
             case 'cap_end':
@@ -1022,11 +1036,11 @@ export class Client extends EventEmitter {
         if (this.opt.webirc.ip && this.opt.webirc.pass && this.opt.webirc.host) {
             this._send('WEBIRC', this.opt.webirc.pass, this.opt.userName, this.opt.webirc.host, this.opt.webirc.ip);
         }
-        if (this.opt.sasl) {
-            // see http://ircv3.atheme.org/extensions/sasl-3.1
-            this._send('CAP REQ', 'sasl');
-        }
-        else if (this.opt.password) {
+        // Request capabilities.
+        // https://ircv3.net/specs/extensions/capability-negotiation.html
+        this._send('CAP LS 302');
+        if (!this.opt.sasl && this.opt.password) {
+            // Legacy PASS command, use when not using sasl.
             this._send('PASS', this.opt.password);
         }
         if (this.opt.debug) {util.log('Sending irc NICK/USER');}
