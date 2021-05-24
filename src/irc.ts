@@ -992,8 +992,9 @@ export class Client extends EventEmitter {
             case 'err_saslaborted':
             case 'err_saslalready':
                 this.emit('sasl_error', message.command, ...message.args);
-                break;
-            case 'cap_end':
+                // We're not going to retry on this connection, so end it.
+                return this._send('CAP', 'END');
+            case 'rpl_saslsuccess':
                 return this._send('CAP', 'END');
             case 'err_unavailresource':
             // err_unavailresource has been seen in the wild on Freenode when trying to

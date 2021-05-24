@@ -559,7 +559,7 @@ export const replyCodes = {
         type: 'reply',
     },
     903: {
-        name: 'cap_end',
+        name: 'rpl_saslsuccess',
         type: 'normal',
     },
     904: {
