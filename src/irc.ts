@@ -175,6 +175,7 @@ export class Client extends EventEmitter {
     private requestedDisconnect = false;
     private supportedState: IrcSupported;
     private capabilities: IrcCapabilities;
+    private loggedIn: boolean|null = null;
     /**
      * Cached data
      */
@@ -202,6 +203,14 @@ export class Client extends EventEmitter {
         return {
             ...this.supportedState,
         };
+    }
+
+    /**
+     * Check if the user is logged in (for SASL supporting servers).
+     * This will be null if this could not be determined.
+     */
+    get isLoggedIn() {
+        return this.loggedIn;
     }
 
     constructor (private server: string, requestedNick: string, opt: IrcClientOpts) {
@@ -970,6 +979,20 @@ export class Client extends EventEmitter {
                 return this.capabilities.onCap(message);
             case 'AUTHENTICATE':
                 return this.onAuthenticate(message);
+            case 'rpl_loggedin':
+                this.emit('sasl_loggedin', ...message.args);
+                this.loggedIn = true;
+                break;
+            case 'rpl_loggedout':
+                this.emit('sasl_loggedout', ...message.args);
+                this.loggedIn = false;
+                break;
+            case 'err_saslfail':
+            case 'err_sasltoolong':
+            case 'err_saslaborted':
+            case 'err_saslalready':
+                this.emit('sasl_error', message.command, ...message.args);
+                break;
             case 'cap_end':
                 return this._send('CAP', 'END');
             case 'err_unavailresource':
