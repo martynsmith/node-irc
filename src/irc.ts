@@ -826,9 +826,9 @@ export class Client extends EventEmitter {
             case 'PLAIN':
                 this._send('AUTHENTICATE',
                     Buffer.from(
-                        this.nick + '\x00' +
-                this.opt.userName + '\x00' +
-                this.opt.password
+                        this.opt.userName + '\x00' +
+                        this.opt.userName + '\x00' +
+                        this.opt.password
                     ).toString('base64'));
                 break;
             case 'EXTERNAL':
@@ -1060,9 +1060,6 @@ export class Client extends EventEmitter {
         if (this.opt.webirc.ip && this.opt.webirc.pass && this.opt.webirc.host) {
             this._send('WEBIRC', this.opt.webirc.pass, this.opt.userName, this.opt.webirc.host, this.opt.webirc.ip);
         }
-        // Request capabilities.
-        // https://ircv3.net/specs/extensions/capability-negotiation.html
-        this._send('CAP LS 302');
         if (!this.opt.sasl && this.opt.password) {
             // Legacy PASS command, use when not using sasl.
             this._send('PASS', this.opt.password);
@@ -1072,6 +1069,9 @@ export class Client extends EventEmitter {
         this.currentNick = this.nick;
         this._updateMaxLineLength();
         this._send('USER', this.opt.userName, '8', '*', this.opt.realName);
+        // Request capabilities.
+        // https://ircv3.net/specs/extensions/capability-negotiation.html
+        this._send('CAP LS', '302');
         this.emit('connect');
     }
 
@@ -1168,7 +1168,6 @@ export class Client extends EventEmitter {
                 // callback called only after successful socket connection
 
                 if (!this.conn.authorized) {
-                    util.log(this.conn.authorizationError.toString());
                     switch (this.conn.authorizationError.toString()) {
                         case 'DEPTH_ZERO_SELF_SIGNED_CERT':
                         case 'UNABLE_TO_VERIFY_LEAF_SIGNATURE':

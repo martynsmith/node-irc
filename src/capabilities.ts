@@ -1,8 +1,8 @@
 import { Message } from "./parse_message";
 
 interface CapabilitiesSet {
-    caps: string[];
-    saslTypes?: string[];
+    caps: Set<string>;
+    saslTypes?: Set<string>;
 }
 
 /**
@@ -11,14 +11,17 @@ interface CapabilitiesSet {
 export class IrcCapabilities {
 
     static parseCapabilityString(caps: string): CapabilitiesSet {
-        const allCaps = caps.split(' ');
+        const allCaps = caps.trim().split(' ');
         // Not all servers respond with the type of sasl supported.
         const saslTypes = allCaps.find((s) => s.startsWith('sasl='))?.split('=')[1]
             .split(',')
             .map((s) => s.toUpperCase());
+        if (saslTypes) {
+            allCaps.push('sasl');
+        }
         return {
-            caps: allCaps,
-            saslTypes: saslTypes,
+            caps: new Set(allCaps),
+            saslTypes: new Set(saslTypes),
         }
     }
 
@@ -36,7 +39,7 @@ export class IrcCapabilities {
         if (!this.serverCapabilites) {
             throw Error('Server response has not arrived yet');
         }
-        return this.serverCapabilites.caps.includes('sasl');
+        return this.serverCapabilites.caps.has('sasl');
     }
 
     /**
@@ -51,13 +54,13 @@ export class IrcCapabilities {
         if (!this.serverCapabilites) {
             throw Error('Server caps response has not arrived yet');
         }
-        if (!this.serverCapabilites.caps.includes('sasl')) {
+        if (!this.serverCapabilites.caps.has('sasl')) {
             return false;
         }
         if (!this.serverCapabilites.saslTypes) {
             return allowNoMethods;
         }
-        return this.serverCapabilites.saslTypes.includes(method.toUpperCase());
+        return this.serverCapabilites.saslTypes.has(method.toUpperCase());
     }
 
     private serverCapabilites?: CapabilitiesSet;
@@ -70,7 +73,7 @@ export class IrcCapabilities {
         // E.g. CAP * LS :account-notify away-notify chghost extended-join multi-prefix
         // sasl=PLAIN,ECDSA-NIST256P-CHALLENGE,EXTERNAL tls account-tag cap-notify echo-message
         // solanum.chat/identify-msg solanum.chat/realhost
-        const [target, subCmd, parts] = message.args;
+        const [, subCmd, parts] = message.args;
         if (subCmd === 'LS') {
             // Listing all caps
             this.serverCapabilites = IrcCapabilities.parseCapabilityString(parts);
