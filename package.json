@@ -7,7 +7,7 @@
     "prepare": "npm run build",
     "build": "tsc --project tsconfig.json",
     "lint": "eslint -c .eslintrc --max-warnings 0 'src/**/*.ts'",
-    "test": "./node_modules/faucet/bin/cmd.js test/test-*.js"
+    "test": "faucet ./test/test-*.js"
   },
   "contributors": [
     "node-irc contributors"
