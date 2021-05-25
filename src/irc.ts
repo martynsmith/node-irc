@@ -27,6 +27,7 @@ import * as Iconv from 'iconv-lite';
 import * as detectCharset from 'chardet';
 import { Message, parseMessage } from './parse_message';
 import { IrcCapabilities } from './capabilities';
+import splitLongLines from './splitLines';
 
 const lineDelimiter = new RegExp('\r\n|\r|\n');
 const MIN_DELAY_MS = 33;
@@ -1417,40 +1418,6 @@ export class Client extends EventEmitter {
             this.supportedState.usermodepriority.indexOf(testMode);
     }
 
-    private _splitLongLines(words: string, maxLength: number, destination: string[] = []): string[] {
-        if (words.length === 0) {
-            return destination;
-        }
-        if (words.length <= maxLength) {
-            destination.push(words);
-            return destination;
-        }
-        let c = words[maxLength];
-        let cutPos = 0;
-        let wsLength = 1;
-        if (c.match(/\s/)) {
-            cutPos = maxLength;
-        }
-        else {
-            let offset = 1;
-            while ((maxLength - offset) > 0) {
-                c = words[maxLength - offset];
-                if (c.match(/\s/)) {
-                    cutPos = maxLength - offset;
-                    break;
-                }
-                offset++;
-            }
-            if (maxLength - offset <= 0) {
-                cutPos = maxLength;
-                wsLength = 0;
-            }
-        }
-        const part = words.substring(0, cutPos);
-        destination.push(part);
-        return this._splitLongLines(words.substring(cutPos + wsLength, words.length), maxLength, destination);
-    }
-
     public say(target: string, text: string) {
         return this._speak('PRIVMSG', target, text);
     }
@@ -1465,7 +1432,7 @@ export class Client extends EventEmitter {
             return [];
         }
         return text.toString().split(/\r?\n/).filter((line) => line.length > 0)
-            .map((line) => this._splitLongLines(line, maxLength, []))
+            .map((line) => splitLongLines(line, maxLength))
             .reduce((a, b) => a.concat(b), []);
     }
 
