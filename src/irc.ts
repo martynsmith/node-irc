@@ -316,8 +316,15 @@ export class Client extends EventEmitter {
     }
 
     private onCapsConfirmed() {
-        if (this.opt.sasl && this.capabilities.supportsSaslMethod(this.opt.saslType, true)) {
+        if (!this.opt.sasl) {
+            // No need to do anything.
+            return;
+        }
+        if (this.capabilities.supportsSaslMethod(this.opt.saslType, true)) {
             this._send('AUTHENTICATE', this.opt.saslType);
+        }
+        else {
+            throw Error('Server does not support requested SASL method');
         }
     }
 
@@ -335,7 +342,10 @@ export class Client extends EventEmitter {
         const welcomeStringWords = message.args[1].split(/\s+/);
         this.hostMask = welcomeStringWords[welcomeStringWords.length - 1];
         this._updateMaxLineLength();
-        this.emit('registered', message);
+        if (!this.opt.sasl) {
+            // If this connection is using SASL, we don't want to emit this until they are authenticated.
+            this.emit('registered');
+        }
         this.whois(this.nick, (args) => {
             this.currentNick = args.nick;
             this.hostMask = args.user + "@" + args.host;
@@ -992,9 +1002,11 @@ export class Client extends EventEmitter {
             case 'err_saslaborted':
             case 'err_saslalready':
                 this.emit('sasl_error', message.command, ...message.args);
+                this.emit('registered'); // emit on failed OR
                 // We're not going to retry on this connection, so end it.
                 return this._send('CAP', 'END');
             case 'rpl_saslsuccess':
+                this.emit('registered'); // emit on success
                 return this._send('CAP', 'END');
             case 'err_unavailresource':
             // err_unavailresource has been seen in the wild on Freenode when trying to
