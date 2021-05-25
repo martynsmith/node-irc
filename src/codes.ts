@@ -548,5 +548,34 @@ export const replyCodes = {
     502: {
         name: 'err_usersdontmatch',
         type: 'error'
-    }
+    },
+    // https://ircv3.net/registry
+    900: {
+        name: 'rpl_loggedin',
+        type: 'reply',
+    },
+    901: {
+        name: 'rpl_loggedout',
+        type: 'reply',
+    },
+    903: {
+        name: 'rpl_saslsuccess',
+        type: 'normal',
+    },
+    904: {
+        name: 'err_saslfail',
+        type: 'error',
+    },
+    905: {
+        name: 'err_sasltoolong',
+        type: 'error',
+    },
+    906: {
+        name: 'err_saslaborted',
+        type: 'error',
+    },
+    907: {
+        name: 'err_saslalready',
+        type: 'error',
+    },
 } as {[id: string]: {name: string, type: CommandType}};
