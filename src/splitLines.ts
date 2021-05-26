@@ -78,7 +78,7 @@ export default function splitLongLines(text: string, maxLengthInBytes = 450): st
     if (cutPosStart !== cutPosCurr) {
         let startPos = cutPosStart;
         if (result.length !== 0) {
-            while (startPos < text.length && text[startPos].match(/\s/)) {
+            while (startPos < text.length && /\s/.test(text[startPos])) {
                 startPos++;
             }
         }
