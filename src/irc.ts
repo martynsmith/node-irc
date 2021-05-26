@@ -310,7 +310,9 @@ export class Client extends EventEmitter {
         }
 
         if (requiredCapabilites.length === 0) {
-            // Don't bother asking.
+            // Don't bother asking for any capabilities.
+            // We're finished checking for caps, so we can send an END.
+            this._send('CAP', 'END');
             return;
         }
         this.send('CAP REQ :', ...requiredCapabilites);
@@ -318,9 +320,11 @@ export class Client extends EventEmitter {
 
     private onCapsConfirmed() {
         if (!this.opt.sasl) {
-            // No need to do anything.
+            // We're not going to authenticate, so we can END.
+            this.send('CAP END');
             return;
         }
+        // otherwise, we should authenticate
         if (this.capabilities.supportsSaslMethod(this.opt.saslType, true)) {
             this._send('AUTHENTICATE', this.opt.saslType);
         }
