@@ -66,22 +66,3 @@ function runTests(t, isSecure, useSecureObject) {
         mock.close();
     });
 }
-
-test ('splitting of long lines', function(t) {
-    const port = 6667;
-    const mock = testHelpers.MockIrcd(port, 'utf-8', false);
-    const client = new irc.Client('localhost', 'testbot', {
-        secure: false,
-        selfSigned: true,
-        port: port,
-        retryCount: 0,
-        debug: true
-    });
-
-    const group = testHelpers.getFixtures('_splitLongLines');
-    t.plan(group.length);
-    group.forEach(function(item) {
-        t.deepEqual(client._splitLongLines(item.input, item.maxLength, []), item.result);
-    });
-    mock.close();
-});
